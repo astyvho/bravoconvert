@@ -1,0 +1,112 @@
+{
+  "navigation": {
+    "home": "ホーム",
+    "imageConverter": "画像変換",
+    "pdfConverter": "PDF変換",
+    "howToUse": "使い方",
+    "faq": "よくある質問",
+    "privacyPolicy": "プライバシーポリシー",
+    "termsOfService": "利用規約"
+  },
+  "home": {
+    "title": "PNG変換ツール",
+    "subtitle": "画像とPDFを簡単に変換",
+    "imageConverterTitle": "画像変換",
+    "imageConverterDesc": "JPG、PNG、WebPなどの画像形式を変換",
+    "pdfConverterTitle": "PDF変換",
+    "pdfConverterDesc": "PDFを画像に変換",
+    "getStarted": "始める"
+  },
+  "imageConverter": {
+    "title": "画像変換",
+    "description": "画像形式を簡単に変換",
+    "uploadText": "ここに画像をドラッグ＆ドロップまたはクリックしてアップロード",
+    "supportedFormats": "対応形式: JPG、PNG、WebP、GIF、BMP",
+    "convert": "変換",
+    "download": "ダウンロード",
+    "quality": "品質",
+    "format": "形式",
+    "processing": "処理中...",
+    "error": "エラーが発生しました。もう一度お試しください。"
+  },
+  "pdfConverter": {
+    "title": "PDF変換",
+    "description": "PDFを画像に変換",
+    "uploadText": "ここにPDFファイルをドラッグ＆ドロップまたはクリックしてアップロード",
+    "supportedFormats": "対応形式: PDF",
+    "convert": "変換",
+    "download": "ダウンロード",
+    "quality": "品質",
+    "format": "形式",
+    "processing": "処理中...",
+    "error": "エラーが発生しました。もう一度お試しください。"
+  },
+  "howToUse": {
+    "title": "使い方",
+    "imageConverter": {
+      "title": "画像変換ガイド",
+      "step1": "1. 画像ファイルをアップロード",
+      "step2": "2. 希望する形式を選択",
+      "step3": "3. 品質を調整",
+      "step4": "4. 変換ボタンをクリック",
+      "step5": "5. 変換された画像をダウンロード",
+      "targetUsers": "Web開発者、デザイナー、コンテンツ作成者"
+    },
+    "pdfConverter": {
+      "title": "PDF変換ガイド",
+      "step1": "1. PDFファイルをアップロード",
+      "step2": "2. 希望する画像形式を選択",
+      "step3": "3. 品質を調整",
+      "step4": "4. 変換ボタンをクリック",
+      "step5": "5. 変換された画像をダウンロード",
+      "targetUsers": "文書管理者、研究者、学生"
+    }
+  },
+  "faq": {
+    "title": "よくある質問",
+    "questions": {
+      "q1": "どの画像形式に対応していますか？",
+      "a1": "JPG、PNG、WebP、GIF、BMP形式に対応しています。",
+      "q2": "PDF変換時の品質はどうですか？",
+      "a2": "高品質設定で変換し、元の品質を維持します。",
+      "q3": "ファイルサイズの制限はありますか？",
+      "a3": "最大50MBまでアップロード可能です。",
+      "q4": "個人情報は安全ですか？",
+      "a4": "アップロードされたファイルは変換後すぐに削除され、サーバーに保存されません。",
+      "q5": "モバイルでも使用できますか？",
+      "a5": "はい、すべてのデバイスで使用可能です。"
+    }
+  },
+  "privacyPolicy": {
+    "title": "プライバシーポリシー",
+    "lastUpdated": "最終更新: 2024年1月1日",
+    "sections": {
+      "intro": "PNG変換ツールはユーザーのプライバシーとデータ保護を重視しています。",
+      "dataCollection": "収集する情報: アップロードされたファイルのみ一時的に処理します。",
+      "dataUsage": "情報の使用: ファイル変換目的でのみ使用されます。",
+      "dataRetention": "情報の保持: 変換後すぐに削除されます。",
+      "dataSecurity": "情報のセキュリティ: SSL暗号化により安全に処理されます。"
+    }
+  },
+  "termsOfService": {
+    "title": "利用規約",
+    "lastUpdated": "最終更新: 2024年1月1日",
+    "sections": {
+      "intro": "PNG変換ツールの利用規約です。",
+      "usage": "サービスの利用: 個人および商業目的で自由に使用可能です。",
+      "prohibited": "禁止事項: 違法なコンテンツの変換は禁止されています。",
+      "liability": "責任制限: サービスの利用による損害について責任を負いません。",
+      "changes": "変更: 規約は事前通知後に変更される場合があります。"
+    }
+  },
+  "common": {
+    "language": "言語",
+    "theme": "テーマ",
+    "loading": "読み込み中...",
+    "error": "エラー",
+    "success": "成功",
+    "cancel": "キャンセル",
+    "confirm": "確認",
+    "close": "閉じる"
+  }
+} 

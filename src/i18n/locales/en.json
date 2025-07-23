@@ -1,0 +1,112 @@
+{
+  "navigation": {
+    "home": "Home",
+    "imageConverter": "Image Converter",
+    "pdfConverter": "PDF Converter",
+    "howToUse": "How to Use",
+    "faq": "FAQ",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service"
+  },
+  "home": {
+    "title": "PNG Converter",
+    "subtitle": "Convert images and PDFs easily",
+    "imageConverterTitle": "Image Converter",
+    "imageConverterDesc": "Convert between JPG, PNG, WebP and other image formats",
+    "pdfConverterTitle": "PDF Converter",
+    "pdfConverterDesc": "Convert PDF to images",
+    "getStarted": "Get Started"
+  },
+  "imageConverter": {
+    "title": "Image Converter",
+    "description": "Convert image formats easily",
+    "uploadText": "Drag and drop images here or click to upload",
+    "supportedFormats": "Supported formats: JPG, PNG, WebP, GIF, BMP",
+    "convert": "Convert",
+    "download": "Download",
+    "quality": "Quality",
+    "format": "Format",
+    "processing": "Processing...",
+    "error": "An error occurred. Please try again."
+  },
+  "pdfConverter": {
+    "title": "PDF Converter",
+    "description": "Convert PDF to images",
+    "uploadText": "Drag and drop PDF files here or click to upload",
+    "supportedFormats": "Supported formats: PDF",
+    "convert": "Convert",
+    "download": "Download",
+    "quality": "Quality",
+    "format": "Format",
+    "processing": "Processing...",
+    "error": "An error occurred. Please try again."
+  },
+  "howToUse": {
+    "title": "How to Use",
+    "imageConverter": {
+      "title": "Image Converter Guide",
+      "step1": "1. Upload your image file",
+      "step2": "2. Select your desired format",
+      "step3": "3. Adjust quality settings",
+      "step4": "4. Click the convert button",
+      "step5": "5. Download your converted image",
+      "targetUsers": "Web developers, designers, content creators"
+    },
+    "pdfConverter": {
+      "title": "PDF Converter Guide",
+      "step1": "1. Upload your PDF file",
+      "step2": "2. Select your desired image format",
+      "step3": "3. Adjust quality settings",
+      "step4": "4. Click the convert button",
+      "step5": "5. Download your converted images",
+      "targetUsers": "Document managers, researchers, students"
+    }
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "questions": {
+      "q1": "What image formats are supported?",
+      "a1": "We support JPG, PNG, WebP, GIF, and BMP formats.",
+      "q2": "What quality can I expect from PDF conversion?",
+      "a2": "High-quality conversion maintains the same quality as the original.",
+      "q3": "Is there a file size limit?",
+      "a3": "You can upload files up to 50MB.",
+      "q4": "Is my data safe?",
+      "a4": "Uploaded files are deleted immediately after conversion and are not stored on our servers.",
+      "q5": "Can I use this on mobile devices?",
+      "a5": "Yes, it works on all devices."
+    }
+  },
+  "privacyPolicy": {
+    "title": "Privacy Policy",
+    "lastUpdated": "Last updated: January 1, 2024",
+    "sections": {
+      "intro": "PNG Converter values your privacy and data protection.",
+      "dataCollection": "Data collected: Only uploaded files are temporarily processed.",
+      "dataUsage": "Data usage: Used solely for file conversion purposes.",
+      "dataRetention": "Data retention: Files are deleted immediately after conversion.",
+      "dataSecurity": "Data security: Processed securely through SSL encryption."
+    }
+  },
+  "termsOfService": {
+    "title": "Terms of Service",
+    "lastUpdated": "Last updated: January 1, 2024",
+    "sections": {
+      "intro": "Terms of service for PNG Converter.",
+      "usage": "Service usage: Free to use for personal and commercial purposes.",
+      "prohibited": "Prohibited: Converting illegal content is not allowed.",
+      "liability": "Liability: We are not responsible for damages from service usage.",
+      "changes": "Changes: Terms may be updated with prior notice."
+    }
+  },
+  "common": {
+    "language": "Language",
+    "theme": "Theme",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "close": "Close"
+  }
+} 

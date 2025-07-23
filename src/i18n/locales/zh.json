@@ -1,0 +1,112 @@
+{
+  "navigation": {
+    "home": "首页",
+    "imageConverter": "图片转换器",
+    "pdfConverter": "PDF转换器",
+    "howToUse": "使用说明",
+    "faq": "常见问题",
+    "privacyPolicy": "隐私政策",
+    "termsOfService": "服务条款"
+  },
+  "home": {
+    "title": "PNG转换器",
+    "subtitle": "轻松转换图片和PDF",
+    "imageConverterTitle": "图片转换器",
+    "imageConverterDesc": "在JPG、PNG、WebP等图片格式间转换",
+    "pdfConverterTitle": "PDF转换器",
+    "pdfConverterDesc": "将PDF转换为图片",
+    "getStarted": "开始使用"
+  },
+  "imageConverter": {
+    "title": "图片转换器",
+    "description": "轻松转换图片格式",
+    "uploadText": "拖拽图片到此处或点击上传",
+    "supportedFormats": "支持格式: JPG、PNG、WebP、GIF、BMP",
+    "convert": "转换",
+    "download": "下载",
+    "quality": "质量",
+    "format": "格式",
+    "processing": "处理中...",
+    "error": "发生错误，请重试。"
+  },
+  "pdfConverter": {
+    "title": "PDF转换器",
+    "description": "将PDF转换为图片",
+    "uploadText": "拖拽PDF文件到此处或点击上传",
+    "supportedFormats": "支持格式: PDF",
+    "convert": "转换",
+    "download": "下载",
+    "quality": "质量",
+    "format": "格式",
+    "processing": "处理中...",
+    "error": "发生错误，请重试。"
+  },
+  "howToUse": {
+    "title": "使用说明",
+    "imageConverter": {
+      "title": "图片转换器指南",
+      "step1": "1. 上传您的图片文件",
+      "step2": "2. 选择您想要的格式",
+      "step3": "3. 调整质量设置",
+      "step4": "4. 点击转换按钮",
+      "step5": "5. 下载转换后的图片",
+      "targetUsers": "Web开发者、设计师、内容创作者"
+    },
+    "pdfConverter": {
+      "title": "PDF转换器指南",
+      "step1": "1. 上传您的PDF文件",
+      "step2": "2. 选择您想要的图片格式",
+      "step3": "3. 调整质量设置",
+      "step4": "4. 点击转换按钮",
+      "step5": "5. 下载转换后的图片",
+      "targetUsers": "文档管理员、研究人员、学生"
+    }
+  },
+  "faq": {
+    "title": "常见问题",
+    "questions": {
+      "q1": "支持哪些图片格式？",
+      "a1": "我们支持JPG、PNG、WebP、GIF和BMP格式。",
+      "q2": "PDF转换的质量如何？",
+      "a2": "高质量转换保持与原始文件相同的质量。",
+      "q3": "有文件大小限制吗？",
+      "a3": "您可以上传最大50MB的文件。",
+      "q4": "我的数据安全吗？",
+      "a4": "上传的文件在转换后立即删除，不会存储在我们的服务器上。",
+      "q5": "可以在移动设备上使用吗？",
+      "a5": "是的，适用于所有设备。"
+    }
+  },
+  "privacyPolicy": {
+    "title": "隐私政策",
+    "lastUpdated": "最后更新: 2024年1月1日",
+    "sections": {
+      "intro": "PNG转换器重视您的隐私和数据保护。",
+      "dataCollection": "收集的数据: 仅临时处理上传的文件。",
+      "dataUsage": "数据使用: 仅用于文件转换目的。",
+      "dataRetention": "数据保留: 转换后立即删除文件。",
+      "dataSecurity": "数据安全: 通过SSL加密安全处理。"
+    }
+  },
+  "termsOfService": {
+    "title": "服务条款",
+    "lastUpdated": "最后更新: 2024年1月1日",
+    "sections": {
+      "intro": "PNG转换器服务条款。",
+      "usage": "服务使用: 可免费用于个人和商业目的。",
+      "prohibited": "禁止: 不允许转换非法内容。",
+      "liability": "责任限制: 对服务使用造成的损害不承担责任。",
+      "changes": "变更: 条款可能会在事先通知后更新。"
+    }
+  },
+  "common": {
+    "language": "语言",
+    "theme": "主题",
+    "loading": "加载中...",
+    "error": "错误",
+    "success": "成功",
+    "cancel": "取消",
+    "confirm": "确认",
+    "close": "关闭"
+  }
+} 

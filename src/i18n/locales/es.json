@@ -1,0 +1,112 @@
+{
+  "navigation": {
+    "home": "Inicio",
+    "imageConverter": "Convertidor de Imágenes",
+    "pdfConverter": "Convertidor PDF",
+    "howToUse": "Cómo Usar",
+    "faq": "Preguntas Frecuentes",
+    "privacyPolicy": "Política de Privacidad",
+    "termsOfService": "Términos de Servicio"
+  },
+  "home": {
+    "title": "Convertidor PNG",
+    "subtitle": "Convierte imágenes y PDFs fácilmente",
+    "imageConverterTitle": "Convertidor de Imágenes",
+    "imageConverterDesc": "Convierte entre JPG, PNG, WebP y otros formatos de imagen",
+    "pdfConverterTitle": "Convertidor PDF",
+    "pdfConverterDesc": "Convierte PDF a imágenes",
+    "getStarted": "Comenzar"
+  },
+  "imageConverter": {
+    "title": "Convertidor de Imágenes",
+    "description": "Convierte formatos de imagen fácilmente",
+    "uploadText": "Arrastra y suelta imágenes aquí o haz clic para subir",
+    "supportedFormats": "Formatos soportados: JPG, PNG, WebP, GIF, BMP",
+    "convert": "Convertir",
+    "download": "Descargar",
+    "quality": "Calidad",
+    "format": "Formato",
+    "processing": "Procesando...",
+    "error": "Ocurrió un error. Por favor, inténtalo de nuevo."
+  },
+  "pdfConverter": {
+    "title": "Convertidor PDF",
+    "description": "Convierte PDF a imágenes",
+    "uploadText": "Arrastra y suelta archivos PDF aquí o haz clic para subir",
+    "supportedFormats": "Formatos soportados: PDF",
+    "convert": "Convertir",
+    "download": "Descargar",
+    "quality": "Calidad",
+    "format": "Formato",
+    "processing": "Procesando...",
+    "error": "Ocurrió un error. Por favor, inténtalo de nuevo."
+  },
+  "howToUse": {
+    "title": "Cómo Usar",
+    "imageConverter": {
+      "title": "Guía del Convertidor de Imágenes",
+      "step1": "1. Sube tu archivo de imagen",
+      "step2": "2. Selecciona tu formato deseado",
+      "step3": "3. Ajusta la configuración de calidad",
+      "step4": "4. Haz clic en el botón convertir",
+      "step5": "5. Descarga tu imagen convertida",
+      "targetUsers": "Desarrolladores web, diseñadores, creadores de contenido"
+    },
+    "pdfConverter": {
+      "title": "Guía del Convertidor PDF",
+      "step1": "1. Sube tu archivo PDF",
+      "step2": "2. Selecciona tu formato de imagen deseado",
+      "step3": "3. Ajusta la configuración de calidad",
+      "step4": "4. Haz clic en el botón convertir",
+      "step5": "5. Descarga tus imágenes convertidas",
+      "targetUsers": "Gestores de documentos, investigadores, estudiantes"
+    }
+  },
+  "faq": {
+    "title": "Preguntas Frecuentes",
+    "questions": {
+      "q1": "¿Qué formatos de imagen son compatibles?",
+      "a1": "Soportamos formatos JPG, PNG, WebP, GIF y BMP.",
+      "q2": "¿Qué calidad puedo esperar de la conversión PDF?",
+      "a2": "La conversión de alta calidad mantiene la misma calidad que el original.",
+      "q3": "¿Hay un límite de tamaño de archivo?",
+      "a3": "Puedes subir archivos de hasta 50MB.",
+      "q4": "¿Mis datos están seguros?",
+      "a4": "Los archivos subidos se eliminan inmediatamente después de la conversión y no se almacenan en nuestros servidores.",
+      "q5": "¿Puedo usar esto en dispositivos móviles?",
+      "a5": "Sí, funciona en todos los dispositivos."
+    }
+  },
+  "privacyPolicy": {
+    "title": "Política de Privacidad",
+    "lastUpdated": "Última actualización: 1 de enero de 2024",
+    "sections": {
+      "intro": "Convertidor PNG valora tu privacidad y protección de datos.",
+      "dataCollection": "Datos recopilados: Solo se procesan temporalmente los archivos subidos.",
+      "dataUsage": "Uso de datos: Se usan únicamente para propósitos de conversión de archivos.",
+      "dataRetention": "Retención de datos: Los archivos se eliminan inmediatamente después de la conversión.",
+      "dataSecurity": "Seguridad de datos: Se procesan de forma segura a través de encriptación SSL."
+    }
+  },
+  "termsOfService": {
+    "title": "Términos de Servicio",
+    "lastUpdated": "Última actualización: 1 de enero de 2024",
+    "sections": {
+      "intro": "Términos de servicio para Convertidor PNG.",
+      "usage": "Uso del servicio: Libre para uso personal y comercial.",
+      "prohibited": "Prohibido: No se permite convertir contenido ilegal.",
+      "liability": "Responsabilidad: No somos responsables por daños del uso del servicio.",
+      "changes": "Cambios: Los términos pueden actualizarse con aviso previo."
+    }
+  },
+  "common": {
+    "language": "Idioma",
+    "theme": "Tema",
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "close": "Cerrar"
+  }
+} 
