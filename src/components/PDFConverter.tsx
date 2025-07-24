@@ -78,11 +78,11 @@ export default function PDFConverter() {
     const initializePDFJS = async () => {
       console.log('🔄 PDF.js 초기화 시작...');
       
-      // Worker 설정 - CDN 사용으로 안정성 확보
+      // Worker 설정 - 설치된 버전과 일치하는 CDN 사용
       if (typeof window !== "undefined") {
         // 프로덕션에서는 CDN 사용, 개발환경에서는 로컬 파일 사용
         const workerSrc = process.env.NODE_ENV === 'production' 
-          ? 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'
+          ? 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.5.136/pdf.worker.min.js'
           : `${window.location.origin}/pdf.worker.min.js`;
         
         GlobalWorkerOptions.workerSrc = workerSrc;
@@ -119,7 +119,7 @@ export default function PDFConverter() {
     return true;
   }, [showError]);
 
-  // PDF 미리보기 렌더링
+  // PDF 미리보기 렌더링 - 안정성 개선
   const renderPreview = useCallback(async (file: File) => {
     if (!canvasRef.current) {
       console.warn('Canvas ref가 없습니다');
@@ -132,26 +132,51 @@ export default function PDFConverter() {
       
       const pdfjs = await loadPDFJS();
       const arrayBuffer = await file.arrayBuffer();
-      const pdf = await pdfjs.getDocument({ data: arrayBuffer }).promise;
+      
+      console.log('📄 PDF 파일 로딩 시작');
+      const pdf = await pdfjs.getDocument({ 
+        data: arrayBuffer,
+        verbosity: 0 // 로그 레벨 최소화
+      }).promise;
+      
+      console.log('📄 PDF 로딩 완료, 첫 페이지 렌더링 시작');
       const page = await pdf.getPage(1);
       
       const canvas = canvasRef.current;
       const context = canvas.getContext('2d');
-      if (!context) throw new Error('Canvas context 없음');
+      if (!context) {
+        throw new Error('Canvas context를 가져올 수 없습니다');
+      }
 
       const scale = 1.5;
       const viewport = page.getViewport({ scale });
+      
+      // Canvas 크기 설정
       canvas.height = viewport.height;
       canvas.width = viewport.width;
+      
+      console.log(`🖼️ Canvas 설정 완료: ${canvas.width}x${canvas.height}`);
 
-      await page.render({ canvasContext: context, viewport }).promise;
+      // 렌더링 실행
+      const renderContext = {
+        canvasContext: context,
+        viewport: viewport
+      };
+      
+      await page.render(renderContext).promise;
+      
       const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
       setPreviewUrl(dataUrl);
       
       console.log('✅ PDF 미리보기 렌더링 완료');
     } catch (error) {
-      console.error('❌ PDF 미리보기 렌더링 실패:', error);
-      showError('PDF 미리보기를 생성할 수 없습니다.');
+      console.error('❌ PDF 미리보기 렌더링 실패:', {
+        message: error instanceof Error ? error.message : 'Unknown error',
+        name: error instanceof Error ? error.name : 'UnknownError',
+        stack: error instanceof Error ? error.stack : undefined,
+        error: error
+      });
+      showError(`PDF 미리보기 생성 실패: ${error instanceof Error ? error.message : '알 수 없는 오류'}`);
     } finally {
       setIsLoading(false);
     }
