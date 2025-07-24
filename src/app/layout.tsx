@@ -80,6 +80,13 @@ export default function RootLayout({
             `,
           }}
         />
+        
+        {/* Google AdSense 자동 광고 */}
+        <script 
+          async 
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5227371483154382"
+          crossOrigin="anonymous"
+        ></script>
       </head>
       <body
         className={`${inter.variable} antialiased text-black`}
