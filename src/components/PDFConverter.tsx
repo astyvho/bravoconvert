@@ -71,16 +71,20 @@ export default function PDFConverter() {
     }
   }, [pdfjsLib, showError]);
 
-  // 🎯 PDF.js 초기화 - useEffect로 한 번만 실행
+  // PDF.js 초기화 - useEffect로 한 번만 실행
   useEffect(() => {
     let isMounted = true;
     
     const initializePDFJS = async () => {
       console.log('🔄 PDF.js 초기화 시작...');
       
-      // Worker 설정 (배포 환경 자동 대응)
+      // Worker 설정 - CDN 사용으로 안정성 확보
       if (typeof window !== "undefined") {
-        const workerSrc = `${window.location.origin}/pdf.worker.min.js`;
+        // 프로덕션에서는 CDN 사용, 개발환경에서는 로컬 파일 사용
+        const workerSrc = process.env.NODE_ENV === 'production' 
+          ? 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'
+          : `${window.location.origin}/pdf.worker.min.js`;
+        
         GlobalWorkerOptions.workerSrc = workerSrc;
         console.log('✅ PDF.js Worker 설정 완료:', workerSrc);
       }
