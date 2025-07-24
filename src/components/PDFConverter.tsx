@@ -78,13 +78,9 @@ export default function PDFConverter() {
     const initializePDFJS = async () => {
       console.log('🔄 PDF.js 초기화 시작...');
       
-      // Worker 설정 - 설치된 버전과 일치하는 CDN 사용
+      // Worker 설정 - 로컬 파일만 사용 (안정성 최우선)
       if (typeof window !== "undefined") {
-        // 프로덕션에서는 CDN 사용, 개발환경에서는 로컬 파일 사용
-        const workerSrc = process.env.NODE_ENV === 'production' 
-          ? 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.5.136/pdf.worker.min.js'
-          : `${window.location.origin}/pdf.worker.min.js`;
-        
+        const workerSrc = `${window.location.origin}/pdf.worker.min.js`;
         GlobalWorkerOptions.workerSrc = workerSrc;
         console.log('✅ PDF.js Worker 설정 완료:', workerSrc);
       }
