@@ -125,54 +125,58 @@ export default function PDFConverter() {
     setIsLoading(true);
     try {
       console.log('🖼️ PDF 미리보기 렌더링 시작');
-      
+
       const pdfjs = await loadPDFJS();
-      const arrayBuffer = await file.arrayBuffer();
       
       console.log('📄 PDF 파일 로딩 시작');
-      const pdf = await pdfjs.getDocument({ 
-        data: arrayBuffer,
-        verbosity: 0 // 로그 레벨 최소화
-      }).promise;
       
-      console.log('📄 PDF 로딩 완료, 첫 페이지 렌더링 시작');
+      // 1. PDF 로딩 (URL.createObjectURL 사용)
+      const pdf = await pdfjs.getDocument(URL.createObjectURL(file)).promise;
+      console.log(`✅ PDF 로딩 완료: 총 ${pdf.numPages} 페이지`);
+
+      // 2. 첫 페이지 가져오기
       const page = await pdf.getPage(1);
-      
+      console.log('✅ 첫 페이지 로딩 완료');
+
       const canvas = canvasRef.current;
       const context = canvas.getContext('2d');
       if (!context) {
-        throw new Error('Canvas context를 가져올 수 없습니다');
+        throw new Error('CanvasContext를 가져올 수 없습니다');
       }
 
+      // 3. 뷰포트 설정 (PDF.js v3+ 호환)
       const scale = 1.5;
       const viewport = page.getViewport({ scale });
-      
-      // Canvas 크기 설정
+      console.log(`🖼️ Canvas 설정 완료 (Width: ${viewport.width}, Height: ${viewport.height})`);
+
+      // 4. Canvas 크기 설정
       canvas.height = viewport.height;
       canvas.width = viewport.width;
-      
-      console.log(`🖼️ Canvas 설정 완료: ${canvas.width}x${canvas.height}`);
 
-      // 렌더링 실행
+      // 5. 렌더링 실행
       const renderContext = {
         canvasContext: context,
         viewport: viewport
       };
-      
+
       await page.render(renderContext).promise;
-      
+      console.log('✅ PDF 미리보기 렌더링 완료');
+
       const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
       setPreviewUrl(dataUrl);
-      
-      console.log('✅ PDF 미리보기 렌더링 완료');
+
     } catch (error) {
-      console.error('❌ PDF 미리보기 렌더링 실패:', {
-        message: error instanceof Error ? error.message : 'Unknown error',
-        name: error instanceof Error ? error.name : 'UnknownError',
-        stack: error instanceof Error ? error.stack : undefined,
-        error: error
-      });
-      showError(`PDF 미리보기 생성 실패: ${error instanceof Error ? error.message : '알 수 없는 오류'}`);
+      if (error instanceof Error) {
+        console.error('❌ PDF 미리보기 렌더링 실패:', {
+          message: error.message,
+          name: error.name,
+          stack: error.stack
+        });
+        showError(`PDF 미리보기 생성 실패: ${error.message}`);
+      } else {
+        console.error('❌ PDF 미리보기 렌더링 실패(원시값):', JSON.stringify(error));
+        showError('PDF 미리보기 생성 중 알 수 없는 오류가 발생했습니다');
+      }
     } finally {
       setIsLoading(false);
     }
