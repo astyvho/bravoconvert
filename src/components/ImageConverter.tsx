@@ -437,7 +437,7 @@ export default function ImageConverter() {
               if (found) dispatch({ type: 'SET_ADD_FORMAT', payload: found });
             }}
             size="lg"
-            gridColumns={2}
+            gridLayout={true}
           />
         </div>
         <span className="text-2xl text-black">→</span>
@@ -449,8 +449,8 @@ export default function ImageConverter() {
               const found = TO_FORMATS.find(f => f.label === value);
               if (found) dispatch({ type: 'SET_CONVERT_FORMAT', payload: found });
             }}
-            gridColumns={2}
             size="lg"
+            gridLayout={true}
           />
         </div>
       </div>
@@ -486,12 +486,7 @@ export default function ImageConverter() {
               </span>
             </div>
             <div className="text-sm text-gray-600">
-              <div className="mb-1">
-                <strong>Input formats:</strong> {ADD_FORMATS.map(f => f.label).join(', ')}
-              </div>
-              <div>
-                <strong>Output formats:</strong> {TO_FORMATS.map(f => f.label).join(', ')}
-              </div>
+              Any format supported: PNG, JPG, WEBP, GIF, BMP, HEIC, TIFF & more
             </div>
           </>
         ) : (

@@ -1,18 +1,19 @@
 "use client";
-import { useEffect, useState } from "react";
+
 import dynamic from "next/dynamic";
 
-// PDFConverter를 동적으로 import하여 서버 사이드에서 제외
+// 🎯 완전한 CSR 전용 - 서버에서는 아무것도 렌더링하지 않음
 const PDFConverter = dynamic(() => import("@/components/PDFConverter"), {
-  ssr: false,
+  ssr: false, // 서버 사이드 렌더링 완전 비활성화
   loading: () => (
-    <div className="max-w-2xl mx-auto pt-8">
+    <div className="min-h-screen bg-white flex items-center justify-center px-4">
       <div className="text-center">
-        <h1 className="text-3xl font-bold text-gray-900 mb-4">
-          PDF to Image Converter
-        </h1>
-        <p className="text-gray-600 mb-8">
-          Loading PDF converter...
+        <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
+        <h2 className="text-2xl font-bold text-gray-800 mb-2">
+          Loading PDF Converter
+        </h2>
+        <p className="text-gray-600">
+          Initializing PDF.js library...
         </p>
       </div>
     </div>
@@ -20,31 +21,8 @@ const PDFConverter = dynamic(() => import("@/components/PDFConverter"), {
 });
 
 export default function PDFConvertPage() {
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  if (!isClient) {
-    return (
-      <main className="min-h-screen bg-white pb-12 px-4">
-        <div className="max-w-2xl mx-auto pt-8">
-          <div className="text-center">
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">
-              PDF to Image Converter
-            </h1>
-            <p className="text-gray-600 mb-8">
-              Loading PDF converter...
-            </p>
-          </div>
-        </div>
-      </main>
-    );
-  }
-
   return (
-    <main className="min-h-screen bg-white pb-12 px-4">
+    <main className="min-h-screen bg-white">
       <PDFConverter />
     </main>
   );

@@ -1,15 +1,25 @@
 "use client";
 import { useRef, useState, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { UploadCloud, Download, Eye, AlertCircle } from "lucide-react";
+import { motion } from "framer-motion";
+import { 
+  UploadCloud, 
+  Download, 
+  FileText, 
+  Settings, 
+  CheckCircle, 
+  AlertCircle,
+  Image,
+  Loader2
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import CustomDropdown from "@/components/ui/CustomDropdown";
-import JSZip from 'jszip';
+import JSZip from "jszip";
+import { GlobalWorkerOptions } from "pdfjs-dist";
 
 // 변환 옵션
 const CONVERT_OPTIONS = [
-  { label: "JPG", value: "jpg" },
-  { label: "PNG", value: "png" },
+  { value: 'png', label: 'PNG' },
+  { value: 'jpg', label: 'JPG' }
 ];
 
 // 변환된 페이지 타입
@@ -21,321 +31,338 @@ interface ConvertedPage {
 }
 
 export default function PDFConverter() {
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  
+  // 🎯 모든 상태를 최상단에 선언 (Hooks 순서 고정)
+  const [isReady, setIsReady] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [convertOption, setConvertOption] = useState(CONVERT_OPTIONS[0]);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [fileLoaded, setFileLoaded] = useState(false);
-  const [pdfJsLoaded, setPdfJsLoaded] = useState(false);
-  const [pendingFile, setPendingFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [convertedPages, setConvertedPages] = useState<ConvertedPage[]>([]);
   const [isConverting, setIsConverting] = useState(false);
   const [progress, setProgress] = useState(0);
   const [pdfjsLib, setPdfjsLib] = useState<any>(null);
-  const [isClient, setIsClient] = useState(false);
 
-  // 클라이언트 확인
-  useEffect(() => {
-    setIsClient(true);
+  // 🎯 모든 함수들을 상태 선언 직후에 배치
+  // 에러 표시 함수
+  const showError = useCallback((message: string) => {
+    setError(message);
+    setTimeout(() => setError(null), 5000);
   }, []);
 
-  // PDF.js를 클라이언트에서만 동적으로 로드
-  useEffect(() => {
-    if (!isClient) return;
+  // PDF.js 로드 함수 - 한 번만 로드하고 재사용
+  const loadPDFJS = useCallback(async () => {
+    if (pdfjsLib) {
+      return pdfjsLib; // 이미 로드된 경우 재사용
+    }
+    
+    try {
+      console.log('📦 PDF.js 라이브러리 dynamic import 중...');
+      const pdfjs = await import('pdfjs-dist');
+      console.log('✅ PDF.js 라이브러리 로딩 완료');
+      setPdfjsLib(pdfjs);
+      return pdfjs;
+    } catch (error) {
+      console.error('❌ PDF.js 라이브러리 로딩 실패:', error);
+      showError('PDF 라이브러리를 로드할 수 없습니다.');
+      throw error;
+    }
+  }, [pdfjsLib, showError]);
 
-    const loadPDFJS = async () => {
-      try {
-        // 동적 import로 PDF.js 로드
-        const pdfjs = await import('pdfjs-dist');
-        
-        // Worker 비활성화 - 메인 스레드에서 안전하게 처리
-        if (typeof window !== 'undefined') {
-          // Worker 사용하지 않음 (CORS 및 404 오류 방지)
-          pdfjs.GlobalWorkerOptions.workerSrc = 'data:text/javascript;base64,';
-        }
-        
-        setPdfjsLib(pdfjs);
-        setPdfJsLoaded(true);
-      } catch (error) {
-        console.error('PDF.js 로드 실패:', error);
-        showError('PDF.js 라이브러리를 로드할 수 없습니다.');
+  // 🎯 PDF.js 초기화 - useEffect로 한 번만 실행
+  useEffect(() => {
+    let isMounted = true;
+    
+    const initializePDFJS = async () => {
+      console.log('🔄 PDF.js 초기화 시작...');
+      
+      // Worker 설정 (배포 환경 자동 대응)
+      if (typeof window !== "undefined") {
+        const workerSrc = `${window.location.origin}/pdf.worker.min.js`;
+        GlobalWorkerOptions.workerSrc = workerSrc;
+        console.log('✅ PDF.js Worker 설정 완료:', workerSrc);
+      }
+      
+      // 컴포넌트가 여전히 마운트되어 있을 때만 상태 업데이트
+      if (isMounted) {
+        setIsReady(true);
+        console.log('🎉 PDF.js 초기화 완료 - 파일 업로드 준비됨!');
       }
     };
 
-    // 약간의 지연을 두어 클라이언트 환경이 완전히 준비된 후 로드
-    const timer = setTimeout(() => {
-      loadPDFJS();
-    }, 100);
+    initializePDFJS();
 
-    return () => clearTimeout(timer);
-  }, [isClient]);
-
-  // PDF.js 로드 완료 시 대기 중인 파일 처리
-  useEffect(() => {
-    if (pdfJsLoaded && pendingFile) {
-      setSelectedFiles([pendingFile]);
-      renderPdfPreview(pendingFile);
-      setPendingFile(null);
-    }
-  }, [pdfJsLoaded, pendingFile]);
-
-  // 에러 토스트 표시
-  const showError = (message: string) => {
-    setError(message);
-    setTimeout(() => setError(null), 5000); // 5초 후 자동 제거
-  };
+    // 클린업 함수
+    return () => {
+      isMounted = false;
+    };
+  }, []); // 빈 의존성 배열로 한 번만 실행
 
   // PDF 파일 검증
-  const validatePdfFile = (file: File): boolean => {
-    if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+  const validatePdfFile = useCallback((file: File): boolean => {
+    if (!file.type.includes('pdf') && !file.name.toLowerCase().endsWith('.pdf')) {
       showError('PDF 파일만 업로드할 수 있습니다.');
       return false;
     }
-    if (file.size > 50 * 1024 * 1024) { // 50MB 제한
+    
+    if (file.size > 50 * 1024 * 1024) {
       showError('파일 크기가 50MB를 초과합니다.');
       return false;
     }
+    
     return true;
-  };
+  }, [showError]);
 
-  // PDF 첫 페이지를 캔버스에 렌더링
-  const renderPdfPreview = useCallback(async (file: File) => {
-    if (!pdfjsLib || !canvasRef.current || !isClient) {
-      setPendingFile(file);
+  // PDF 미리보기 렌더링
+  const renderPreview = useCallback(async (file: File) => {
+    if (!canvasRef.current) {
+      console.warn('Canvas ref가 없습니다');
       return;
     }
 
     setIsLoading(true);
-    setFileLoaded(false);
-
     try {
+      console.log('🖼️ PDF 미리보기 렌더링 시작');
+      
+      const pdfjs = await loadPDFJS();
       const arrayBuffer = await file.arrayBuffer();
-      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-      const page = await pdf.getPage(1); // 첫 페이지
-
+      const pdf = await pdfjs.getDocument({ data: arrayBuffer }).promise;
+      const page = await pdf.getPage(1);
+      
       const canvas = canvasRef.current;
       const context = canvas.getContext('2d');
-      if (!context) {
-        throw new Error('Canvas context를 가져올 수 없습니다.');
-      }
-      
-      // 뷰포트 설정 (스케일 1.5로 고화질)
-      const viewport = page.getViewport({ scale: 1.5 });
+      if (!context) throw new Error('Canvas context 없음');
+
+      const scale = 1.5;
+      const viewport = page.getViewport({ scale });
       canvas.height = viewport.height;
       canvas.width = viewport.width;
 
-      // 페이지 렌더링
-      await page.render({
-        canvasContext: context,
-        viewport: viewport
-      }).promise;
-
-      // 미리보기 URL 생성
-      setPreviewUrl(canvas.toDataURL());
-      setFileLoaded(true); // 파일 로딩 완료
-    } catch (err) {
-      console.error('PDF 렌더링 실패:', err);
-      showError('PDF 파일을 읽을 수 없습니다. 파일이 손상되었을 수 있습니다.');
-      setFileLoaded(false);
+      await page.render({ canvasContext: context, viewport }).promise;
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+      setPreviewUrl(dataUrl);
+      
+      console.log('✅ PDF 미리보기 렌더링 완료');
+    } catch (error) {
+      console.error('❌ PDF 미리보기 렌더링 실패:', error);
+      showError('PDF 미리보기를 생성할 수 없습니다.');
     } finally {
       setIsLoading(false);
     }
-  }, [pdfjsLib, isClient]);
+  }, [loadPDFJS, showError]);
 
-  // 파일 선택 처리
-  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (!isClient) return;
+  // 파일 선택 버튼 클릭 핸들러
+  const handleAddFileClick = useCallback((e?: React.MouseEvent) => {
+    console.log('🖱️ Add File 영역 클릭됨');
     
-    const files = event.target.files;
-    if (files && files.length > 0) {
-      const file = files[0];
-      if (validatePdfFile(file)) {
-        setConvertedPages([]); // 이전 결과 초기화
-        setPreviewUrl(null); // 이전 미리보기 초기화
-        setFileLoaded(false); // 파일 로드 상태 초기화
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    
+    if (!isReady) {
+      console.warn('⚠️ PDF 라이브러리가 아직 준비되지 않음');
+      showError('PDF 라이브러리가 로딩 중입니다. 잠시 후 다시 시도해주세요.');
+      return;
+    }
+    
+    // 숨겨진 파일 input 생성하고 클릭
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = '.pdf,application/pdf';
+    fileInput.style.display = 'none';
+    
+    fileInput.onchange = async (event) => {
+      const target = event.target as HTMLInputElement;
+      const files = target.files;
+      
+      if (files && files.length > 0) {
+        const file = files[0];
+        console.log('📄 파일 선택됨:', { name: file.name, size: file.size, type: file.type });
         
-        if (pdfJsLoaded) {
-          setSelectedFiles([file]);
-          renderPdfPreview(file);
-        } else {
-          // PDF.js 로딩 대기 중
-          setPendingFile(file);
-          setIsLoading(true);
+        // PDF.js 초기화 상태 재확인
+        if (!isReady) {
+          console.warn('⚠️ PDF.js가 아직 초기화되지 않음');
+          showError('PDF 라이브러리 초기화 중입니다. 잠시 후 다시 시도해주세요.');
+          return;
+        }
+        
+        if (validatePdfFile(file)) {
+          console.log('✅ 파일 유효성 검사 통과');
+
+          // 상태 초기화
+          setConvertedPages([]);
+          setPreviewUrl(null);
+          setSelectedFile(file);
+          console.log('✅ 파일 선택 완료');
+
+          // PDF 미리보기 렌더링 - 초기화 완료 상태에서만 실행
+          console.log('🖼️ PDF 미리보기 시작');
+          await renderPreview(file);
         }
       }
-    }
-  };
+      
+      // 임시 파일 입력 요소 제거
+      document.body.removeChild(fileInput);
+    };
+    
+    // DOM에 추가하고 클릭
+    document.body.appendChild(fileInput);
+    console.log('✅ 파일 선택 대화상자 열기');
+    fileInput.click();
+  }, [isReady, renderPreview, showError, validatePdfFile]);
+
+  // 드래그 오버 처리
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+  }, []);
 
   // 드래그 앤 드롭 처리
-  const handleDrop = (e: React.DragEvent) => {
-    if (!isClient) return;
-    
+  const handleDrop = useCallback(async (e: React.DragEvent) => {
     e.preventDefault();
     const files = e.dataTransfer.files;
+    
     if (files && files.length > 0) {
       const file = files[0];
+      
+      // PDF.js 초기화 상태 확인
+      if (!isReady) {
+        console.warn('⚠️ PDF.js가 아직 초기화되지 않음 (드래그앤드롭)');
+        showError('PDF 라이브러리 초기화 중입니다. 잠시 후 다시 시도해주세요.');
+        return;
+      }
+      
       if (validatePdfFile(file)) {
-        setConvertedPages([]); // 이전 결과 초기화
-        setPreviewUrl(null); // 이전 미리보기 초기화
-        setFileLoaded(false); // 파일 로드 상태 초기화
+        setConvertedPages([]);
+        setPreviewUrl(null);
+        setSelectedFile(file);
         
-        if (pdfJsLoaded) {
-          setSelectedFiles([file]);
-          renderPdfPreview(file);
-        } else {
-          // PDF.js 로딩 대기 중
-          setPendingFile(file);
-          setIsLoading(true);
-        }
+        console.log('🖼️ PDF 미리보기 시작 (드래그앤드롭)');
+        await renderPreview(file);
       }
     }
-  };
-
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-  };
+  }, [isReady, renderPreview, showError, validatePdfFile]);
 
   // PDF를 이미지로 변환
-  const convertPdfToImages = async (file: File) => {
-    if (!pdfjsLib || !canvasRef.current || !isClient) {
-      showError('PDF.js가 아직 로드되지 않았습니다.');
+  const convertPdfToImages = useCallback(async () => {
+    // PDF.js 초기화 및 파일 상태 확인
+    if (!selectedFile) {
+      showError('변환할 PDF 파일을 선택해주세요.');
+      return;
+    }
+    
+    if (!isReady) {
+      showError('PDF 라이브러리 초기화 중입니다. 잠시 후 다시 시도해주세요.');
+      return;
+    }
+    
+    if (!canvasRef.current) {
+      showError('캔버스를 초기화할 수 없습니다.');
       return;
     }
 
     setIsConverting(true);
     setProgress(0);
     setConvertedPages([]);
+    console.log('🔄 PDF 변환 시작...');
 
     try {
-      const arrayBuffer = await file.arrayBuffer();
-      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      const pdfjs = await loadPDFJS();
+      const arrayBuffer = await selectedFile.arrayBuffer();
+      const pdf = await pdfjs.getDocument({ data: arrayBuffer }).promise;
       const totalPages = pdf.numPages;
-      const convertedResults: ConvertedPage[] = [];
+      const results: ConvertedPage[] = [];
 
-      // 각 페이지를 순차적으로 변환
+      console.log(`📖 총 ${totalPages}페이지 변환 시작`);
+
       for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
         try {
           const page = await pdf.getPage(pageNum);
           const canvas = canvasRef.current;
           const context = canvas.getContext('2d');
-          if (!context) {
-            throw new Error('Canvas context를 가져올 수 없습니다.');
-          }
+          if (!context) throw new Error('Canvas context 없음');
 
-          // 고화질 렌더링을 위한 스케일 설정
+          // 고화질 렌더링
           const scale = 2.0;
           const viewport = page.getViewport({ scale });
           canvas.height = viewport.height;
           canvas.width = viewport.width;
 
-          // 페이지 렌더링
-          await page.render({
-            canvasContext: context,
-            viewport: viewport
-          }).promise;
+          await page.render({ canvasContext: context, viewport }).promise;
 
-          // 이미지 포맷 설정
+          // 이미지 변환
           const mimeType = convertOption.value === 'png' ? 'image/png' : 'image/jpeg';
           const quality = convertOption.value === 'jpg' ? 0.95 : undefined;
 
-          // Blob 생성
           const blob = await new Promise<Blob>((resolve) => {
-            canvas.toBlob((blob) => {
-              resolve(blob!);
-            }, mimeType, quality);
+            canvas.toBlob((blob) => resolve(blob!), mimeType, quality);
           });
 
-          // 썸네일 생성 (작은 크기)
-          const thumbnailScale = 0.3;
-          const thumbnailViewport = page.getViewport({ scale: thumbnailScale });
+          // 썸네일 생성
+          const thumbnailViewport = page.getViewport({ scale: 0.3 });
           canvas.height = thumbnailViewport.height;
           canvas.width = thumbnailViewport.width;
-
-          await page.render({
-            canvasContext: context,
-            viewport: thumbnailViewport
-          }).promise;
-
+          await page.render({ canvasContext: context, viewport: thumbnailViewport }).promise;
           const thumbnailUrl = canvas.toDataURL('image/jpeg', 0.7);
 
-          // 결과 저장
           const blobUrl = URL.createObjectURL(blob);
-          const filename = `${file.name.replace('.pdf', '')}_page_${pageNum}.${convertOption.value}`;
-          
-          convertedResults.push({
+          const filename = `${selectedFile.name.replace('.pdf', '')}_page_${pageNum}.${convertOption.value}`;
+            
+          results.push({
             pageNumber: pageNum,
             blobUrl,
             thumbnailUrl,
             filename
           });
 
-          // 진행률 업데이트
-          setProgress(Math.round((pageNum / totalPages) * 100));
+          const progressPercent = Math.round((pageNum / totalPages) * 100);
+          setProgress(progressPercent);
+          setConvertedPages([...results]);
           
-          // 실시간 결과 업데이트
-          setConvertedPages([...convertedResults]);
+          console.log(`✅ 페이지 ${pageNum}/${totalPages} 완료 (${progressPercent}%)`);
 
         } catch (pageError) {
-          console.error(`페이지 ${pageNum} 변환 실패:`, pageError);
-          showError(`페이지 ${pageNum} 변환에 실패했습니다.`);
+          console.error(`❌ 페이지 ${pageNum} 변환 실패:`, pageError);
         }
       }
 
-      if (convertedResults.length > 0) {
-        console.log(`${convertedResults.length}개 페이지 변환 완료`);
-      }
+      console.log(`🎉 변환 완료: ${results.length}개 페이지`);
 
     } catch (err) {
-      console.error('PDF 변환 실패:', err);
+      console.error('❌ PDF 변환 실패:', err);
       showError('PDF 변환 중 오류가 발생했습니다.');
     } finally {
       setIsConverting(false);
       setProgress(100);
     }
-  };
-
-  const handleConvert = () => {
-    if (!isClient) return;
-    
-    if (selectedFiles.length === 0) {
-      showError('변환할 PDF 파일을 선택해주세요.');
-      return;
-    }
-    
-    convertPdfToImages(selectedFiles[0]);
-  };
+  }, [selectedFile, isReady, convertOption, loadPDFJS, showError]);
 
   // 개별 파일 다운로드
-  const downloadPage = (page: ConvertedPage) => {
-    if (!isClient) return;
-    
+  const downloadPage = useCallback((page: ConvertedPage) => {
     const link = document.createElement('a');
     link.href = page.blobUrl;
     link.download = page.filename;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-  };
+  }, []);
 
-  // 전체 파일 ZIP 다운로드
-  const downloadAllPages = async () => {
-    if (!isClient || convertedPages.length === 0) return;
+  // 전체 ZIP 다운로드
+  const downloadAllPages = useCallback(async () => {
+    if (convertedPages.length === 0) return;
 
     try {
       const zip = new JSZip();
-      const fileName = selectedFiles[0]?.name?.replace('.pdf', '') || 'converted';
+      const fileName = selectedFile?.name?.replace('.pdf', '') || 'converted';
 
-      // 모든 페이지를 ZIP에 추가
       for (const page of convertedPages) {
         const response = await fetch(page.blobUrl);
         const blob = await response.blob();
         zip.file(page.filename, blob);
       }
 
-      // ZIP 파일 생성 및 다운로드
       const zipBlob = await zip.generateAsync({ type: 'blob' });
       const link = document.createElement('a');
       link.href = URL.createObjectURL(zipBlob);
@@ -343,164 +370,192 @@ export default function PDFConverter() {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      
-      // 메모리 정리
       URL.revokeObjectURL(link.href);
+      
     } catch (error) {
-      console.error('ZIP 다운로드 실패:', error);
+      console.error('❌ ZIP 다운로드 실패:', error);
       showError('전체 다운로드 중 오류가 발생했습니다.');
     }
-  };
+  }, [convertedPages, selectedFile, showError]);
 
-  // 클라이언트가 아닌 경우 로딩 표시
-  if (!isClient) {
+  // 🎯 조건부 렌더링 - early return 제거하고 여기서 처리
+  if (!isReady) {
     return (
-      <div className="w-full max-w-2xl mx-auto py-12 px-2 bg-transparent h-full">
+      <div className="w-full max-w-2xl mx-auto py-12 px-2 bg-transparent h-full flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">
-            PDF to Image Converter
-          </h1>
-          <p className="text-gray-600 mb-8">
-            Loading PDF converter...
+          <Loader2 className="w-16 h-16 border-gray-300 text-gray-600 animate-spin mx-auto mb-6" />
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            Initializing PDF Engine
+          </h2>
+          <p className="text-gray-600">
+            Setting up conversion system...
           </p>
         </div>
       </div>
     );
   }
 
+  // 🎯 메인 렌더링 (PDF.js 준비 완료 후)
   return (
     <div className="w-full max-w-2xl mx-auto py-12 px-2 bg-transparent h-full">
-      {/* 파일 선택 input: 숨김 */}
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept=".pdf,application/pdf"
-        className="hidden"
-        onChange={handleFileSelect}
-      />
-
-      {/* 숨겨진 캔버스 (렌더링용) */}
+      {/* 숨겨진 캔버스 */}
       <canvas ref={canvasRef} style={{ display: 'none' }} />
 
-      {/* 에러 토스트 */}
-      {error && (
-        <motion.div
-          initial={{ opacity: 0, y: -50 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -50 }}
-          className="fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-xl shadow-lg z-50 flex items-center gap-2"
-        >
-          <AlertCircle size={20} />
-          {error}
-        </motion.div>
-      )}
-
-      {/* Hero 영역 */}
+      {/* 페이지 헤더 */}
       <div className="mb-10 text-center">
         <h1 className="text-5xl md:text-7xl font-extrabold text-black mb-2 drop-shadow-none">
-          PDF to Image <span className="text-black">Converter</span>
+          PDF to Image Converter
         </h1>
         <p className="text-lg md:text-2xl text-black font-bold mb-1">
-          Convert your PDF files to images quickly and easily.
+          Convert your PDF files to high-quality images quickly and easily
         </p>
-        <p>
-          <span className="text-black font-extrabold">100% Free</span>, No installation required!
+        <p className="text-black font-extrabold">
+          100% Free, No installation required!
         </p>
       </div>
 
-      {/* Drag & Drop 영역 - 조건부 렌더링 */}
-      {!fileLoaded ? (
-        <div
-          className="border-2 border-dotted border-gray-400 rounded-3xl min-h-[220px] flex flex-col items-center justify-center text-center transition-all cursor-pointer mb-8 p-6 bg-gray-100 hover:bg-gray-200 hover:shadow-md hover:border-gray-500"
-          onClick={() => fileInputRef.current?.click()}
-          onDrop={handleDrop}
-          onDragOver={handleDragOver}
+      {/* 에러 메시지 */}
+      {error && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-6 p-4 bg-gray-100 border border-gray-300 rounded-xl"
         >
+          <div className="flex items-center gap-2 justify-center">
+            <AlertCircle className="w-5 h-5 text-gray-700" />
+            <p className="text-gray-700 font-medium">{error}</p>
+          </div>
+        </motion.div>
+      )}
+
+      {/* 파일 업로드 영역 */}
+      <motion.div
+        className={`border-2 border-dotted border-gray-400 rounded-3xl min-h-[220px] flex flex-col items-center justify-center text-center transition-all mb-8 p-6 ${
+          selectedFile ? 'bg-gray-50' : 'bg-gray-100 hover:bg-gray-200 hover:shadow-md hover:border-gray-500 cursor-pointer'
+        }`}
+        whileHover={!selectedFile ? { scale: 1.01 } : undefined}
+        {...(!selectedFile ? {
+          onClick: handleAddFileClick,
+          onDrop: handleDrop,
+          onDragOver: handleDragOver,
+        } : {})}
+      >
+        {!selectedFile ? (
+          <>
             <UploadCloud className="mx-auto mb-4 text-black" size={56} />
             <div className="text-2xl font-bold mb-1 text-black">Add PDF Files</div>
             <div className="text-black text-base">
               Drag & drop or{" "}
-              <span
-                className="text-blue-600 font-bold cursor-pointer underline hover:text-blue-700"
+              <span 
+                className="text-black font-bold cursor-pointer underline hover:text-gray-700"
                 onClick={(e) => {
                   e.stopPropagation();
-                  fileInputRef.current?.click();
+                  handleAddFileClick(e);
                 }}
               >
                 Select PDF Files
               </span>
             </div>
             <div className="text-gray-600 text-sm mt-2">
-              Supported format: PDF
-            </div>
-          </div>
-        ) : (
-          <div className="mb-8">
-          {/* 파일 미리보기 */}
-          <div className="bg-white rounded-3xl p-6 shadow-lg border border-gray-200">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-bold text-black">Selected PDF</h3>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  setSelectedFiles([]);
-                  setPreviewUrl(null);
-                  setFileLoaded(false);
-                  setConvertedPages([]);
-                }}
-                className="border-gray-300 text-gray-600 hover:border-red-400 hover:text-red-600 hover:bg-red-50 transition-colors"
-              >
-                Remove
-              </Button>
+              Supported format: PDF (Max 50MB)
             </div>
             
-            {previewUrl && (
-              <div className="mb-4">
-                <div className="text-sm text-gray-600 mb-2">Preview (First Page):</div>
-                <div className="border border-gray-300 rounded-lg overflow-hidden max-w-full">
-                  <img 
-                    src={previewUrl} 
-                    alt="PDF Preview" 
-                    className="w-full h-auto max-h-64 object-contain"
+            <div className="bg-white rounded-xl px-6 py-3 shadow-sm border border-gray-200 mt-4">
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-gray-900" />
+                <p className="text-gray-900 font-medium text-sm">
+                  PDF Engine Ready - Upload to Start Converting!
+                </p>
+              </div>
+            </div>
+          </>
+        ) : (
+          <div className="w-full flex flex-col items-center">
+            {/* 파일 미리보기 */}
+            <div className="bg-white rounded-3xl p-6 shadow-lg border border-gray-200 w-full">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-gray-900" />
+                  <h3 className="text-xl font-bold text-gray-900">Selected PDF</h3>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleAddFileClick}
+                    disabled={!isReady}
+                    className="rounded-xl bg-gray-100 text-black hover:bg-gray-200 border border-gray-200 hover:border-gray-400 shadow-lg transition-all duration-300"
+                  >
+                    Change File
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setSelectedFile(null);
+                      setPreviewUrl(null);
+                      setConvertedPages([]);
+                    }}
+                    className="rounded-xl bg-gray-100 text-black hover:bg-gray-200 border border-gray-200 hover:border-gray-400 shadow-lg transition-all duration-300"
+                  >
+                    Remove
+                  </Button>
+                </div>
+              </div>
+              
+              {isLoading ? (
+                <div className="text-center py-8">
+                  <Loader2 className="w-8 h-8 text-gray-600 animate-spin mx-auto mb-2" />
+                  <p className="text-gray-600">Generating preview...</p>
+                </div>
+              ) : previewUrl ? (
+                <div className="mb-4">
+                  <div className="text-sm text-gray-600 mb-2 flex items-center gap-2">
+                    <Image className="w-4 h-4" />
+                    Preview (First Page):
+                  </div>
+                  <div className="border border-gray-300 rounded-lg overflow-hidden max-w-full">
+                    <img 
+                      src={previewUrl} 
+                      alt="PDF Preview" 
+                      className="w-full h-auto max-h-64 object-contain"
+                    />
+                  </div>
+                </div>
+              ) : null}
+              
+              <div className="text-sm text-gray-600">
+                File: {selectedFile.name} ({Math.round(selectedFile.size / 1024)} KB)
+              </div>
+            </div>
+
+            {/* 변환 버튼 */}
+            <div className="flex gap-2 mt-4 justify-end w-full">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <Settings className="w-4 h-4 text-gray-700" />
+                  <span className="text-gray-900 font-medium">Output Format:</span>
+                </div>
+                <div className="w-32">
+                  <CustomDropdown
+                    options={CONVERT_OPTIONS}
+                    value={convertOption.value}
+                    onChange={(value: string) => {
+                      const found = CONVERT_OPTIONS.find(option => option.value === value);
+                      if (found) setConvertOption(found);
+                    }}
+                    size="lg"
                   />
                 </div>
               </div>
-            )}
-            
-            <div className="text-sm text-gray-600">
-              File: {selectedFiles[0]?.name}
-            </div>
-          </div>
-        </div>
-        )}
-
-      {/* 변환 옵션 및 버튼 */}
-      {fileLoaded && (
-        <div className="mb-8">
-          <div className="bg-white rounded-3xl p-6 shadow-lg border border-gray-200">
-            <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-              <div className="flex items-center gap-4">
-                <span className="text-black font-medium">Output Format:</span>
-                <CustomDropdown
-                  options={CONVERT_OPTIONS}
-                  value={convertOption.value}
-                  onChange={(value) => {
-                    const found = CONVERT_OPTIONS.find(option => option.value === value);
-                    if (found) setConvertOption(found);
-                  }}
-                  size="md"
-                />
-              </div>
-              
               <Button
-                onClick={handleConvert}
-                disabled={isConverting}
-                className="bg-black hover:bg-gray-800 text-white px-8 py-3 rounded-xl font-semibold transition-colors disabled:opacity-50"
+                onClick={convertPdfToImages}
+                disabled={isConverting || !isReady}
+                className="px-8 py-3 rounded-xl bg-black text-white hover:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 disabled:opacity-50 disabled:transform-none"
               >
                 {isConverting ? (
                   <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <Loader2 className="w-4 h-4 animate-spin" />
                     Converting... {progress}%
                   </div>
                 ) : (
@@ -512,31 +567,49 @@ export default function PDFConverter() {
               </Button>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </motion.div>
 
       {/* 변환 결과 */}
-      {convertedPages.length > 0 && (
-        <div className="mb-8">
+      {convertedPages.length > 0 && isReady && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8"
+        >
           <div className="bg-white rounded-3xl p-6 shadow-lg border border-gray-200">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-2xl font-bold text-black">
-                Converted Pages ({convertedPages.length})
-              </h3>
-              <Button
-                onClick={downloadAllPages}
-                className="bg-black hover:bg-gray-800 text-white px-6 py-2 rounded-xl font-semibold transition-colors"
-              >
-                <Download size={16} className="mr-2" />
-                Download All
-              </Button>
+              <div className="flex items-center gap-2">
+                <Image className="w-6 h-6 text-gray-900" />
+                <h3 className="text-2xl font-bold text-gray-900">
+                  Converted Pages ({convertedPages.length})
+                </h3>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  onClick={handleAddFileClick}
+                  disabled={!isReady}
+                  className="rounded-xl bg-gray-100 text-black hover:bg-gray-200 border border-gray-200 hover:border-gray-400 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 px-4 py-2"
+                >
+                  Convert Another PDF
+                </Button>
+                <Button
+                  onClick={downloadAllPages}
+                  className="rounded-xl bg-black text-white hover:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 px-6 py-2"
+                >
+                  <Download size={16} className="mr-2" />
+                  Download All
+                </Button>
+              </div>
             </div>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {convertedPages.map((page) => (
-                <div
+                <motion.div
                   key={page.pageNumber}
-                  className="bg-gray-50 rounded-xl p-4 border border-gray-200"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="bg-gray-50 rounded-xl p-4 border border-gray-200 hover:shadow-md transition-shadow"
                 >
                   <div className="mb-3">
                     <img 
@@ -553,18 +626,32 @@ export default function PDFConverter() {
                     <Button
                       onClick={() => downloadPage(page)}
                       size="sm"
-                      className="bg-black hover:bg-gray-800 text-white px-3 py-1 rounded-lg text-xs"
+                      className="rounded-xl bg-black text-white hover:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 px-3 py-1 text-xs"
                     >
                       <Download size={12} className="mr-1" />
                       Download
                     </Button>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
+          </div>
+        </motion.div>
+      )}
+
+      {/* 프로그레스 바 */}
+      {isConverting && (
+        <div className="mt-4">
+          <div className="w-full bg-gray-200 rounded-full h-2">
+            <motion.div
+              className="bg-black h-2 rounded-full"
+              initial={{ width: 0 }}
+              animate={{ width: `${progress}%` }}
+              transition={{ duration: 0.3 }}
+            />
           </div>
         </div>
       )}
     </div>
   );
-} 
+}

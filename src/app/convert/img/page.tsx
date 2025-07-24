@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import ClientRoot from "@/components/ClientRoot";
+import ImageConverter from "@/components/ImageConverter";
 
 export const metadata: Metadata = {
   title: "Image Converter - BravoConvert",
@@ -10,7 +11,9 @@ export const metadata: Metadata = {
 export default function ImageConverterPage() {
   return (
     <main className="min-h-screen bg-white pb-12 px-4">
-      <ClientRoot />
+      <ClientRoot>
+        <ImageConverter />
+      </ClientRoot>
     </main>
   );
 } 

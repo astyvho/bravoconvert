@@ -64,10 +64,6 @@ export default function RootLayout({
         {/* Google 애드센스 소유권 확인 */}
         <meta name="google-adsense-account" content="ca-pub-5227371483154382" />
         
-        {/* Favicon */}
-        <link rel="icon" href="/favicon.ico" />
-        <link rel="icon" type="image/png" href="/favicon.png" />
-        
         {/* Canonical URL and RSS Feed */}
         <link rel="canonical" href="https://bravoconvert.com" />
         <link rel="alternate" type="application/rss+xml" title="BravoConvert File Converter RSS Feed" href="https://bravoconvert.com/feed.xml" />

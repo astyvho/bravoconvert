@@ -104,7 +104,7 @@ export default function Navigation() {
 
         {/* 모바일 드롭다운 메뉴 */}
         {isMenuOpen && (
-          <div className="absolute top-full left-0 right-0 mt-2 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl border border-gray-200 overflow-hidden md:hidden">
+          <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden md:hidden">
             <div className="flex flex-col">
               <Link href="/convert/img" onClick={() => setIsMenuOpen(false)} className="hover:text-black text-black transition-all duration-300 font-medium px-6 py-4 hover:bg-gray-200 border-b border-gray-100">
                 <div className="font-medium">Image Converter</div>

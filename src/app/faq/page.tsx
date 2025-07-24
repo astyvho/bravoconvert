@@ -1,5 +1,3 @@
-"use client";
-
 import { HelpCircle } from "lucide-react";
 
 export default function FAQ() {
@@ -123,37 +121,6 @@ export default function FAQ() {
               </div>
             </div>
           ))}
-        </div>
-
-        {/* Contact Section */}
-        <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-200 mt-12 hover:shadow-xl transition-all duration-300">
-          <h3 className="text-3xl font-bold text-black mb-6 flex items-center">
-            <HelpCircle className="w-8 h-8 text-gray-700 mr-3" />
-            Still Have Questions?
-          </h3>
-          <p className="text-xl text-gray-700 mb-8">
-            If you couldn't find the answer you were looking for, we're here to help!
-          </p>
-          <div className="flex flex-wrap gap-6">
-            <a 
-              href="/how-to-use" 
-              className="bg-black text-white px-8 py-4 rounded-xl hover:bg-gray-800 transition-all duration-300 font-medium shadow-lg hover:shadow-xl hover:-translate-y-1"
-            >
-              How to Use
-            </a>
-            <a 
-              href="/privacy-policy" 
-              className="bg-white text-black px-8 py-4 rounded-xl hover:bg-gray-50 transition-all duration-300 font-medium shadow-lg hover:shadow-xl border border-gray-200 hover:-translate-y-1"
-            >
-              Privacy Policy
-            </a>
-            <a 
-              href="mailto:convertstyvho@gmail.com" 
-              className="bg-white text-black px-8 py-4 rounded-xl hover:bg-gray-50 transition-all duration-300 font-medium shadow-lg hover:shadow-xl border border-gray-200 hover:-translate-y-1"
-            >
-              Contact Us
-            </a>
-          </div>
         </div>
       </div>
     </main>

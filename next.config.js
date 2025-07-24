@@ -11,7 +11,7 @@ const nextConfig = {
     return config;
   },
   
-  // 변환 API만 no-cache, 정적 리소스는 캐시 허용
+  // 정적 리소스 캐시 설정
   async headers() {
     return [
       {
@@ -32,10 +32,17 @@ const nextConfig = {
           },
         ],
       },
+      {
+        source: '/pdf.worker.min.js',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
     ];
   },
-  
-  // ... 기타 설정
 };
 
 module.exports = nextConfig;

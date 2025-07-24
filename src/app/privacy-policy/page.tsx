@@ -1,4 +1,3 @@
-"use client";
 import Link from "next/link";
 import { Shield, Settings, Smartphone, Lock, Hand, Mail, Calendar } from "lucide-react";
 
@@ -15,7 +14,7 @@ export default function PrivacyPolicyPage() {
             Your privacy and data protection are our priority
           </p>
           <p className="text-base text-gray-600">
-            Last updated: January 1, 2025
+            Last updated: December 15, 2024
           </p>
         </div>
 
@@ -68,13 +67,12 @@ export default function PrivacyPolicyPage() {
               <div className="bg-gray-50 rounded-lg p-6 border-l-4 border-black">
                 <p className="text-base text-gray-700 mb-4 flex items-start">
                   <Smartphone className="w-6 h-6 text-gray-700 mr-3 mt-0.5 flex-shrink-0" />
-                  <span><strong className="text-black">Advertising Services:</strong> We may use third-party advertising services to support our free service.</span>
+                  <span><strong className="text-black">Service Integration:</strong> Our service operates independently without third-party dependencies.</span>
                 </p>
                 <ul className="text-base text-gray-700 space-y-2">
-                  {/* <li>• <strong>Google AdSense:</strong> May use cookies for personalized advertising</li> */}
-                  <li>• <strong>Cookie Management:</strong> You can control cookie settings through your browser preferences</li>
+                  <li>• <strong>No External Dependencies:</strong> All file processing happens entirely in your browser</li>
                   <li>• <strong>No File Sharing:</strong> Third-party services never have access to your uploaded files</li>
-                  <li>• <strong>Opt-Out Options:</strong> You can opt out of personalized advertising through your browser settings</li>
+                  <li>• <strong>Complete Privacy:</strong> Your files remain completely private during processing</li>
                 </ul>
               </div>
             </div>
@@ -128,8 +126,8 @@ export default function PrivacyPolicyPage() {
                   <span><strong className="text-black">Privacy Inquiries:</strong> If you have any questions about our privacy practices, we're here to help.</span>
                 </p>
                 <ul className="text-base text-gray-700 space-y-2">
-                  <li>• <strong>Email:</strong> convertstyvho@gmail.com</li>
-                  <li>• <strong>Response Time:</strong> We typically respond to privacy inquiries within 24 hours</li>
+                  <li>• <strong>Email:</strong> bravoconvert.help@gmail.com</li>
+                  <li>• <strong>Response Time:</strong> We typically respond to privacy inquiries within 1-4 weeks</li>
                   <li>• <strong>No Personal Data:</strong> Even in communications, we don't collect or store personal information</li>
                 </ul>
               </div>
@@ -140,7 +138,7 @@ export default function PrivacyPolicyPage() {
           <div className="text-center bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200 shadow-md">
             <p className="text-base text-gray-700 flex items-center justify-center mb-2">
               <Calendar className="w-6 h-6 text-gray-700 mr-3" />
-              <span><strong className="text-black">Effective Date:</strong> July 12, 2025</span>
+              <span><strong className="text-black">Effective Date:</strong> December 15, 2024</span>
             </p>
             <p className="text-sm text-gray-600">
               This privacy policy applies to all BravoConvert services and may be updated as needed.

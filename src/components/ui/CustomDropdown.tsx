@@ -15,7 +15,7 @@ interface CustomDropdownProps {
   className?: string;
   size?: "sm" | "md" | "lg";
   placeholder?: string;
-  gridColumns?: number; // 1 = 세로로 나열, 2 = 2열 그리드
+  gridLayout?: boolean; // 2열 그리드 레이아웃 옵션
 }
 
 export default function CustomDropdown({
@@ -25,7 +25,7 @@ export default function CustomDropdown({
   className = "",
   size = "md",
   placeholder = "선택하세요",
-  gridColumns = 1
+  gridLayout = false
 }: CustomDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -106,47 +106,53 @@ export default function CustomDropdown({
             className="absolute z-50 w-full mt-2 bg-white border border-gray-200 rounded-2xl shadow-lg overflow-hidden"
             role="listbox"
           >
-            <div className="max-h-80 overflow-y-auto p-1">
-              {gridColumns === 2 ? (
-                <div className="grid grid-cols-2 gap-1">
-                  {options.map((option, index) => (
-                    <button
-                      key={option.value}
-                      type="button"
-                      onClick={() => handleOptionClick(option.value)}
-                      className={`
-                        w-full px-3 py-2.5 text-center font-medium rounded-xl
-                        hover:bg-gray-100 focus:bg-gray-100 focus:outline-none
-                        transition-colors duration-150
-                        ${option.value === value ? 'bg-gray-200 text-black font-bold' : 'text-gray-700'}
-                      `}
-                      role="option"
-                      aria-selected={option.value === value}
-                    >
-                      {option.label}
-                    </button>
-                  ))}
-                </div>
+            <div className="max-h-80 overflow-y-auto">
+              {gridLayout ? (
+                // 2열 그리드 레이아웃
+                <div className="grid grid-cols-2 gap-1 p-2">
+                {options.map((option, index) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => handleOptionClick(option.value)}
+                    className={`
+                      w-full px-3 py-2.5 text-center font-medium rounded-xl
+                      hover:bg-gray-200 focus:bg-gray-200 focus:outline-none
+                      transition-colors duration-150
+                      ${option.value === value ? 'bg-gray-300 text-black font-bold' : 'text-gray-700'}
+                    `}
+                    role="option"
+                    aria-selected={option.value === value}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
               ) : (
-                <>
-                  {options.map((option, index) => (
-                    <button
-                      key={option.value}
-                      type="button"
-                      onClick={() => handleOptionClick(option.value)}
-                      className={`
-                        w-full px-4 py-3 text-left font-medium rounded-xl mb-1 last:mb-0
-                        hover:bg-gray-100 focus:bg-gray-100 focus:outline-none
-                        transition-colors duration-150
-                        ${option.value === value ? 'bg-gray-200 text-black font-bold' : 'text-gray-700'}
-                      `}
-                      role="option"
-                      aria-selected={option.value === value}
-                    >
-                      {option.label}
-                    </button>
-                  ))}
-                </>
+                // 세로 리스트 레이아웃 (기존)
+                options.map((option, index) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => handleOptionClick(option.value)}
+                    className={`
+                      w-full px-4 py-3 text-left font-medium
+                      hover:bg-gray-200 focus:bg-gray-200 focus:outline-none
+                      transition-colors duration-150 flex items-center justify-between
+                      ${option.value === value ? 'bg-gray-300 text-black font-bold' : 'text-gray-700'}
+                      ${index === 0 ? '' : 'border-t border-gray-100'}
+                    `}
+                    role="option"
+                    aria-selected={option.value === value}
+                  >
+                    <span>{option.label}</span>
+                    {option.value === value && (
+                      <svg className="w-4 h-4 text-black" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/>
+                      </svg>
+                    )}
+                  </button>
+                ))
               )}
             </div>
           </motion.div>

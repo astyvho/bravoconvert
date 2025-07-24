@@ -1,4 +1,3 @@
-"use client";
 import Link from "next/link";
 import { Shield, User, Check, Settings, AlertTriangle, RotateCcw, FileText, Mail, Calendar } from "lucide-react";
 
@@ -15,7 +14,7 @@ export default function TermsPage() {
             Clear and transparent terms for using BravoConvert
           </p>
           <p className="text-base text-gray-600">
-            Last updated: January 1, 2025
+            Last updated: December 15, 2024
           </p>
         </div>
 
@@ -93,7 +92,10 @@ export default function TermsPage() {
                   <span><strong className="text-black">Service Constraints:</strong> Our services have certain technical limitations for optimal performance.</span>
                 </p>
                 <ul className="text-base text-gray-700 space-y-2">
-                  <li>• <strong>File Formats:</strong> Supported formats are limited to PNG, JPG, JPEG, WebP for images and standard PDFs</li>
+                  <li>• <strong>File Formats:</strong> Supported formats include:<br/>
+                    <span className="ml-4">• <strong>Input:</strong> BMP, CR3, DNG, HEIC, JFIF, JPG, PNG, TIFF, GIF</span><br/>
+                    <span className="ml-4">• <strong>Output:</strong> WEBP, AVIF, BMP, GIF, ICO, JFIF, JPG, PNG, TIFF, PDF</span>
+                  </li>
                   <li>• <strong>File Sizes:</strong> Maximum 10MB per image file, 50MB per PDF file</li>
                   <li>• <strong>Browser Requirements:</strong> Modern browsers with JavaScript enabled are required</li>
                   <li>• <strong>PDF Restrictions:</strong> Password-protected or encrypted PDFs are not supported</li>
@@ -116,7 +118,6 @@ export default function TermsPage() {
                   <li>• <strong>No Guarantees:</strong> We do not guarantee 100% accuracy in file conversions</li>
                   <li>• <strong>User Responsibility:</strong> You are responsible for backing up your original files</li>
                   <li>• <strong>No Data Loss Claims:</strong> We are not liable for any data loss or file corruption</li>
-                  <li>• <strong>Third-Party Services:</strong> Issues with advertising services are not our responsibility</li>
                   <li>• <strong>Maximum Liability:</strong> Our liability is limited to the amount you paid for the service (which is $0)</li>
                 </ul>
               </div>
@@ -171,8 +172,8 @@ export default function TermsPage() {
                   <span><strong className="text-black">Questions and Support:</strong> We're here to help with any questions about these terms.</span>
                 </p>
                 <ul className="text-base text-gray-700 space-y-2">
-                  <li>• <strong>Email:</strong> convertstyvho@gmail.com</li>
-                  <li>• <strong>Response Time:</strong> We typically respond to inquiries within 24 hours</li>
+                  <li>• <strong>Email:</strong> bravoconvert.help@gmail.com</li>
+                  <li>• <strong>Response Time:</strong> We typically respond to inquiries within 1-4 weeks</li>
                   <li>• <strong>Legal Questions:</strong> For legal matters, please provide detailed information</li>
                 </ul>
               </div>
@@ -183,7 +184,7 @@ export default function TermsPage() {
           <div className="text-center bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200 shadow-md">
             <p className="text-base text-gray-700 flex items-center justify-center mb-2">
               <Calendar className="w-6 h-6 text-gray-700 mr-3" />
-              <span><strong className="text-black">Effective Date:</strong> July 12, 2025</span>
+              <span><strong className="text-black">Effective Date:</strong> December 15, 2024</span>
             </p>
             <p className="text-sm text-gray-600">
               These terms apply to all BravoConvert services and may be updated as needed.
