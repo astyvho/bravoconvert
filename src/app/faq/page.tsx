@@ -24,6 +24,18 @@ export default function FAQ() {
         {
           question: "What's the maximum file size for images?",
           answer: "Each image file can be up to 10MB. For PDF creation, the total size of all images should not exceed 50MB for optimal performance."
+        },
+        {
+          question: "What is the auto-rotation feature?",
+          answer: "Our auto-rotation feature automatically detects and corrects photo orientation using EXIF data. This is especially useful for iPhone photos that appear sideways. The feature reads the camera's orientation information and rotates images to display correctly, eliminating the need to manually rotate photos."
+        },
+        {
+          question: "How does metadata removal work?",
+          answer: "When you enable metadata removal (enabled by default), our tool strips all EXIF data from your images including GPS location, camera model, date taken, and other sensitive information. This protects your privacy when sharing photos online, especially important for social media and professional use."
+        },
+        {
+          question: "Can I turn off auto-rotation or metadata removal?",
+          answer: "Yes! Both features are toggleable options on the converter page. You can enable or disable auto-rotation and metadata removal according to your needs. Auto-rotation is helpful for smartphone photos, while metadata removal is recommended for privacy protection."
         }
       ]
     },
@@ -53,11 +65,36 @@ export default function FAQ() {
       ]
     },
     {
+      category: "Smart Features",
+      questions: [
+        {
+          question: "Why are my iPhone photos appearing sideways?",
+          answer: "iPhone and other smartphones save orientation information in EXIF data rather than physically rotating the image. Some applications don't read this data correctly, causing photos to appear sideways. Our auto-rotation feature fixes this by reading the EXIF orientation data and physically rotating the image."
+        },
+        {
+          question: "What EXIF data is removed for privacy?",
+          answer: "We remove all EXIF metadata including GPS coordinates (location where photo was taken), camera make and model, date and time, camera settings (ISO, aperture, shutter speed), and other technical data. This ensures your privacy when sharing photos online."
+        },
+        {
+          question: "Does metadata removal affect image quality?",
+          answer: "No, metadata removal only removes the hidden data tags and doesn't affect the actual image pixels or visual quality. Your images will look exactly the same but without the privacy-sensitive information attached."
+        },
+        {
+          question: "Which smartphones benefit most from auto-rotation?",
+          answer: "All modern smartphones including iPhone, Samsung Galaxy, Google Pixel, and others benefit from auto-rotation. This feature is particularly useful for photos taken in portrait mode or when the phone was rotated during capture."
+        },
+        {
+          question: "Is the auto-rotation feature safe for professional use?",
+          answer: "Yes, our auto-rotation feature is safe for professional use. It reads standardized EXIF orientation values (1-8) and applies the correct rotation mathematically. This ensures accuracy and preserves image quality while fixing orientation issues."
+        }
+      ]
+    },
+    {
       category: "General",
       questions: [
         {
           question: "Is my data safe and private?",
-          answer: "Absolutely! All file processing happens directly in your browser. Your files are never uploaded to our servers, ensuring complete privacy and security. No one can access your files except you."
+          answer: "Absolutely! All file processing happens directly in your browser using advanced web workers. Your files are never uploaded to our servers, ensuring complete privacy and security. Additionally, our metadata removal feature strips location data and other sensitive information from your photos for extra privacy protection."
         },
         {
           question: "Do I need to create an account?",

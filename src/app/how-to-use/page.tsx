@@ -1,4 +1,4 @@
-import { Upload, Image, FileText, Download, Zap, Shield, BookOpen } from "lucide-react";
+import { Upload, Image, FileText, Download, Zap, Shield, BookOpen, RotateCw, EyeOff } from "lucide-react";
 
 export default function HowToUsePage() {
   return (
@@ -66,11 +66,36 @@ export default function HowToUsePage() {
             </div>
           </div>
 
-          <div className="mt-8 p-6 bg-gray-50 rounded-lg border border-gray-200">
+          {/* New Smart Features Section */}
+          <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
+            <h4 className="text-lg font-bold text-black mb-4 flex items-center">
+              <span className="mr-2">🎯</span>
+              Smart Features (NEW!)
+            </h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex items-start space-x-3">
+                <RotateCw className="w-5 h-5 text-blue-600 mt-1 flex-shrink-0" />
+                <div>
+                  <div className="font-semibold text-black">Auto-Rotate Photos</div>
+                  <div className="text-sm text-gray-700">Automatically fixes sideways iPhone photos using EXIF data</div>
+                </div>
+              </div>
+              <div className="flex items-start space-x-3">
+                <EyeOff className="w-5 h-5 text-blue-600 mt-1 flex-shrink-0" />
+                <div>
+                  <div className="font-semibold text-black">Privacy Protection</div>
+                  <div className="text-sm text-gray-700">Removes metadata, location data, and camera info for security</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="mt-6 p-6 bg-gray-50 rounded-lg border border-gray-200">
             <h4 className="text-lg font-bold text-black mb-3">Tips</h4>
             <ul className="text-base text-gray-700 space-y-2">
               <li>• <strong className="text-black">Multiple Files:</strong> You can upload multiple images at once</li>
               <li>• <strong className="text-black">PDF Creation:</strong> Combine multiple images into a single PDF</li>
+              <li>• <strong className="text-black">Smart Options:</strong> Toggle auto-rotation and metadata removal as needed</li>
               <li>• <strong className="text-black">File Size:</strong> Each image supports up to 10MB</li>
             </ul>
           </div>
@@ -129,6 +154,7 @@ export default function HowToUsePage() {
             <ul className="text-base text-gray-700 space-y-2">
               <li>• <strong className="text-black">Page-by-Page:</strong> Each PDF page becomes a separate image file</li>
               <li>• <strong className="text-black">ZIP Archive:</strong> Multiple pages are bundled together for download</li>
+              <li>• <strong className="text-black">Smart Processing:</strong> PDF conversion also includes auto-rotation and privacy protection</li>
               <li>• <strong className="text-black">File Size:</strong> PDFs support up to 50MB</li>
             </ul>
           </div>
@@ -150,6 +176,8 @@ export default function HowToUsePage() {
               <ul className="text-base text-gray-700 space-y-2 pl-9">
                 <li>• Files are never uploaded to our servers</li>
                 <li>• All conversion happens directly in your browser</li>
+                <li>• Automatic metadata removal protects your privacy</li>
+                <li>• EXIF data, GPS location, and camera info are stripped</li>
                 <li>• No personal data collection whatsoever</li>
                 <li>• No registration required</li>
               </ul>

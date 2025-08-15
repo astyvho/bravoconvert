@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import Head from "next/head";
 
 // 🎯 완전한 CSR 전용 - 서버에서는 아무것도 렌더링하지 않음
 const PDFConverter = dynamic(() => import("@/components/PDFConverter"), {
@@ -10,10 +11,10 @@ const PDFConverter = dynamic(() => import("@/components/PDFConverter"), {
       <div className="text-center">
         <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
         <h2 className="text-2xl font-bold text-gray-800 mb-2">
-          Loading PDF Converter
+          Loading Smart PDF Converter
         </h2>
         <p className="text-gray-600">
-          Initializing PDF.js library...
+          Initializing PDF.js with auto-rotation and privacy features...
         </p>
       </div>
     </div>

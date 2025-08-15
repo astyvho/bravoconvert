@@ -685,17 +685,36 @@ export default function ImageConverter() {
       />
       <div className="mb-10 text-center">
         <h1 className="text-5xl md:text-7xl font-extrabold text-black mb-2 drop-shadow-none">
-          Image Converter <span className="text-black">{addFormat.label} to {toFormat.label}</span>
+          Smart Image Converter <span className="text-black">{addFormat.label} to {toFormat.label}</span>
         </h1>
-        <p className="text-lg md:text-2xl text-black font-bold mb-1">
+        <p className="text-lg md:text-2xl text-black font-bold mb-3">
           {toFormat.label === "PDF" 
-            ? `Convert multiple ${addFormat.label} images into a single PDF file.`
-            : `Convert your ${addFormat.label} images to ${toFormat.label} quickly and easily.`
+            ? `Convert multiple ${addFormat.label} images into a single PDF with auto-rotation and privacy protection.`
+            : `Convert your ${addFormat.label} images to ${toFormat.label} with automatic photo rotation correction and metadata removal.`
           }
         </p>
+        
+        {/* SEO-friendly feature highlights */}
+        <div className="max-w-4xl mx-auto mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+            <div className="bg-blue-50 border border-blue-200 rounded-xl p-3">
+              <div className="font-semibold text-blue-800 mb-1">🔄 Auto-Rotate Photos</div>
+              <div className="text-blue-700">Fixes sideways iPhone photos automatically using EXIF data</div>
+            </div>
+            <div className="bg-green-50 border border-green-200 rounded-xl p-3">
+              <div className="font-semibold text-green-800 mb-1">🛡️ Privacy Protection</div>
+              <div className="text-green-700">Removes metadata, location data, and camera info for security</div>
+            </div>
+            <div className="bg-purple-50 border border-purple-200 rounded-xl p-3">
+              <div className="font-semibold text-purple-800 mb-1">⚡ Instant Processing</div>
+              <div className="text-purple-700">Converts images in your browser - no upload to servers needed</div>
+            </div>
+          </div>
+        </div>
+        
         <p className="text-sm text-gray-600 mb-2 flex items-center justify-center">
           <Sparkles className="w-4 h-4 text-gray-600 mr-2" />
-          Just drag & drop any image format - we'll auto-detect the input type!
+          Perfect for social media, professional use, and privacy-conscious users
         </p>
       </div>
       
@@ -727,29 +746,38 @@ export default function ImageConverter() {
         </div>
       </div>
 
-      {/* EXIF Options - Compact placement above upload area */}
-      <div className="flex flex-wrap gap-4 items-center justify-center text-xs text-gray-600 mb-4">
-        <label className="flex items-center gap-1.5 cursor-pointer hover:text-gray-800 transition-colors">
-          <input
-            type="checkbox"
-            checked={autorotate}
-            onChange={() => dispatch({ type: 'TOGGLE_AUTOROTATE' })}
-            className="w-3.5 h-3.5 text-black bg-gray-100 border-gray-300 rounded focus:ring-black focus:ring-1"
-            aria-label="Auto-rotate images"
-          />
-          <span className="font-medium">Auto-rotate images</span>
-        </label>
-        
-        <label className="flex items-center gap-1.5 cursor-pointer hover:text-gray-800 transition-colors">
-          <input
-            type="checkbox"
-            checked={stripMetadata}
-            onChange={() => dispatch({ type: 'TOGGLE_STRIP_METADATA' })}
-            className="w-3.5 h-3.5 text-black bg-gray-100 border-gray-300 rounded focus:ring-black focus:ring-1"
-            aria-label="Strip metadata"
-          />
-          <span className="font-medium">Strip metadata</span>
-        </label>
+      {/* Smart Options with detailed explanations */}
+      <div className="bg-gray-50 border border-gray-200 rounded-2xl p-4 mb-6">
+        <h3 className="text-lg font-semibold text-gray-800 mb-3 text-center">Smart Conversion Options</h3>
+        <div className="flex flex-wrap gap-6 items-start justify-center">
+          <label className="flex items-start gap-3 cursor-pointer hover:bg-white rounded-lg p-2 transition-colors max-w-xs">
+            <input
+              type="checkbox"
+              checked={autorotate}
+              onChange={() => dispatch({ type: 'TOGGLE_AUTOROTATE' })}
+              className="w-4 h-4 text-black bg-gray-100 border-gray-300 rounded focus:ring-black focus:ring-1 mt-1 flex-shrink-0"
+              aria-label="Auto-rotate images based on EXIF data"
+            />
+            <div>
+              <span className="font-medium text-gray-800 block">Auto-rotate photos</span>
+              <span className="text-xs text-gray-600">Automatically fixes sideways iPhone photos using EXIF orientation data</span>
+            </div>
+          </label>
+          
+          <label className="flex items-start gap-3 cursor-pointer hover:bg-white rounded-lg p-2 transition-colors max-w-xs">
+            <input
+              type="checkbox"
+              checked={stripMetadata}
+              onChange={() => dispatch({ type: 'TOGGLE_STRIP_METADATA' })}
+              className="w-4 h-4 text-black bg-gray-100 border-gray-300 rounded focus:ring-black focus:ring-1 mt-1 flex-shrink-0"
+              aria-label="Remove metadata for privacy protection"
+            />
+            <div>
+              <span className="font-medium text-gray-800 block">Remove metadata</span>
+              <span className="text-xs text-gray-600">Strips EXIF data, location info, and camera details for privacy protection</span>
+            </div>
+          </label>
+        </div>
       </div>
 
       <motion.div
@@ -893,6 +921,80 @@ export default function ImageConverter() {
           </div>
         </div>
       )}
+      
+      {/* SEO Content Section */}
+      <div className="mt-16 max-w-4xl mx-auto">
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
+          <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Why Choose Our Smart Image Converter?</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                <span className="mr-2">🔄</span>
+                Automatic Photo Rotation
+              </h3>
+              <p className="text-gray-600 text-sm leading-relaxed">
+                Tired of sideways iPhone photos? Our EXIF auto-rotation feature automatically detects and corrects photo orientation 
+                based on camera data. Perfect for photos taken in portrait mode or rotated accidentally. Works with all smartphone 
+                cameras including iPhone, Samsung, and Google Pixel.
+              </p>
+            </div>
+            
+            <div>
+              <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                <span className="mr-2">🛡️</span>
+                Privacy-First Metadata Removal
+              </h3>
+              <p className="text-gray-600 text-sm leading-relaxed">
+                Protect your privacy by automatically removing EXIF metadata, GPS location data, camera model, and other sensitive 
+                information from your photos. Essential for social media sharing, professional portfolios, and online marketplaces 
+                where privacy matters.
+              </p>
+            </div>
+            
+            <div>
+              <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                <span className="mr-2">⚡</span>
+                Lightning-Fast Browser Processing
+              </h3>
+              <p className="text-gray-600 text-sm leading-relaxed">
+                All image processing happens directly in your browser using advanced web workers. No files are uploaded to servers, 
+                ensuring maximum privacy and speed. Convert hundreds of images in minutes without installation or registration.
+              </p>
+            </div>
+            
+            <div>
+              <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                <span className="mr-2">📱</span>
+                Perfect for Mobile Photos
+              </h3>
+              <p className="text-gray-600 text-sm leading-relaxed">
+                Optimized for smartphone photos with intelligent format detection. Handles HEIC, JPEG, PNG, and WebP formats 
+                seamlessly. Ideal for preparing photos for websites, social media, or print where specific formats and 
+                orientations are required.
+              </p>
+            </div>
+          </div>
+          
+          <div className="border-t border-gray-200 pt-6">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4 text-center">Supported Formats & Use Cases</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+              <div className="text-center">
+                <div className="font-medium text-gray-800 mb-2">Social Media</div>
+                <div className="text-gray-600">Instagram, Facebook, Twitter - perfect dimensions and privacy protection</div>
+              </div>
+              <div className="text-center">
+                <div className="font-medium text-gray-800 mb-2">Professional Use</div>
+                <div className="text-gray-600">Portfolio websites, business cards, presentations with clean metadata</div>
+              </div>
+              <div className="text-center">
+                <div className="font-medium text-gray-800 mb-2">E-commerce</div>
+                <div className="text-gray-600">Product photos for online stores with optimized file sizes and formats</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

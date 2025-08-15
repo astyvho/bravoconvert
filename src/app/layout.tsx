@@ -9,14 +9,23 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "BravoConvert - Free Online File Conversion Tools",
-  description: "Convert images and PDFs for free, fast, and securely in your browser. No installation required. Batch upload, bulk conversion, privacy protected. The best online file converter for your image and PDF conversion needs.",
+  title: "BravoConvert - Free Online Image Converter with Auto-Rotation & Privacy Protection",
+  description: "Convert images and PDFs with automatic photo rotation correction and metadata removal for privacy. Free EXIF auto-rotate, batch conversion, and instant processing in your browser. Perfect for iPhone photos, social media, and professional use.",
   keywords: [
     "file converter",
     "free file converter",
     "online file converter",
     "image converter",
     "PDF converter",
+    "auto rotate images",
+    "EXIF rotation fix",
+    "photo orientation correction",
+    "iPhone photo rotation",
+    "metadata removal",
+    "EXIF data removal",
+    "privacy protection",
+    "strip metadata",
+    "remove photo data",
     "PNG to WebP",
     "PNG to JPG",
     "JPG to WebP",
@@ -36,9 +45,22 @@ export const metadata: Metadata = {
     "convert files online",
     "file conversion tool",
     "image format converter",
-    "PDF image converter"
+    "PDF image converter",
+    "rotate photos automatically",
+    "fix sideways photos",
+    "correct image orientation"
   ],
-  // viewport 제거
+  openGraph: {
+    title: "BravoConvert - Smart Image Converter with Auto-Rotation",
+    description: "Automatically fix photo orientation and remove metadata for privacy. Free online converter with EXIF auto-rotate feature.",
+    type: "website",
+    url: "https://bravoconvert.com"
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "BravoConvert - Auto-Rotate & Privacy-Safe Image Converter",
+    description: "Fix sideways iPhone photos automatically! Remove metadata for privacy. Free online image converter."
+  }
 };
 
 export const viewport = {
@@ -99,7 +121,12 @@ export default function RootLayout({
         {/* 푸터 */}
         <div className="w-full px-4 pt-8 pb-6">
           <footer className="max-w-6xl mx-auto text-center text-xs text-black py-8 bg-white/70 rounded-3xl shadow-lg shadow-gray-200/20 border border-gray-100/50 backdrop-blur-sm">
-            <div className="mb-3">
+            <div className="mb-4">
+              {/* 주요 기능 하이라이트 */}
+              <div className="text-sm text-gray-700 mb-3 max-w-2xl mx-auto">
+                <strong>Smart Features:</strong> Auto-rotate iPhone photos • Remove metadata for privacy • Batch conversion • No software installation
+              </div>
+              
               {/* 데스크톱 푸터 링크 */}
               <div className="hidden sm:block">
                 <a href="/how-to-use" className="hover:text-gray-700 mx-3 text-black transition-colors duration-300">How to Use</a>
