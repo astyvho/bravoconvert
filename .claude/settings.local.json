@@ -6,7 +6,8 @@
       "Bash(rm:*)",
       "Bash(npm run dev:*)",
       "Bash(git add:*)",
-      "Bash(git config:*)"
+      "Bash(git config:*)",
+      "Bash(mkdir:*)"
     ],
     "defaultMode": "acceptEdits"
   }

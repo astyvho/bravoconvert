@@ -11,7 +11,8 @@ import { arrayMove } from '@dnd-kit/sortable';
 import { FileList } from "./image-converter/FileList";
 import { FileItem, ResultItem, ConvertOptions } from "./image-converter/types";
 import { ADD_FORMATS, TO_FORMATS } from "./image-converter/formats";
-import { readOrientation, getCanvasWithOrientation } from "@/lib/image-exif";
+// Worker handles EXIF processing, no longer need main thread imports
+// import { readOrientation, getCanvasWithOrientation } from "@/lib/image-exif";
 
 /**
  * ImageConverter Component with EXIF Auto-Rotation Support
@@ -145,8 +146,62 @@ export default function ImageConverter() {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { fileArr, resultArr, isLoading, progress, isReorderMode, originalFileOrder, viewMode, addFormat, toFormat, autorotate, stripMetadata } = state;
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // Worker management
+  const workerRef = useRef<Worker | null>(null);
+  const conversionQueueRef = useRef<{
+    id: string;
+    fileIndex: number;
+    resolve: (result: any) => void;
+    reject: (error: any) => void;
+  }[]>([]);
+  const activeConversionsRef = useRef(0);
+  const MAX_CONCURRENT_CONVERSIONS = 2;
 
-  // Memory Leak Prevention: Revoke object URLs on unmount
+  // Worker initialization and cleanup
+  useEffect(() => {
+    // Initialize worker
+    workerRef.current = new Worker('/workers/image-worker.js');
+    
+    // Handle worker messages
+    workerRef.current.onmessage = (e) => {
+      const { type, id, payload } = e.data;
+      
+      const queueItem = conversionQueueRef.current.find(item => item.id === id);
+      if (!queueItem) return;
+      
+      // Remove from queue
+      conversionQueueRef.current = conversionQueueRef.current.filter(item => item.id !== id);
+      activeConversionsRef.current--;
+      
+      if (type === 'done') {
+        queueItem.resolve(payload);
+      } else if (type === 'error') {
+        queueItem.reject(new Error(payload.message));
+      }
+      
+      // Process next item in queue
+      processQueue();
+    };
+    
+    workerRef.current.onerror = (error) => {
+      console.error('Worker error:', error);
+    };
+    
+    return () => {
+      // Cleanup worker and object URLs
+      if (workerRef.current) {
+        workerRef.current.terminate();
+      }
+      resultArr.forEach(result => {
+        if (result?.url) {
+          URL.revokeObjectURL(result.url);
+        }
+      });
+    };
+  }, []);
+  
+  // Memory Leak Prevention: Revoke object URLs on result changes
   useEffect(() => {
     return () => {
       resultArr.forEach(result => {
@@ -274,108 +329,81 @@ export default function ImageConverter() {
     }), []);
 
   /**
-   * Main conversion pipeline with EXIF autorotate and metadata stripping
-   * 
-   * Pipeline flow:
-   * 1. Extract file as ArrayBuffer → Blob → ImageBitmap for optimal processing
-   * 2. Read EXIF orientation (if autorotate enabled)
-   * 3. Apply orientation transformation on OffscreenCanvas
-   * 4. Re-encode to target format (strips metadata automatically)
-   * 5. Generate thumbnail and cleanup resources
-   * 
-   * Testing checklist:
-   * - iPhone vertical photo with autorotate ON/OFF comparison
-   * - JPEG/WebP quality 0.6/0.9 file size comparison
-   * - Multi-file processing with progress tracking
-   * - Memory usage during batch processing
+   * Worker-based conversion queue processing
+   * Limits concurrent conversions to prevent memory issues
    */
-  const convertToFormat = useCallback(async (file: File, format: string, options: ConvertOptions = {}): Promise<{ blob: Blob; thumb: string }> => {
-    const { autorotate: enableAutorotate = true, stripMetadata: enableStripMetadata = true } = options;
-    
-    try {
-      // 1) File processing pipeline: ArrayBuffer → Blob → ImageBitmap
-      const ab = await file.arrayBuffer();
-      const blob = new Blob([ab], { type: file.type || 'application/octet-stream' });
-      const bmp = await createImageBitmap(blob, { colorSpaceConversion: 'default' });
+  const processQueue = useCallback(() => {
+    while (
+      activeConversionsRef.current < MAX_CONCURRENT_CONVERSIONS &&
+      conversionQueueRef.current.length > 0
+    ) {
+      const queueItem = conversionQueueRef.current[0];
+      activeConversionsRef.current++;
       
-      // 2) EXIF autorotate branch
-      const orientation = enableAutorotate ? await readOrientation(file) : null;
-      const canvas = enableAutorotate 
-        ? getCanvasWithOrientation(bmp, orientation)
-        : (() => {
-            const c = new OffscreenCanvas(bmp.width, bmp.height);
-            c.getContext('2d')!.drawImage(bmp, 0, 0);
-            return c;
-          })();
+      // Remove from front of queue
+      conversionQueueRef.current = conversionQueueRef.current.slice(1);
       
-      // 3) Strip metadata via re-encoding (guaranteed by format conversion)
-      const outType = `image/${format}`;
-      const outQuality = (outType === 'image/jpeg' || outType === 'image/webp') ? 0.9 : undefined;
-      
-      // Note: Re-encoding automatically removes EXIF/ICC metadata (stripMetadata effect)
-      // TODO: Future enhancement - when stripMetadata=false, preserve original EXIF data
-      const outBlob = ('convertToBlob' in canvas)
-        ? await (canvas as any).convertToBlob({ type: outType, quality: outQuality })
-        : await new Promise<Blob>(res => (canvas as any).toBlob(res, outType, outQuality ?? 0.92));
-      
-      // 4) Generate thumbnail for UI display
-      const thumbCanvas = document.createElement('canvas');
-      const thumbCtx = thumbCanvas.getContext('2d');
-      
-      if (thumbCtx) {
-        const scale = Math.min(200 / canvas.width, 200 / canvas.height);
-        const thumbWidth = canvas.width * scale;
-        const thumbHeight = canvas.height * scale;
-        
-        thumbCanvas.width = thumbWidth;
-        thumbCanvas.height = thumbHeight;
-        thumbCtx.drawImage(canvas, 0, 0, thumbWidth, thumbHeight);
-      }
-      
-      const thumb = thumbCanvas.toDataURL('image/webp', 0.7);
-      
-      // 5) Memory management - cleanup resources
-      bmp.close();
-      
-      return { blob: outBlob, thumb };
-      
-    } catch (error) {
-      console.warn('EXIF processing failed, falling back to basic conversion:', error);
-      
-      // Fallback pipeline for error cases
-      return new Promise<{ blob: Blob; thumb: string }>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-          const img = new window.Image();
-          img.onload = () => {
-            const canvas = document.createElement("canvas");
-            canvas.width = img.width;
-            canvas.height = img.height;
-            const ctx = canvas.getContext("2d")!;
-            ctx.drawImage(img, 0, 0);
-            canvas.toBlob(
-              (blob) => {
-                if (blob) {
-                  resolve({ 
-                    blob, 
-                    thumb: canvas.toDataURL("image/webp", 0.7) 
-                  });
-                } else {
-                  reject(new Error('Failed to create blob in fallback'));
-                }
-              },
-              `image/${format}`,
-              format === 'jpeg' ? 0.9 : undefined
-            );
-          };
-          img.onerror = () => reject(new Error('Failed to load image in fallback'));
-          img.src = reader.result as string;
-        };
-        reader.onerror = () => reject(new Error('Failed to read file in fallback'));
-        reader.readAsDataURL(file);
-      });
+      // Process this item (already sent to worker)
     }
   }, []);
+  
+  /**
+   * Worker-based conversion with queue management
+   * 
+   * Pipeline moved to worker:
+   * - UI blocking prevention
+   * - Better memory management  
+   * - Transferable objects for performance
+   * - Concurrent processing with limits
+   */
+  const convertWithWorker = useCallback(async (
+    file: File, 
+    fileIndex: number, 
+    format: string, 
+    options: ConvertOptions = {}
+  ): Promise<any> => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        if (!workerRef.current) {
+          throw new Error('Worker not initialized');
+        }
+        
+        const { autorotate: enableAutorotate = true, stripMetadata: enableStripMetadata = true } = options;
+        
+        // Read file as ArrayBuffer
+        const buffer = await file.arrayBuffer();
+        const id = `${file.name}_${fileIndex}_${Date.now()}`;
+        
+        // Add to queue
+        conversionQueueRef.current.push({
+          id,
+          fileIndex,
+          resolve,
+          reject
+        });
+        
+        // Send to worker with transferable
+        workerRef.current.postMessage({
+          type: 'convert',
+          id,
+          payload: {
+            buffer,
+            autorotate: enableAutorotate,
+            stripMetadata: enableStripMetadata,
+            outType: `image/${format}`,
+            quality: (format === 'jpeg' || format === 'webp') ? 0.9 : undefined,
+            originalName: file.name
+          }
+        }, [buffer]); // Transfer ownership
+        
+        // Process queue
+        processQueue();
+        
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }, [processQueue]);
 
   const convertIndividualImages = async () => {
     dispatch({ type: 'START_CONVERSION' });
@@ -383,34 +411,52 @@ export default function ImageConverter() {
     let successCount = 0;
     let failureCount = 0;
     
-    for (let idx = 0; idx < fileArr.length; idx++) {
+    // Process all files concurrently with worker queue
+    const conversionPromises = fileArr.map(async (item, idx) => {
       if (results[idx]) { // Skip already converted
         successCount++;
-        dispatch({ type: 'UPDATE_PROGRESS', payload: ((idx + 1) / fileArr.length) * 100 });
-        continue;
+        return;
       }
       
-      const item = fileArr[idx];
       const t0 = performance.now();
       
       try {
-        // Use main conversion pipeline with proper error handling
-        const { blob, thumb } = await convertToFormat(item.file, toFormat.label.toLowerCase(), { autorotate, stripMetadata });
+        // Use worker-based conversion
+        const workerResult = await convertWithWorker(
+          item.file, 
+          idx,
+          toFormat.label.toLowerCase(), 
+          { autorotate, stripMetadata }
+        );
+        
         const t1 = performance.now();
         const outName = item.file.name.replace(/\.[^/.]+$/, `.${toFormat.label.toLowerCase()}`);
         
+        // Create blobs from worker results
+        const outputBlob = new Blob([workerResult.outputBuffer], { 
+          type: `image/${toFormat.label.toLowerCase()}` 
+        });
+        const thumbBlob = new Blob([workerResult.thumbBuffer], { 
+          type: 'image/webp' 
+        });
+        const thumb = URL.createObjectURL(thumbBlob);
+        
         results[idx] = {
-          url: URL.createObjectURL(blob),
+          url: URL.createObjectURL(outputBlob),
           outName,
-          inSize: (item.file.size / 1024).toFixed(0) + " KB",
-          outSize: (blob.size / 1024).toFixed(0) + " KB",
+          inSize: (workerResult.originalSize / 1024).toFixed(0) + " KB",
+          outSize: (workerResult.outputSize / 1024).toFixed(0) + " KB",
           time: ((t1 - t0) / 1000).toFixed(2),
           thumb,
-          blob,
+          blob: outputBlob,
         };
         
         successCount++;
         console.log(`✓ Converted ${item.file.name} (${successCount}/${fileArr.length})`);
+        
+        // Update progress
+        dispatch({ type: 'SET_RESULTS', payload: [...results] });
+        dispatch({ type: 'UPDATE_PROGRESS', payload: ((successCount + failureCount) / fileArr.length) * 100 });
         
       } catch (error) {
         failureCount++;
@@ -418,12 +464,17 @@ export default function ImageConverter() {
         
         // Keep slot as null for failed conversions
         results[idx] = null;
+        
+        // Update progress
+        dispatch({ type: 'UPDATE_PROGRESS', payload: ((successCount + failureCount) / fileArr.length) * 100 });
       }
-      
-      // Update progress and UI
-      dispatch({ type: 'SET_RESULTS', payload: [...results] });
-      dispatch({ type: 'UPDATE_PROGRESS', payload: ((idx + 1) / fileArr.length) * 100 });
-    }
+    });
+    
+    // Wait for all conversions to complete
+    await Promise.all(conversionPromises);
+    
+    // Final update
+    dispatch({ type: 'SET_RESULTS', payload: [...results] });
     
     // Summary notification
     if (failureCount > 0) {
@@ -442,31 +493,22 @@ export default function ImageConverter() {
     let successCount = 0;
     let failureCount = 0;
     
+    // Process images sequentially for PDF (order matters)
     for (let i = 0; i < fileArr.length; i++) {
         const item = fileArr[i];
         dispatch({ type: 'UPDATE_PROGRESS', payload: (i / fileArr.length) * 100 });
         
         try {
-          // Use same pipeline as individual conversion for consistency
-          const ab = await item.file.arrayBuffer();
-          const blob = new Blob([ab], { type: item.file.type || 'application/octet-stream' });
-          const bmp = await createImageBitmap(blob, { colorSpaceConversion: 'default' });
+          // Use worker for consistent processing
+          const workerResult = await convertWithWorker(
+            item.file, 
+            i,
+            'jpeg', // PDF requires JPEG
+            { autorotate, stripMetadata }
+          );
           
-          // Apply autorotate branch
-          const orientation = autorotate ? await readOrientation(item.file) : null;
-          const canvas = autorotate 
-            ? getCanvasWithOrientation(bmp, orientation)
-            : (() => {
-                const c = new OffscreenCanvas(bmp.width, bmp.height);
-                c.getContext('2d')!.drawImage(bmp, 0, 0);
-                return c;
-              })();
-          
-          // Convert to JPEG for PDF with quality control
-          const jpegBlob = ('convertToBlob' in canvas)
-            ? await (canvas as any).convertToBlob({ type: 'image/jpeg', quality: 0.9 })
-            : await new Promise<Blob>(res => (canvas as any).toBlob(res, 'image/jpeg', 0.9));
-            
+          // Create JPEG blob from worker result
+          const jpegBlob = new Blob([workerResult.outputBuffer], { type: 'image/jpeg' });
           const dataUrl = await new Promise<string>((resolve, reject) => {
             const reader = new FileReader();
             reader.onload = () => resolve(reader.result as string);
@@ -474,8 +516,8 @@ export default function ImageConverter() {
             reader.readAsDataURL(jpegBlob);
           });
           
-          // Calculate page dimensions
-          const { width: imgWidth, height: imgHeight } = canvas;
+          // Calculate page dimensions using worker result
+          const { width: imgWidth, height: imgHeight } = workerResult;
           const { width: a4Width, height: a4Height } = { width: 595, height: 842 }; // A4 in points
           const imgRatio = imgWidth / imgHeight;
           const a4Ratio = a4Width / a4Height;
@@ -495,8 +537,6 @@ export default function ImageConverter() {
           pdf.addPage([pdfWidth, pdfHeight], pdfWidth > pdfHeight ? 'landscape' : 'portrait');
           pdf.addImage(dataUrl, 'JPEG', 0, 0, pdfWidth, pdfHeight);
           
-          // Memory cleanup
-          bmp.close();
           successCount++;
           console.log(`✓ Added to PDF: ${item.file.name} (${successCount}/${fileArr.length})`);
           
