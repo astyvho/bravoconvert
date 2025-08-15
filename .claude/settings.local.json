@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run build:*)",
+      "Bash(timeout 10 npm run dev)",
+      "Bash(rm:*)",
+      "Bash(npm run dev:*)",
+      "Bash(git add:*)",
+      "Bash(git config:*)"
+    ],
+    "defaultMode": "acceptEdits"
+  }
+}

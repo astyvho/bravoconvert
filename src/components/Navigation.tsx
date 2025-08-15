@@ -9,7 +9,7 @@ export default function Navigation() {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // 드롭다운 메뉴 닫기 타이머
+  // Dropdown menu close timer
   const startCloseTimer = () => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
@@ -19,7 +19,7 @@ export default function Navigation() {
     }, 300); // 300ms 지연
   };
 
-  // 드롭다운 메뉴 열기
+  // Open dropdown menu
   const openDropdown = () => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
@@ -27,7 +27,7 @@ export default function Navigation() {
     setIsConverterOpen(true);
   };
 
-  // 컴포넌트 언마운트 시 타이머 정리
+  // Clean up timer on component unmount
   useEffect(() => {
     return () => {
       if (timeoutRef.current) {
@@ -39,14 +39,14 @@ export default function Navigation() {
   return (
     <div className="sticky top-0 w-full px-4 pt-6 pb-4 z-50 bg-white/80 backdrop-blur-sm">
       <nav className="max-w-6xl mx-auto flex items-center justify-between px-8 py-5 bg-white/95 rounded-3xl shadow-xl shadow-gray-200/30 border border-gray-200 hover:border-gray-300 transition-all duration-300 backdrop-blur-md relative">
-        {/* 추가 그림자 효과 */}
+        {/* Additional shadow effect */}
         <div className="absolute inset-0 rounded-3xl bg-gradient-to-b from-white/40 to-transparent pointer-events-none"></div>
         
         <Link href="/" className="font-bold text-xl text-black relative z-10">BravoConvert</Link>
         
-        {/* 데스크톱 메뉴 */}
+        {/* Desktop menu */}
         <div className="hidden md:flex items-center gap-6 text-sm relative z-10">
-          {/* 변환 도구 드롭다운 */}
+          {/* Converter tools dropdown */}
           <div 
             ref={dropdownRef}
             className="relative"
@@ -60,14 +60,14 @@ export default function Navigation() {
               <ChevronDown size={16} className={`transition-transform duration-200 ${isConverterOpen ? 'rotate-180' : ''}`} />
             </button>
             
-            {/* 드롭다운 메뉴 */}
+            {/* Dropdown menu */}
             {isConverterOpen && (
               <div 
                 className="absolute top-full left-0 mt-1 w-48 bg-white/95 backdrop-blur-md rounded-xl shadow-xl border border-gray-200 overflow-hidden"
                 onMouseEnter={openDropdown}
                 onMouseLeave={startCloseTimer}
               >
-                {/* 상단 가상 패딩 영역 - 마우스 오버 영역 확장 */}
+                {/* Top virtual padding area - expand mouse over area */}
                 <div className="h-4 bg-transparent"></div>
                 <Link href="/convert/img" className="block px-4 py-3 text-black hover:bg-gray-100 transition-all duration-200 border-b border-gray-100">
                   <div className="font-medium">Image Converter</div>
@@ -77,7 +77,7 @@ export default function Navigation() {
                   <div className="font-medium">PDF to Image</div>
                   <div className="text-xs text-gray-600">Convert PDF to JPG, PNG</div>
                 </Link>
-                {/* 하단 가상 패딩 영역 - 마우스 오버 영역 확장 */}
+                {/* Bottom virtual padding area - expand mouse over area */}
                 <div className="h-4 bg-transparent"></div>
               </div>
             )}
@@ -89,11 +89,11 @@ export default function Navigation() {
           <a href="/terms" className="hover:text-black text-black transition-all duration-300 font-medium px-4 py-2.5 rounded-xl hover:bg-gray-200 hover:shadow-sm">Terms of Service</a>
         </div>
 
-        {/* 모바일 햄버거 메뉴 버튼 */}
+        {/* Mobile hamburger menu button */}
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           className="md:hidden relative z-10 p-2 text-black hover:text-gray-700 transition-colors"
-          aria-label="메뉴 토글"
+          aria-label="Toggle menu"
         >
           <div className="w-6 h-6 flex flex-col justify-center items-center">
             <span className={`block w-5 h-0.5 bg-current transition-all duration-300 ${isMenuOpen ? 'rotate-45 translate-y-1' : '-translate-y-1'}`}></span>
@@ -102,7 +102,7 @@ export default function Navigation() {
           </div>
         </button>
 
-        {/* 모바일 드롭다운 메뉴 */}
+        {/* Mobile dropdown menu */}
         {isMenuOpen && (
           <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden md:hidden">
             <div className="flex flex-col">

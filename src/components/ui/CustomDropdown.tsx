@@ -24,7 +24,7 @@ export default function CustomDropdown({
   onChange,
   className = "",
   size = "md",
-  placeholder = "선택하세요",
+  placeholder = "Select",
   gridLayout = false
 }: CustomDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);

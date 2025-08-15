@@ -9,3 +9,8 @@ export type ResultItem = {
   thumb: string;
   blob: Blob; // 변환된 blob을 직접 저장
 };
+
+export type ConvertOptions = {
+  autorotate?: boolean;
+  stripMetadata?: boolean;
+};

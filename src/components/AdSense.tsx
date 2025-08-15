@@ -10,69 +10,69 @@ interface AdSenseProps {
 }
 
 const AD_SIZES = {
-  banner: { width: 728, height: 90, name: '리더보드' },
-  rectangle: { width: 300, height: 250, name: '중형 직사각형' },
-  leaderboard: { width: 970, height: 90, name: '슈퍼 리더보드' },
-  skyscraper: { width: 160, height: 600, name: '와이드 스카이스크래퍼' },
-  mobile: { width: 320, height: 50, name: '모바일 배너' },
-  responsive: { width: '100%', height: 280, name: '반응형' },
-  square: { width: 336, height: 280, name: '대형 직사각형' },
+  banner: { width: 728, height: 90, name: 'Leaderboard' },
+  rectangle: { width: 300, height: 250, name: 'Medium Rectangle' },
+  leaderboard: { width: 970, height: 90, name: 'Super Leaderboard' },
+  skyscraper: { width: 160, height: 600, name: 'Wide Skyscraper' },
+  mobile: { width: 320, height: 50, name: 'Mobile Banner' },
+  responsive: { width: '100%', height: 280, name: 'Responsive' },
+  square: { width: 336, height: 280, name: 'Large Rectangle' },
 };
 
-// 다양한 가짜 광고 콘텐츠
+// Various fake ad content
 const FAKE_ADS = [
   {
-    title: "최신 스마트폰 50% 할인!",
-    subtitle: "지금 구매하면 무료 배송",
+    title: "Latest Smartphone 50% Off!",
+    subtitle: "Free shipping when you buy now",
     icon: ShoppingCart,
     bg: "bg-gradient-to-br from-blue-500 to-purple-600",
     color: "text-white",
-    button: "지금 구매",
+    button: "Buy Now",
     emoji: "📱"
   },
   {
-    title: "무료 온라인 강의",
-    subtitle: "프로그래밍 마스터하기",
+    title: "Free Online Course",
+    subtitle: "Master Programming",
     icon: Play,
     bg: "bg-gradient-to-br from-green-500 to-teal-600",
     color: "text-white",
-    button: "무료 수강",
+    button: "Start Free",
     emoji: "💻"
   },
   {
-    title: "건강한 다이어트 솔루션",
-    subtitle: "30일 무료 체험",
+    title: "Healthy Diet Solution",
+    subtitle: "30-day free trial",
     icon: Heart,
     bg: "bg-gradient-to-br from-pink-500 to-rose-600",
     color: "text-white",
-    button: "체험하기",
+    button: "Try Now",
     emoji: "💪"
   },
   {
-    title: "AI 사진 편집기",
-    subtitle: "1초만에 전문가급 보정",
+    title: "AI Photo Editor",
+    subtitle: "Professional editing in 1 second",
     icon: Camera,
     bg: "bg-gradient-to-br from-orange-500 to-red-600",
     color: "text-white",
-    button: "무료 체험",
+    button: "Try Free",
     emoji: "📷"
   },
   {
-    title: "투자의 기회",
-    subtitle: "월 5% 수익률 보장",
+    title: "Investment Opportunity",
+    subtitle: "5% monthly return guaranteed",
     icon: Star,
     bg: "bg-gradient-to-br from-yellow-500 to-orange-600",
     color: "text-white",
-    button: "투자하기",
+    button: "Invest Now",
     emoji: "💰"
   },
   {
-    title: "빠른 배송 서비스",
-    subtitle: "당일 배송 무료",
+    title: "Fast Delivery Service",
+    subtitle: "Same-day delivery for free",
     icon: Zap,
     bg: "bg-gradient-to-br from-indigo-500 to-blue-600",
     color: "text-white",
-    button: "주문하기",
+    button: "Order Now",
     emoji: "⚡"
   }
 ];
@@ -84,7 +84,7 @@ export default function AdSense({
   className = "", 
   type = 'rectangle' 
 }: AdSenseProps) {
-  // 애드센스 승인 전까지 광고를 표시하지 않음
+  // Do not show ads until AdSense approval
   return null;
 }
 

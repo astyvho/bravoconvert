@@ -28,7 +28,7 @@ export default function ThemeToggle() {
     <button
       onClick={toggle}
       className="p-2 rounded-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 transition"
-      aria-label="다크모드 토글"
+      aria-label="Toggle dark mode"
     >
       {dark ? <Sun size={20} /> : <Moon size={20} />}
     </button>
