@@ -360,6 +360,11 @@ export default function ImageConverter() {
         const ctx = canvas.getContext('2d');
         
         img.onload = () => {
+          if (!ctx) {
+            reject(new Error('Canvas context not available'));
+            return;
+          }
+          
           // Set canvas size
           canvas.width = img.width;
           canvas.height = img.height;
@@ -378,6 +383,10 @@ export default function ImageConverter() {
               // Create thumbnail
               const thumbCanvas = document.createElement('canvas');
               const thumbCtx = thumbCanvas.getContext('2d');
+              if (!thumbCtx) {
+                reject(new Error('Thumbnail canvas context not available'));
+                return;
+              }
               thumbCanvas.width = 150;
               thumbCanvas.height = 150;
               thumbCtx.drawImage(img, 0, 0, 150, 150);
@@ -455,7 +464,7 @@ export default function ImageConverter() {
         });
         
         // Send to worker with transferable
-        workerRef.current.postMessage({
+        workerRef.current!.postMessage({
           type: 'convert',
           id,
           payload: {
