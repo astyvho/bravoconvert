@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Navigation from "@/components/Navigation";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
+import Link from "next/link";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -112,28 +113,24 @@ export default function RootLayout({
         <div className="w-full px-4 pt-8 pb-6">
           <footer className="max-w-6xl mx-auto text-center text-xs text-black py-8 bg-white/70 rounded-3xl shadow-lg shadow-gray-200/20 border border-gray-100/50 backdrop-blur-sm">
             <div className="mb-4">
-              {/* 주요 기능 하이라이트 */}
-              <div className="text-sm text-gray-700 mb-3 max-w-2xl mx-auto">
-                <strong>Smart Features:</strong> Auto-rotate iPhone photos • Remove metadata for privacy • Batch conversion • No software installation
-              </div>
               
               {/* 데스크톱 푸터 링크 */}
               <div className="hidden sm:block">
-                <a href="/how-to-use" className="hover:text-gray-700 mx-3 text-black transition-colors duration-300">How to Use</a>
+                <Link href="/how-to-use" className="hover:text-gray-700 mx-3 text-black transition-colors duration-300">How to Use</Link>
                 <span className="text-gray-400">•</span>
-                <a href="/faq" className="hover:text-gray-700 mx-3 text-black transition-colors duration-300">FAQ</a>
+                <Link href="/faq" className="hover:text-gray-700 mx-3 text-black transition-colors duration-300">FAQ</Link>
                 <span className="text-gray-400">•</span>
-                <a href="/privacy-policy" className="hover:text-gray-700 mx-3 text-black transition-colors duration-300">Privacy Policy</a>
+                <Link href="/privacy-policy" className="hover:text-gray-700 mx-3 text-black transition-colors duration-300">Privacy Policy</Link>
                 <span className="text-gray-400">•</span>
-                <a href="/terms" className="hover:text-gray-700 mx-3 text-black transition-colors duration-300">Terms of Service</a>
+                <Link href="/terms" className="hover:text-gray-700 mx-3 text-black transition-colors duration-300">Terms of Service</Link>
               </div>
               
               {/* 모바일 푸터 링크 */}
               <div className="sm:hidden flex flex-wrap justify-center gap-2">
-                <a href="/how-to-use" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">How to Use</a>
-                <a href="/faq" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">FAQ</a>
-                <a href="/privacy-policy" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">Privacy Policy</a>
-                <a href="/terms" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">Terms of Service</a>
+                <Link href="/how-to-use" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">How to Use</Link>
+                <Link href="/faq" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">FAQ</Link>
+                <Link href="/privacy-policy" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">Privacy Policy</Link>
+                <Link href="/terms" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">Terms of Service</Link>
               </div>
             </div>
             <div className="text-black font-medium">© 2025 BravoConvert</div>
