@@ -333,18 +333,9 @@ export default function ImageConverter() {
    * Limits concurrent conversions to prevent memory issues
    */
   const processQueue = useCallback(() => {
-    while (
-      activeConversionsRef.current < MAX_CONCURRENT_CONVERSIONS &&
-      conversionQueueRef.current.length > 0
-    ) {
-      const queueItem = conversionQueueRef.current[0];
-      activeConversionsRef.current++;
-      
-      // Remove from front of queue
-      conversionQueueRef.current = conversionQueueRef.current.slice(1);
-      
-      // Process this item (already sent to worker)
-    }
+    // Queue processing is simplified - worker messages are sent directly
+    // This function is kept for compatibility but doesn't need to do anything
+    // since messages are sent immediately in convertWithWorker
   }, []);
   
   /**
@@ -356,30 +347,111 @@ export default function ImageConverter() {
    * - Transferable objects for performance
    * - Concurrent processing with limits
    */
+  // Fallback conversion using main thread
+  const convertWithCanvas = useCallback(async (
+    file: File, 
+    format: string
+  ): Promise<any> => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        // Create image element
+        const img = new Image();
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        img.onload = () => {
+          // Set canvas size
+          canvas.width = img.width;
+          canvas.height = img.height;
+          
+          // Draw image
+          ctx.drawImage(img, 0, 0);
+          
+          // Convert to blob
+          canvas.toBlob((blob) => {
+            if (!blob) {
+              reject(new Error('Canvas conversion failed'));
+              return;
+            }
+            
+            blob.arrayBuffer().then(outputBuffer => {
+              // Create thumbnail
+              const thumbCanvas = document.createElement('canvas');
+              const thumbCtx = thumbCanvas.getContext('2d');
+              thumbCanvas.width = 150;
+              thumbCanvas.height = 150;
+              thumbCtx.drawImage(img, 0, 0, 150, 150);
+              
+              thumbCanvas.toBlob((thumbBlob) => {
+                if (!thumbBlob) {
+                  reject(new Error('Thumbnail creation failed'));
+                  return;
+                }
+                
+                thumbBlob.arrayBuffer().then(thumbBuffer => {
+                  resolve({
+                    outputBuffer,
+                    thumbBuffer,
+                    originalSize: file.size,
+                    outputSize: outputBuffer.byteLength,
+                    width: img.width,
+                    height: img.height,
+                    originalName: file.name,
+                    orientation: 1
+                  });
+                });
+              }, 'image/webp', 0.7);
+            });
+          }, `image/${format}`, format === 'jpeg' || format === 'webp' ? 0.9 : undefined);
+        };
+        
+        img.onerror = () => reject(new Error('Image load failed'));
+        img.src = URL.createObjectURL(file);
+        
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }, []);
+
   const convertWithWorker = useCallback(async (
     file: File, 
     fileIndex: number, 
     format: string, 
     options: ConvertOptions = {}
   ): Promise<any> => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        if (!workerRef.current) {
-          throw new Error('Worker not initialized');
-        }
-        
+    // Try worker first, fallback to canvas if it fails
+    try {
+      if (!workerRef.current) {
+        console.warn('Worker not available, using fallback');
+        return await convertWithCanvas(file, format);
+      }
+      
+      return new Promise(async (resolve, reject) => {
         const { autorotate: enableAutorotate = true, stripMetadata: enableStripMetadata = true } = options;
         
         // Read file as ArrayBuffer
         const buffer = await file.arrayBuffer();
         const id = `${file.name}_${fileIndex}_${Date.now()}`;
         
-        // Add to queue
+        // Set timeout for worker response
+        const timeout = setTimeout(() => {
+          console.warn('Worker timeout, using fallback');
+          convertWithCanvas(file, format).then(resolve).catch(reject);
+        }, 5000);
+        
+        // Store promise handlers for this conversion
         conversionQueueRef.current.push({
           id,
           fileIndex,
-          resolve,
-          reject
+          resolve: (result) => {
+            clearTimeout(timeout);
+            resolve(result);
+          },
+          reject: (error) => {
+            clearTimeout(timeout);
+            reject(error);
+          }
         });
         
         // Send to worker with transferable
@@ -395,15 +467,13 @@ export default function ImageConverter() {
             originalName: file.name
           }
         }, [buffer]); // Transfer ownership
-        
-        // Process queue
-        processQueue();
-        
-      } catch (error) {
-        reject(error);
-      }
-    });
-  }, [processQueue]);
+      });
+      
+    } catch (error) {
+      console.warn('Worker failed, using fallback:', error);
+      return await convertWithCanvas(file, format);
+    }
+  }, [convertWithCanvas]);
 
   const convertIndividualImages = async () => {
     dispatch({ type: 'START_CONVERSION' });
