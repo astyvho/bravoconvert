@@ -1,12 +1,16 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  experimental: {
+    esmExternals: 'loose'
+  },
   webpack: (config, { isServer }) => {
     // PDF.js를 클라이언트에서만 번들링
     if (isServer) {
       config.externals = config.externals || [];
       config.externals.push('pdfjs-dist');
     }
+
     
     return config;
   },

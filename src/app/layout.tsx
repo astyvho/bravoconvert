@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Navigation from "@/components/Navigation";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -90,18 +91,6 @@ export default function RootLayout({
         <link rel="canonical" href="https://bravoconvert.com" />
         <link rel="alternate" type="application/rss+xml" title="BravoConvert File Converter RSS Feed" href="https://bravoconvert.com/feed.xml" />
         
-        {/* Google tag (gtag.js) */}
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-2QXJN1E3TF"></script>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', 'G-2QXJN1E3TF');
-            `,
-          }}
-        />
         
         {/* Google AdSense 자동 광고 */}
         <script 
@@ -113,6 +102,7 @@ export default function RootLayout({
       <body
         className={`${inter.variable} antialiased text-black`}
       >
+        <GoogleAnalytics />
         <Navigation />
         <div className="pt-8">
           {children}

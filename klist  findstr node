@@ -1,0 +1,10 @@
+[33m156c955[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m fix(ui): restore original ImageConverter layout for better usability
+[33m557d5cd[m feat(seo): add comprehensive SEO content for autorotate and metadata removal features
+[33m473e30a[m feat(image): move image conversion to worker with OffscreenCanvas
+[33m8820042[m feat(image): wire autorotate into main pipeline and strip via re-encode
+[33m7f85f09[m[33m ([m[1;31morigin/main[m[33m)[m fix: layout.tsx 수정
+[33m1526cfc[m fix: pdf.worker.min.js 추가 및 배포
+[33mfcd0b49[m fix: PDF 미리보기 렌더링 코드 개선 및 에러 로깅 강화
+[33m2e9bd2f[m fix: PDF.js 버전 호환성 개선 및 에러 로깅 강화
+[33m384cc99[m fix: PDF.js 버전 호환성 개선 및 에러 로깅 강화
+[33m5669f65[m pdf 변환 방식 변경

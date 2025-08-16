@@ -77,12 +77,15 @@ Note: This project does not include linting or testing commands. ESLint is confi
 4. JSZip creates downloadable archives for batch operations
 5. URL.revokeObjectURL() called for memory management
 
-### State Management in ImageConverter
-The component uses a reducer pattern with these key actions:
+
+### State Management Patterns
+
+#### ImageConverter Reducer Actions
 - File management (ADD_FILES, REMOVE_FILE, REORDER_FILES)
 - Format selection (SET_ADD_FORMAT, SET_CONVERT_FORMAT)  
 - Conversion process (START_CONVERSION, UPDATE_PROGRESS, SET_RESULTS)
 - UI state (TOGGLE_REORDER_MODE, SET_VIEW_MODE)
+
 
 ### SEO & Analytics
 - Comprehensive meta tags and keywords in layout.tsx

@@ -73,7 +73,7 @@ export default function Navigation() {
                   <div className="font-medium">Image Converter</div>
                   <div className="text-xs text-gray-600">PNG, JPG, WEBP, PDF & more</div>
                 </Link>
-                <Link href="/convert/pdf" className="block px-4 py-3 text-black hover:bg-gray-100 transition-all duration-200 border-b border-gray-100 last:border-b-0">
+                <Link href="/convert/pdf" className="block px-4 py-3 text-black hover:bg-gray-100 transition-all duration-200 border-b border-gray-100">
                   <div className="font-medium">PDF to Image</div>
                   <div className="text-xs text-gray-600">Convert PDF to JPG, PNG</div>
                 </Link>

@@ -1,30 +1,23 @@
-"use client";
+import { Metadata } from 'next';
+import PDFConverter from '@/components/PDFConverter';
 
-import dynamic from "next/dynamic";
-import Head from "next/head";
-
-// 🎯 완전한 CSR 전용 - 서버에서는 아무것도 렌더링하지 않음
-const PDFConverter = dynamic(() => import("@/components/PDFConverter"), {
-  ssr: false, // 서버 사이드 렌더링 완전 비활성화
-  loading: () => (
-    <div className="min-h-screen bg-white flex items-center justify-center px-4">
-      <div className="text-center">
-        <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">
-          Loading Smart PDF Converter
-        </h2>
-        <p className="text-gray-600">
-          Initializing PDF.js with auto-rotation and privacy features...
-        </p>
-      </div>
-    </div>
-  ),
-});
+export const metadata: Metadata = {
+  title: 'PDF to Image Converter - Convert PDF to JPG, PNG Online Free | BravoConvert',
+  description: 'Convert PDF pages to high-quality JPG or PNG images online. Free PDF to image converter with batch processing, auto-rotation, and privacy protection.',
+  keywords: 'PDF to image, PDF to JPG, PDF to PNG, convert PDF, PDF converter, free PDF converter, online PDF to image',
+  openGraph: {
+    title: 'PDF to Image Converter - Convert PDF to JPG, PNG Online Free',
+    description: 'Convert PDF pages to high-quality JPG or PNG images online. Batch processing available.',
+    url: '/convert/pdf',
+  },
+};
 
 export default function PDFConvertPage() {
   return (
-    <main className="min-h-screen bg-white">
-      <PDFConverter />
-    </main>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 py-8">
+      <div className="container mx-auto px-4">
+        <PDFConverter />
+      </div>
+    </div>
   );
-} 
+}

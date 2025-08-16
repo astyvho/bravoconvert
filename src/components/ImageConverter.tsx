@@ -806,31 +806,6 @@ export default function ImageConverter() {
         </div>
       </div>
 
-      {/* EXIF Options - Compact placement above upload area */}
-      <div className="flex flex-wrap gap-4 items-center justify-center text-xs text-gray-600 mb-4">
-        <label className="flex items-center gap-1.5 cursor-pointer hover:text-gray-800 transition-colors">
-          <input
-            type="checkbox"
-            checked={autorotate}
-            onChange={() => dispatch({ type: 'TOGGLE_AUTOROTATE' })}
-            className="w-3.5 h-3.5 text-black bg-gray-100 border-gray-300 rounded focus:ring-black focus:ring-1"
-            aria-label="Auto-rotate images"
-          />
-          <span className="font-medium">Auto-rotate images</span>
-        </label>
-        
-        <label className="flex items-center gap-1.5 cursor-pointer hover:text-gray-800 transition-colors">
-          <input
-            type="checkbox"
-            checked={stripMetadata}
-            onChange={() => dispatch({ type: 'TOGGLE_STRIP_METADATA' })}
-            className="w-3.5 h-3.5 text-black bg-gray-100 border-gray-300 rounded focus:ring-black focus:ring-1"
-            aria-label="Strip metadata"
-          />
-          <span className="font-medium">Strip metadata</span>
-        </label>
-      </div>
-
       <motion.div
         className={`border-2 border-dotted border-gray-400 rounded-3xl min-h-[220px] flex flex-col items-center justify-center text-center transition-all mb-8 p-6 ${
           isLoading ? 'bg-gray-100 opacity-50 cursor-not-allowed' : fileArr.length > 0 ? 'bg-gray-50' : 'bg-gray-100 hover:bg-gray-200 hover:shadow-md hover:border-gray-500 cursor-pointer'
@@ -947,6 +922,37 @@ export default function ImageConverter() {
           </div>
         )}
       </motion.div>
+
+      {/* EXIF Options */}
+      <div className="flex flex-wrap gap-4 items-center justify-center text-xs text-gray-600 mb-4">
+        <label className="flex items-center gap-1.5 cursor-pointer hover:text-gray-800 transition-colors">
+          <input
+            type="checkbox"
+            checked={autorotate}
+            onChange={() => dispatch({ type: 'TOGGLE_AUTOROTATE' })}
+            className="w-3.5 h-3.5 text-black bg-gray-100 border-gray-300 rounded focus:ring-black focus:ring-1"
+            aria-label="Auto-rotate images"
+          />
+          <span className="font-medium">Auto-rotate images</span>
+        </label>
+        
+        <label className="flex items-center gap-1.5 cursor-pointer hover:text-gray-800 transition-colors">
+          <input
+            type="checkbox"
+            checked={stripMetadata}
+            onChange={() => dispatch({ type: 'TOGGLE_STRIP_METADATA' })}
+            className="w-3.5 h-3.5 text-black bg-gray-100 border-gray-300 rounded focus:ring-black focus:ring-1"
+            aria-label="Strip metadata"
+          />
+          <span className="font-medium">Strip metadata</span>
+        </label>
+      </div>
+
+      {/* Feature Description */}
+      <div className="text-center text-sm text-gray-600 mb-6 max-w-2xl mx-auto space-y-2">
+        <p><span className="font-medium text-gray-700">Auto-rotate:</span> Automatically detects and corrects orientation of iPhone/camera photos</p>
+        <p><span className="font-medium text-gray-700">Strip metadata:</span> Removes GPS location, camera info and other EXIF data for privacy protection</p>
+      </div>
 
       {toFormat.label === "PDF" && fileArr.length > 0 && (
         <div className="flex items-center justify-center gap-4 mb-8 rounded-2xl bg-white shadow-lg border border-gray-200 p-6">
