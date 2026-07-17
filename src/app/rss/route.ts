@@ -72,6 +72,14 @@ export async function GET() {
       <pubDate>${new Date().toUTCString()}</pubDate>
       <guid isPermaLink="false">${baseUrl}-terms</guid>
     </item>
+
+    <item>
+      <title>About BravoConvert</title>
+      <description>Learn how BravoConvert processes image and PDF files locally in your browser.</description>
+      <link>${baseUrl}/about</link>
+      <pubDate>${new Date().toUTCString()}</pubDate>
+      <guid isPermaLink="false">${baseUrl}-about</guid>
+    </item>
   </channel>
 </rss>`
 
@@ -81,4 +89,4 @@ export async function GET() {
       'Cache-Control': 'public, max-age=3600', // 1시간 캐시
     },
   })
-} 
+}

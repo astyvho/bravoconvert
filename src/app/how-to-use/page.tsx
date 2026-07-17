@@ -1,4 +1,11 @@
+import type { Metadata } from "next";
 import { Upload, Image, FileText, Download, Zap, Shield, BookOpen, RotateCw, EyeOff } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "How to Use BravoConvert",
+  description: "Step-by-step instructions for converting JPG, PNG and WebP images and rendering PDF pages as images.",
+  alternates: { canonical: "/how-to-use" },
+};
 
 export default function HowToUsePage() {
   return (
@@ -35,7 +42,7 @@ export default function HowToUsePage() {
               </h3>
               <p className="text-base text-gray-700 leading-relaxed pl-12 flex items-start">
                 <Upload className="w-6 h-6 text-gray-700 mr-3 mt-0.5 flex-shrink-0" />
-                Drag and drop or click to upload the images you want to convert. Supports PNG, JPG, JPEG, and WebP formats.
+                Drag and drop or click to upload JPG/JPEG, PNG, or WebP images. Each image must be 10MB or smaller.
               </p>
             </div>
 
@@ -84,7 +91,7 @@ export default function HowToUsePage() {
                 <EyeOff className="w-5 h-5 text-blue-600 mt-1 flex-shrink-0" />
                 <div>
                   <div className="font-semibold text-black">Privacy Protection</div>
-                  <div className="text-sm text-gray-700">Removes metadata, location data, and camera info for security</div>
+                  <div className="text-sm text-gray-700">Creates new output files without copying source EXIF metadata</div>
                 </div>
               </div>
             </div>
@@ -95,7 +102,7 @@ export default function HowToUsePage() {
             <ul className="text-base text-gray-700 space-y-2">
               <li>• <strong className="text-black">Multiple Files:</strong> You can upload multiple images at once</li>
               <li>• <strong className="text-black">PDF Creation:</strong> Combine multiple images into a single PDF</li>
-              <li>• <strong className="text-black">Smart Options:</strong> Toggle auto-rotation and metadata removal as needed</li>
+              <li>• <strong className="text-black">Smart Option:</strong> Toggle EXIF orientation correction as needed</li>
               <li>• <strong className="text-black">File Size:</strong> Each image supports up to 10MB</li>
             </ul>
           </div>
@@ -154,7 +161,7 @@ export default function HowToUsePage() {
             <ul className="text-base text-gray-700 space-y-2">
               <li>• <strong className="text-black">Page-by-Page:</strong> Each PDF page becomes a separate image file</li>
               <li>• <strong className="text-black">ZIP Archive:</strong> Multiple pages are bundled together for download</li>
-              <li>• <strong className="text-black">Smart Processing:</strong> PDF conversion also includes auto-rotation and privacy protection</li>
+              <li>• <strong className="text-black">Local Processing:</strong> PDF pages are rendered on your device</li>
               <li>• <strong className="text-black">File Size:</strong> PDFs support up to 50MB</li>
             </ul>
           </div>
@@ -176,9 +183,8 @@ export default function HowToUsePage() {
               <ul className="text-base text-gray-700 space-y-2 pl-9">
                 <li>• Files are never uploaded to our servers</li>
                 <li>• All conversion happens directly in your browser</li>
-                <li>• Automatic metadata removal protects your privacy</li>
-                <li>• EXIF data, GPS location, and camera info are stripped</li>
-                <li>• No personal data collection whatsoever</li>
+                <li>• Converted images are newly encoded without copying source EXIF data</li>
+                <li>• Website analytics and advertising data are explained in the Privacy Policy</li>
                 <li>• No registration required</li>
               </ul>
             </div>
@@ -200,4 +206,4 @@ export default function HowToUsePage() {
       </div>
     </main>
   );
-} 
+}

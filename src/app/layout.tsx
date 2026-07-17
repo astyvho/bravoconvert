@@ -1,16 +1,11 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import Navigation from "@/components/Navigation";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import Link from "next/link";
 
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-});
-
 export const metadata: Metadata = {
+  metadataBase: new URL("https://bravoconvert.com"),
   title: "BravoConvert - Free Online Image Converter with Auto-Rotation & Privacy Protection",
   description: "Convert images and PDFs with automatic photo rotation correction and metadata removal for privacy. Free EXIF auto-rotate, batch conversion, and instant processing in your browser. Perfect for iPhone photos, social media, and professional use.",
   keywords: [
@@ -62,7 +57,10 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "BravoConvert - Auto-Rotate & Privacy-Safe Image Converter",
     description: "Fix sideways iPhone photos automatically! Remove metadata for privacy. Free online image converter."
-  }
+  },
+  alternates: {
+    canonical: "/",
+  },
 };
 
 export const viewport = {
@@ -79,6 +77,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        {/* Default to denied until a consent platform supplies the user's choice. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('consent','default',{'ad_storage':'denied','analytics_storage':'denied','ad_user_data':'denied','ad_personalization':'denied','wait_for_update':500});`,
+          }}
+        />
         {/* Google Search Console 도메인 소유 확인 */}
         <meta name="google-site-verification" content="f_yi04ke2AOQgKSmgW2C60LLIMow3yeWvahynPvZDzI" />
         
@@ -89,7 +93,6 @@ export default function RootLayout({
         <meta name="google-adsense-account" content="ca-pub-5227371483154382" />
         
         {/* Canonical URL and RSS Feed */}
-        <link rel="canonical" href="https://bravoconvert.com" />
         <link rel="alternate" type="application/rss+xml" title="BravoConvert File Converter RSS Feed" href="https://bravoconvert.com/feed.xml" />
         
         
@@ -101,7 +104,7 @@ export default function RootLayout({
         ></script>
       </head>
       <body
-        className={`${inter.variable} antialiased text-black`}
+        className="antialiased text-black"
       >
         <GoogleAnalytics />
         <Navigation />
@@ -123,6 +126,10 @@ export default function RootLayout({
                 <Link href="/privacy-policy" className="hover:text-gray-700 mx-3 text-black transition-colors duration-300">Privacy Policy</Link>
                 <span className="text-gray-400">•</span>
                 <Link href="/terms" className="hover:text-gray-700 mx-3 text-black transition-colors duration-300">Terms of Service</Link>
+                <span className="text-gray-400">•</span>
+                <Link href="/about" className="hover:text-gray-700 mx-3 text-black transition-colors duration-300">About</Link>
+                <span className="text-gray-400">•</span>
+                <Link href="/contact" className="hover:text-gray-700 mx-3 text-black transition-colors duration-300">Contact</Link>
               </div>
               
               {/* 모바일 푸터 링크 */}
@@ -131,9 +138,11 @@ export default function RootLayout({
                 <Link href="/faq" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">FAQ</Link>
                 <Link href="/privacy-policy" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">Privacy Policy</Link>
                 <Link href="/terms" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">Terms of Service</Link>
+                <Link href="/about" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">About</Link>
+                <Link href="/contact" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">Contact</Link>
               </div>
             </div>
-            <div className="text-black font-medium">© 2025 BravoConvert</div>
+            <div className="text-black font-medium">© {new Date().getFullYear()} BravoConvert</div>
           </footer>
         </div>
       </body>

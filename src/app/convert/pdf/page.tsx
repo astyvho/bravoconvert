@@ -2,8 +2,9 @@ import { Metadata } from 'next';
 import PDFConverter from '@/components/PDFConverter';
 
 export const metadata: Metadata = {
+  alternates: { canonical: '/convert/pdf' },
   title: 'PDF to Image Converter - Convert PDF to JPG, PNG Online Free | BravoConvert',
-  description: 'Convert PDF pages to high-quality JPG or PNG images online. Free PDF to image converter with batch processing, auto-rotation, and privacy protection.',
+  description: 'Render PDF pages as high-quality JPG or PNG images online. Free browser-based PDF converter with batch download.',
   keywords: 'PDF to image, PDF to JPG, PDF to PNG, convert PDF, PDF converter, free PDF converter, online PDF to image',
   openGraph: {
     title: 'PDF to Image Converter - Convert PDF to JPG, PNG Online Free',

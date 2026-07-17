@@ -1,151 +1,81 @@
+import type { Metadata } from "next";
 import Link from "next/link";
-import { Shield, Settings, Smartphone, Lock, Hand, Mail, Calendar } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "Privacy Policy | BravoConvert",
+  description: "How BravoConvert processes files locally and how Google Analytics and Google AdSense may use cookies and usage data.",
+  alternates: { canonical: "/privacy-policy" },
+};
+
+const sections = [
+  {
+    title: "Files you convert",
+    body: "Images and PDF files selected in BravoConvert are processed locally in your browser. BravoConvert does not upload, receive, or store the contents of those files on its servers. Closing or refreshing the page clears the working session, although downloaded files remain on your device.",
+  },
+  {
+    title: "Analytics and technical information",
+    body: "We use Google Analytics to understand site usage and improve the service. Google may process information such as pages visited, approximate location derived from IP address, browser and device information, referring pages, and interaction events. This information is separate from the files you convert; file contents are not sent to Analytics.",
+  },
+  {
+    title: "Advertising and cookies",
+    body: "We use Google AdSense. Google and its advertising partners may use cookies, web beacons, IP addresses, or similar identifiers to provide, personalize, measure, and limit advertising. Third-party vendors, including Google, may use advertising cookies based on visits to this and other websites. Advertising tags never receive the contents of files selected for conversion.",
+  },
+  {
+    title: "Consent and your choices",
+    body: "Where required, a consent message allows you to accept, reject, or manage advertising and analytics choices. You may also block or delete cookies in your browser. You can manage personalized Google advertising at My Ad Center. Withdrawing consent does not affect processing that occurred before withdrawal.",
+  },
+  {
+    title: "Third-party services",
+    body: "Google Analytics and Google AdSense are provided by Google. Their processing is governed by Google's own privacy terms. External links are governed by the privacy policies of their operators. We do not sell the files you convert or disclose their contents to advertisers.",
+  },
+  {
+    title: "Retention and security",
+    body: "BravoConvert does not retain converted file contents. Analytics and advertising data may be retained by Google according to the settings and policies of those services. Browser-based processing reduces file exposure, but no internet service or device can be guaranteed completely secure.",
+  },
+  {
+    title: "Your rights and contact",
+    body: "Depending on your location, you may have rights to access, correct, delete, restrict, or object to processing of personal information. For privacy questions, email bravoconvert.help@gmail.com. We may need your email and message content to respond to your request.",
+  },
+];
 
 export default function PrivacyPolicyPage() {
   return (
     <main className="min-h-screen bg-gray-50 py-12 px-4">
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-6xl font-bold text-black mb-4 flex items-center justify-center">
-            <Shield className="w-16 h-16 text-gray-700 mr-4" />
-            Privacy Policy
-          </h1>
-          <p className="text-xl text-black mb-8">
-            Your privacy and data protection are our priority
-          </p>
-          <p className="text-base text-gray-600">
-            Last updated: December 15, 2024
-          </p>
+      <article className="max-w-4xl mx-auto bg-white rounded-2xl p-6 md:p-10 shadow-lg border border-gray-200">
+        <header className="mb-10">
+          <h1 className="text-4xl md:text-5xl font-bold text-black mb-4">Privacy Policy</h1>
+          <p className="text-gray-700">Effective and last updated: July 17, 2026</p>
+        </header>
+
+        <div className="mb-8 rounded-xl bg-blue-50 border border-blue-200 p-5 text-gray-800">
+          <strong>Important distinction:</strong> files are converted locally and are not uploaded to BravoConvert, while normal website analytics and advertising technologies may process usage and device information.
         </div>
 
-        {/* Privacy Policy Content */}
-        <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300">
-          <div className="space-y-8">
-            <div>
-              <h2 className="text-2xl font-bold text-black mb-4 flex items-center">
-                <span className="w-8 h-8 bg-gradient-to-br from-black to-gray-800 text-white rounded-full flex items-center justify-center text-sm font-bold mr-4 shadow-md">1</span>
-                Information We Collect
-              </h2>
-              <div className="bg-gray-50 rounded-lg p-6 border-l-4 border-black">
-                <p className="text-base text-gray-700 mb-4 flex items-start">
-                  <Shield className="w-6 h-6 text-gray-700 mr-3 mt-0.5 flex-shrink-0" />
-                  <span><strong className="text-black">No Personal Data Collection:</strong> BravoConvert operates with a fundamental principle of privacy by design. We do not collect, store, or process any personal information from our users.</span>
+        <div className="space-y-9">
+          {sections.map((section, index) => (
+            <section key={section.title}>
+              <h2 className="text-2xl font-bold text-black mb-3">{index + 1}. {section.title}</h2>
+              <p className="text-gray-700 leading-7">{section.body}</p>
+              {section.title === "Consent and your choices" && (
+                <p className="mt-3 text-gray-700">
+                  Visit <a className="underline font-medium" href="https://myadcenter.google.com/" rel="noopener noreferrer" target="_blank">Google My Ad Center</a> to manage Google advertising preferences.
                 </p>
-                <ul className="text-base text-gray-700 space-y-2">
-                  <li>• <strong>No Registration Required:</strong> You can use all our services without creating an account or providing any personal information</li>
-                  <li>• <strong>No File Storage:</strong> All file conversions (images and PDFs) are processed entirely in your browser</li>
-                  <li>• <strong>No Upload to Servers:</strong> Your files never leave your device during the conversion process</li>
-                  <li>• <strong>No Tracking:</strong> We do not track your browsing behavior or collect usage analytics</li>
-                </ul>
-              </div>
-            </div>
-
-            <div>
-              <h2 className="text-2xl font-bold text-black mb-4 flex items-center">
-                <span className="w-8 h-8 bg-gradient-to-br from-black to-gray-800 text-white rounded-full flex items-center justify-center text-sm font-bold mr-4 shadow-md">2</span>
-                How Our Services Work
-              </h2>
-              <div className="bg-gray-50 rounded-lg p-6 border-l-4 border-black">
-                <p className="text-base text-gray-700 mb-4 flex items-start">
-                  <Settings className="w-6 h-6 text-gray-700 mr-3 mt-0.5 flex-shrink-0" />
-                  <span><strong className="text-black">Client-Side Processing:</strong> All file conversions happen directly in your web browser using JavaScript technology.</span>
+              )}
+              {section.title === "Third-party services" && (
+                <p className="mt-3 text-gray-700">
+                  Learn <a className="underline font-medium" href="https://policies.google.com/technologies/partner-sites" rel="noopener noreferrer" target="_blank">how Google uses information from partner sites</a>.
                 </p>
-                <ul className="text-base text-gray-700 space-y-2">
-                  <li>• <strong>Image Converter:</strong> PNG, JPG, WebP conversions and PDF creation happen locally in your browser</li>
-                  <li>• <strong>PDF to Image:</strong> PDF page extraction and image conversion occur entirely on your device</li>
-                  <li>• <strong>Real-Time Processing:</strong> Files are processed instantly without any server involvement</li>
-                  <li>• <strong>Automatic Cleanup:</strong> Converted files are automatically removed from browser memory after download</li>
-                </ul>
-              </div>
-            </div>
-
-            <div>
-              <h2 className="text-2xl font-bold text-black mb-4 flex items-center">
-                <span className="w-8 h-8 bg-gradient-to-br from-black to-gray-800 text-white rounded-full flex items-center justify-center text-sm font-bold mr-4 shadow-md">3</span>
-                Third-Party Services
-              </h2>
-              <div className="bg-gray-50 rounded-lg p-6 border-l-4 border-black">
-                <p className="text-base text-gray-700 mb-4 flex items-start">
-                  <Smartphone className="w-6 h-6 text-gray-700 mr-3 mt-0.5 flex-shrink-0" />
-                  <span><strong className="text-black">Service Integration:</strong> Our service operates independently without third-party dependencies.</span>
-                </p>
-                <ul className="text-base text-gray-700 space-y-2">
-                  <li>• <strong>No External Dependencies:</strong> All file processing happens entirely in your browser</li>
-                  <li>• <strong>No File Sharing:</strong> Third-party services never have access to your uploaded files</li>
-                  <li>• <strong>Complete Privacy:</strong> Your files remain completely private during processing</li>
-                </ul>
-              </div>
-            </div>
-
-            <div>
-              <h2 className="text-2xl font-bold text-black mb-4 flex items-center">
-                <span className="w-8 h-8 bg-gradient-to-br from-black to-gray-800 text-white rounded-full flex items-center justify-center text-sm font-bold mr-4 shadow-md">4</span>
-                Data Security
-              </h2>
-              <div className="bg-gray-50 rounded-lg p-6 border-l-4 border-black">
-                <p className="text-base text-gray-700 mb-4 flex items-start">
-                  <Lock className="w-6 h-6 text-gray-700 mr-3 mt-0.5 flex-shrink-0" />
-                  <span><strong className="text-black">Maximum Security:</strong> Your data security is guaranteed through our client-side processing approach.</span>
-                </p>
-                <ul className="text-base text-gray-700 space-y-2">
-                  <li>• <strong>No Server Storage:</strong> Files are never stored on our servers or any cloud storage</li>
-                  <li>• <strong>End-to-End Privacy:</strong> Only you have access to your files during the entire process</li>
-                  <li>• <strong>Automatic Deletion:</strong> Files are automatically removed from browser memory after processing</li>
-                  <li>• <strong>No Data Retention:</strong> We have no ability to access, view, or store your files</li>
-                </ul>
-              </div>
-            </div>
-
-            <div>
-              <h2 className="text-2xl font-bold text-black mb-4 flex items-center">
-                <span className="w-8 h-8 bg-gradient-to-br from-black to-gray-800 text-white rounded-full flex items-center justify-center text-sm font-bold mr-4 shadow-md">5</span>
-                Your Rights
-              </h2>
-              <div className="bg-gray-50 rounded-lg p-6 border-l-4 border-black">
-                <p className="text-base text-gray-700 mb-4 flex items-start">
-                  <Hand className="w-6 h-6 text-gray-700 mr-3 mt-0.5 flex-shrink-0" />
-                  <span><strong className="text-black">Complete Control:</strong> You maintain complete control over your data and privacy.</span>
-                </p>
-                <ul className="text-base text-gray-700 space-y-2">
-                  <li>• <strong>No Data Collection:</strong> Since we don't collect personal data, there's nothing to request, modify, or delete</li>
-                  <li>• <strong>Immediate Use:</strong> Start using our services immediately without any privacy concerns</li>
-                  <li>• <strong>Browser Control:</strong> You can control all aspects of your privacy through browser settings</li>
-                  <li>• <strong>Transparency:</strong> Our privacy practices are completely transparent and verifiable</li>
-                </ul>
-              </div>
-            </div>
-
-            <div>
-              <h2 className="text-2xl font-bold text-black mb-4 flex items-center">
-                <span className="w-8 h-8 bg-gradient-to-br from-black to-gray-800 text-white rounded-full flex items-center justify-center text-sm font-bold mr-4 shadow-md">6</span>
-                Contact Information
-              </h2>
-              <div className="bg-gray-50 rounded-lg p-6 border-l-4 border-black">
-                <p className="text-base text-gray-700 mb-4 flex items-start">
-                  <Mail className="w-6 h-6 text-gray-700 mr-3 mt-0.5 flex-shrink-0" />
-                  <span><strong className="text-black">Privacy Inquiries:</strong> If you have any questions about our privacy practices, we're here to help.</span>
-                </p>
-                <ul className="text-base text-gray-700 space-y-2">
-                  <li>• <strong>Email:</strong> bravoconvert.help@gmail.com</li>
-                  <li>• <strong>Response Time:</strong> We typically respond to privacy inquiries within 1-4 weeks</li>
-                  <li>• <strong>No Personal Data:</strong> Even in communications, we don't collect or store personal information</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          <hr className="my-12 border-gray-300" />
-          <div className="text-center bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200 shadow-md">
-            <p className="text-base text-gray-700 flex items-center justify-center mb-2">
-              <Calendar className="w-6 h-6 text-gray-700 mr-3" />
-              <span><strong className="text-black">Effective Date:</strong> December 15, 2024</span>
-            </p>
-            <p className="text-sm text-gray-600">
-              This privacy policy applies to all BravoConvert services and may be updated as needed.
-            </p>
-          </div>
+              )}
+            </section>
+          ))}
         </div>
-      </div>
+
+        <section className="mt-10 pt-8 border-t border-gray-200">
+          <h2 className="text-2xl font-bold text-black mb-3">8. Changes to this policy</h2>
+          <p className="text-gray-700 leading-7">We may update this policy when the service or applicable requirements change. The current effective date will be shown at the top of this page.</p>
+          <p className="mt-4 text-gray-700">Questions? See our <Link className="underline font-medium" href="/contact">contact page</Link>.</p>
+        </section>
+      </article>
     </main>
   );
-} 
+}

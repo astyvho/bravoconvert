@@ -1,5 +1,11 @@
-import Link from "next/link";
+import type { Metadata } from "next";
 import { Shield, User, Check, Settings, AlertTriangle, RotateCcw, FileText, Mail, Calendar } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "Terms of Service | BravoConvert",
+  description: "Terms governing use of BravoConvert's browser-based image and PDF conversion tools.",
+  alternates: { canonical: "/terms" },
+};
 
 export default function TermsPage() {
   return (
@@ -14,7 +20,7 @@ export default function TermsPage() {
             Clear and transparent terms for using BravoConvert
           </p>
           <p className="text-base text-gray-600">
-            Last updated: December 15, 2024
+            Last updated: July 17, 2026
           </p>
         </div>
 
@@ -54,7 +60,7 @@ export default function TermsPage() {
                 <ul className="text-base text-gray-700 space-y-2">
                   <li>• <strong>File Ownership:</strong> You retain full ownership and copyright of all uploaded files</li>
                   <li>• <strong>Privacy Control:</strong> Your files never leave your device during processing</li>
-                  <li>• <strong>No Data Collection:</strong> We do not collect, store, or access your personal information</li>
+                  <li>• <strong>Website Data:</strong> Analytics and advertising services may process usage and device information as described in our Privacy Policy</li>
                   <li>• <strong>Immediate Use:</strong> Start using our services without any registration requirements</li>
                   <li>• <strong>Unlimited Access:</strong> No daily or monthly limits on file conversions</li>
                 </ul>
@@ -93,8 +99,8 @@ export default function TermsPage() {
                 </p>
                 <ul className="text-base text-gray-700 space-y-2">
                   <li>• <strong>File Formats:</strong> Supported formats include:<br/>
-                    <span className="ml-4">• <strong>Input:</strong> BMP, CR3, DNG, HEIC, JFIF, JPG, PNG, TIFF, GIF</span><br/>
-                    <span className="ml-4">• <strong>Output:</strong> WEBP, AVIF, BMP, GIF, ICO, JFIF, JPG, PNG, TIFF, PDF</span>
+                    <span className="ml-4">• <strong>Image input:</strong> JPG/JPEG, PNG, WebP</span><br/>
+                    <span className="ml-4">• <strong>Image output:</strong> JPG, PNG, WebP, PDF</span>
                   </li>
                   <li>• <strong>File Sizes:</strong> Maximum 10MB per image file, 50MB per PDF file</li>
                   <li>• <strong>Browser Requirements:</strong> Modern browsers with JavaScript enabled are required</li>
@@ -184,7 +190,7 @@ export default function TermsPage() {
           <div className="text-center bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200 shadow-md">
             <p className="text-base text-gray-700 flex items-center justify-center mb-2">
               <Calendar className="w-6 h-6 text-gray-700 mr-3" />
-              <span><strong className="text-black">Effective Date:</strong> December 15, 2024</span>
+              <span><strong className="text-black">Effective Date:</strong> July 17, 2026</span>
             </p>
             <p className="text-sm text-gray-600">
               These terms apply to all BravoConvert services and may be updated as needed.
@@ -194,4 +200,4 @@ export default function TermsPage() {
       </div>
     </main>
   );
-} 
+}

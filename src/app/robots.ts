@@ -7,21 +7,24 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: '*',
-        allow: '/',
+        allow: ['/', '/ads.txt'],
         disallow: [
           '/private/',
           '/api/',
-          '/_next/',
           '/admin/',
         ],
       },
       {
         userAgent: 'Googlebot',
-        allow: '/',
+        allow: ['/', '/ads.txt'],
         disallow: ['/private/'],
+      },
+      {
+        userAgent: 'Mediapartners-Google',
+        allow: ['/', '/ads.txt'],
       },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,
     host: baseUrl,
   }
-} 
+}

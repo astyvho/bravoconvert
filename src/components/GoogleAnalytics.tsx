@@ -19,7 +19,7 @@ export default function GoogleAnalytics() {
 
     // Initialize gtag
     window.dataLayer = window.dataLayer || [];
-    window.gtag = function gtag() {
+    window.gtag = window.gtag || function gtag() {
       window.dataLayer.push(arguments);
     };
     window.gtag('js', new Date());

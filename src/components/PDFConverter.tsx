@@ -32,6 +32,7 @@ interface ConvertedPage {
 
 export default function PDFConverter() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const convertedPagesRef = useRef<ConvertedPage[]>([]);
   
   // 🎯 모든 상태를 최상단에 선언 (Hooks 순서 고정)
   const [isReady, setIsReady] = useState(false);
@@ -44,6 +45,16 @@ export default function PDFConverter() {
   const [isConverting, setIsConverting] = useState(false);
   const [progress, setProgress] = useState(0);
   const [pdfjsLib, setPdfjsLib] = useState<any>(null);
+
+  const clearConvertedPages = useCallback(() => {
+    convertedPagesRef.current.forEach((page) => URL.revokeObjectURL(page.blobUrl));
+    convertedPagesRef.current = [];
+    setConvertedPages([]);
+  }, []);
+
+  useEffect(() => () => {
+    convertedPagesRef.current.forEach((page) => URL.revokeObjectURL(page.blobUrl));
+  }, []);
 
   // 🎯 모든 함수들을 상태 선언 직후에 배치
   // 에러 표시 함수
@@ -131,7 +142,7 @@ export default function PDFConverter() {
       console.log('📄 PDF 파일 로딩 시작');
       
       // 1. PDF 로딩 (URL.createObjectURL 사용)
-      const pdf = await pdfjs.getDocument(URL.createObjectURL(file)).promise;
+      const pdf = await pdfjs.getDocument({ data: await file.arrayBuffer() }).promise;
       console.log(`✅ PDF 로딩 완료: 총 ${pdf.numPages} 페이지`);
 
       // 2. 첫 페이지 가져오기
@@ -222,7 +233,7 @@ export default function PDFConverter() {
           console.log('✅ 파일 유효성 검사 통과');
 
           // 상태 초기화
-          setConvertedPages([]);
+          clearConvertedPages();
           setPreviewUrl(null);
           setSelectedFile(file);
           console.log('✅ 파일 선택 완료');
@@ -241,7 +252,7 @@ export default function PDFConverter() {
     document.body.appendChild(fileInput);
     console.log('✅ 파일 선택 대화상자 열기');
     fileInput.click();
-  }, [isReady, renderPreview, showError, validatePdfFile]);
+  }, [clearConvertedPages, isReady, renderPreview, showError, validatePdfFile]);
 
   // 드래그 오버 처리
   const handleDragOver = useCallback((e: React.DragEvent) => {
@@ -264,7 +275,7 @@ export default function PDFConverter() {
       }
       
       if (validatePdfFile(file)) {
-        setConvertedPages([]);
+        clearConvertedPages();
         setPreviewUrl(null);
         setSelectedFile(file);
         
@@ -272,7 +283,7 @@ export default function PDFConverter() {
         await renderPreview(file);
       }
     }
-  }, [isReady, renderPreview, showError, validatePdfFile]);
+  }, [clearConvertedPages, isReady, renderPreview, showError, validatePdfFile]);
 
   // PDF를 이미지로 변환
   const convertPdfToImages = useCallback(async () => {
@@ -294,7 +305,7 @@ export default function PDFConverter() {
 
     setIsConverting(true);
     setProgress(0);
-    setConvertedPages([]);
+    clearConvertedPages();
     console.log('🔄 PDF 변환 시작...');
 
     try {
@@ -345,6 +356,7 @@ export default function PDFConverter() {
             thumbnailUrl,
             filename
           });
+          convertedPagesRef.current = [...results];
 
           const progressPercent = Math.round((pageNum / totalPages) * 100);
           setProgress(progressPercent);
@@ -366,7 +378,7 @@ export default function PDFConverter() {
       setIsConverting(false);
       setProgress(100);
     }
-  }, [selectedFile, isReady, convertOption, loadPDFJS, showError]);
+  }, [selectedFile, isReady, convertOption, loadPDFJS, showError, clearConvertedPages]);
 
   // 개별 파일 다운로드
   const downloadPage = useCallback((page: ConvertedPage) => {
@@ -523,7 +535,7 @@ export default function PDFConverter() {
                     onClick={() => {
                       setSelectedFile(null);
                       setPreviewUrl(null);
-                      setConvertedPages([]);
+                      clearConvertedPages();
                     }}
                     className="rounded-xl bg-gray-100 text-black hover:bg-gray-200 border border-gray-200 hover:border-gray-400 shadow-lg transition-all duration-300"
                   >

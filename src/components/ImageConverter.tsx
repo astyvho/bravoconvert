@@ -71,7 +71,7 @@ const initialState: State = {
   isReorderMode: false,
   originalFileOrder: [],
   viewMode: 'list', // 기본값을 list로 변경
-  addFormat: ADD_FORMATS[6], // PNG
+  addFormat: ADD_FORMATS[1], // PNG
   toFormat: TO_FORMATS[0], // WEBP
   autorotate: true, // 기본값 ON
   stripMetadata: true, // 기본값 ON
@@ -157,6 +157,7 @@ export default function ImageConverter() {
   }[]>([]);
   const activeConversionsRef = useRef(0);
   const MAX_CONCURRENT_CONVERSIONS = 2;
+  const MAX_IMAGE_SIZE = 10 * 1024 * 1024;
 
   // Worker initialization and cleanup
   useEffect(() => {
@@ -197,6 +198,9 @@ export default function ImageConverter() {
         if (result?.url) {
           URL.revokeObjectURL(result.url);
         }
+        if (result?.thumb) {
+          URL.revokeObjectURL(result.thumb);
+        }
       });
     };
   }, []);
@@ -207,6 +211,9 @@ export default function ImageConverter() {
       resultArr.forEach(result => {
         if (result?.url) {
           URL.revokeObjectURL(result.url);
+        }
+        if (result?.thumb) {
+          URL.revokeObjectURL(result.thumb);
         }
       });
     };
@@ -223,19 +230,12 @@ export default function ImageConverter() {
     // 파일 확장자로 감지
     const extension = file.name.toLowerCase().split('.').pop();
     const extensionMap = {
-      'bmp': 'image/bmp',
-      'cr3': 'image/x-canon-cr3',
-      'dng': 'image/x-adobe-dng',
-      'heic': 'image/heic',
-      'heif': 'image/heic',
-      'jfif': 'image/jfif',
       'jpg': 'image/jpeg',
       'jpeg': 'image/jpeg',
       'jpe': 'image/jpeg',
+      'jfif': 'image/jpeg',
       'png': 'image/png',
-      'tiff': 'image/tiff',
-      'tif': 'image/tiff',
-      'gif': 'image/gif',
+      'webp': 'image/webp',
     };
     
     const mimeType = extensionMap[extension as keyof typeof extensionMap];
@@ -254,18 +254,25 @@ export default function ImageConverter() {
     
     // 이미지 파일만 필터링
     const imageFiles = fileArray.filter(f => {
-      return f.type.startsWith('image/') || 
-             ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'tiff', 'tif', 'heic', 'heif', 'jfif', 'cr3', 'dng']
+      return ['image/jpeg', 'image/png', 'image/webp'].includes(f.type) ||
+             ['jpg', 'jpeg', 'jpe', 'jfif', 'png', 'webp']
                .includes(f.name.toLowerCase().split('.').pop() || '');
     });
     
     if (imageFiles.length === 0) {
-      alert('No image files found. Please select image files.');
+      alert('No supported images found. Please select JPG, PNG, or WebP files.');
       return;
     }
+
+    const oversizedFiles = imageFiles.filter(file => file.size > MAX_IMAGE_SIZE);
+    if (oversizedFiles.length > 0) {
+      alert(`${oversizedFiles.length} image(s) exceed the 10MB per-file limit and were not added.`);
+    }
+    const sizeValidFiles = imageFiles.filter(file => file.size <= MAX_IMAGE_SIZE);
+    if (sizeValidFiles.length === 0) return;
     
     // 첫 번째 파일의 형식을 기준으로 addFormat 자동 설정
-    const firstFile = imageFiles[0];
+    const firstFile = sizeValidFiles[0];
     const detectedFormat = detectFileFormat(firstFile);
     
          if (detectedFormat && detectedFormat.label !== addFormat.label) {
@@ -274,7 +281,7 @@ export default function ImageConverter() {
        console.log(`Auto-detected input format: ${detectedFormat.label}`);
        
        // 사용자에게 자동 감지 알림 (선택적)
-       if (imageFiles.length === 1) {
+       if (sizeValidFiles.length === 1) {
          console.log(`Auto-detected ${detectedFormat.label} format from your image!`);
        } else {
          console.log(`Auto-detected ${detectedFormat.label} format from your images!`);
@@ -283,7 +290,7 @@ export default function ImageConverter() {
     
     // 현재 또는 감지된 형식과 일치하는 파일들만 필터링
     const targetFormat = detectedFormat || addFormat;
-    const validFiles = imageFiles.filter(f => {
+    const validFiles = sizeValidFiles.filter(f => {
       const fileFormat = detectFileFormat(f);
       return fileFormat?.mime === targetFormat.mime;
     });
@@ -293,8 +300,8 @@ export default function ImageConverter() {
       return;
     }
     
-    if (validFiles.length < imageFiles.length) {
-      const filteredCount = imageFiles.length - validFiles.length;
+    if (validFiles.length < sizeValidFiles.length) {
+      const filteredCount = sizeValidFiles.length - validFiles.length;
       console.log(`${filteredCount} file${filteredCount > 1 ? 's were' : ' was'} filtered out (different format)`);
     }
     
@@ -304,7 +311,7 @@ export default function ImageConverter() {
     }
     
     dispatch({ type: 'ADD_FILES', payload: validFiles });
-  }, [addFormat, detectFileFormat]);
+  }, [addFormat, detectFileFormat, MAX_IMAGE_SIZE]);
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -415,7 +422,16 @@ export default function ImageConverter() {
         };
         
         img.onerror = () => reject(new Error('Image load failed'));
-        img.src = URL.createObjectURL(file);
+        const sourceUrl = URL.createObjectURL(file);
+        img.onload = ((originalOnload) => () => {
+          URL.revokeObjectURL(sourceUrl);
+          originalOnload?.call(img, new Event('load'));
+        })(img.onload);
+        img.onerror = () => {
+          URL.revokeObjectURL(sourceUrl);
+          reject(new Error('Image load failed'));
+        };
+        img.src = sourceUrl;
         
       } catch (error) {
         reject(error);
@@ -445,9 +461,10 @@ export default function ImageConverter() {
         
         // Set timeout for worker response
         const timeout = setTimeout(() => {
+          conversionQueueRef.current = conversionQueueRef.current.filter(item => item.id !== id);
           console.warn('Worker timeout, using fallback');
           convertWithCanvas(file, format).then(resolve).catch(reject);
-        }, 5000);
+        }, 15000);
         
         // Store promise handlers for this conversion
         conversionQueueRef.current.push({
@@ -500,20 +517,22 @@ export default function ImageConverter() {
       const t0 = performance.now();
       
       try {
+        const outputExtension = toFormat.label.toLowerCase();
+        const outputCodec = outputExtension === 'jpg' ? 'jpeg' : outputExtension;
         // Use worker-based conversion
         const workerResult = await convertWithWorker(
           item.file, 
           idx,
-          toFormat.label.toLowerCase(), 
+          outputCodec,
           { autorotate, stripMetadata }
         );
         
         const t1 = performance.now();
-        const outName = item.file.name.replace(/\.[^/.]+$/, `.${toFormat.label.toLowerCase()}`);
+        const outName = item.file.name.replace(/\.[^/.]+$/, `.${outputExtension}`);
         
         // Create blobs from worker results
         const outputBlob = new Blob([workerResult.outputBuffer], { 
-          type: `image/${toFormat.label.toLowerCase()}` 
+          type: `image/${outputCodec}`
         });
         const thumbBlob = new Blob([workerResult.thumbBuffer], { 
           type: 'image/webp' 
@@ -774,7 +793,7 @@ export default function ImageConverter() {
         </p>
         <p className="text-sm text-gray-600 mb-2 flex items-center justify-center">
           <Sparkles className="w-4 h-4 text-gray-600 mr-2" />
-          Just drag & drop any image format - we'll auto-detect the input type!
+          Drag and drop JPG, PNG or WebP images — the input type is detected automatically.
         </p>
       </div>
       
@@ -837,7 +856,7 @@ export default function ImageConverter() {
               </span>
             </div>
             <div className="text-sm text-gray-600">
-              Any format supported: PNG, JPG, WEBP, GIF, BMP, HEIC, TIFF & more
+          Supported formats: JPG/JPEG, PNG and WebP (maximum 10MB per file)
             </div>
           </>
         ) : (
@@ -936,22 +955,13 @@ export default function ImageConverter() {
           <span className="font-medium">Auto-rotate images</span>
         </label>
         
-        <label className="flex items-center gap-1.5 cursor-pointer hover:text-gray-800 transition-colors">
-          <input
-            type="checkbox"
-            checked={stripMetadata}
-            onChange={() => dispatch({ type: 'TOGGLE_STRIP_METADATA' })}
-            className="w-3.5 h-3.5 text-black bg-gray-100 border-gray-300 rounded focus:ring-black focus:ring-1"
-            aria-label="Strip metadata"
-          />
-          <span className="font-medium">Strip metadata</span>
-        </label>
+        <span className="font-medium">Converted images are re-encoded without EXIF metadata.</span>
       </div>
 
       {/* Feature Description */}
       <div className="text-center text-sm text-gray-600 mb-6 max-w-2xl mx-auto space-y-2">
         <p><span className="font-medium text-gray-700">Auto-rotate:</span> Automatically detects and corrects orientation of iPhone/camera photos</p>
-        <p><span className="font-medium text-gray-700">Strip metadata:</span> Removes GPS location, camera info and other EXIF data for privacy protection</p>
+        <p><span className="font-medium text-gray-700">Metadata:</span> Converted JPG, PNG and WebP files are newly encoded without EXIF metadata.</p>
       </div>
 
       {toFormat.label === "PDF" && fileArr.length > 0 && (

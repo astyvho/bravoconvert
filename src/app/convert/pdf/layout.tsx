@@ -1,8 +1,8 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "PDF to Image Converter - Convert PDF to JPG/PNG with Auto-Rotation | BravoConvert",
-  description: "Convert PDF files to high-quality JPG and PNG images with automatic photo rotation and metadata removal. Free online PDF to image converter with privacy protection and batch processing.",
+  title: "PDF to Image Converter - Convert PDF to JPG/PNG | BravoConvert",
+  description: "Render PDF files as high-quality JPG and PNG images locally in your browser with page-by-page and ZIP downloads.",
   keywords: [
     "PDF to image converter",
     "PDF to JPG",
@@ -15,15 +15,13 @@ export const metadata: Metadata = {
     "online PDF converter",
     "PDF splitter",
     "PDF privacy protection",
-    "remove PDF metadata",
-    "auto rotate PDF images",
     "batch PDF conversion",
     "PDF.js converter",
     "secure PDF processing"
   ],
   openGraph: {
     title: "Free PDF to Image Converter with Privacy Protection",
-    description: "Convert PDF pages to images with automatic rotation correction and metadata removal for privacy.",
+    description: "Render PDF pages as JPG or PNG images locally in your browser.",
     type: "website"
   }
 };
@@ -34,4 +32,4 @@ export default function PDFLayout({
   children: React.ReactNode;
 }) {
   return children;
-} 
+}

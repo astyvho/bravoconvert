@@ -3,8 +3,9 @@ import ClientRoot from "@/components/ClientRoot";
 import ImageConverter from "@/components/ImageConverter";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/convert/img" },
   title: "Smart Image Converter with Auto-Rotation & Privacy Protection | BravoConvert",
-  description: "Convert PNG, JPG, WebP, GIF images with automatic photo rotation correction and metadata removal. Fix sideways iPhone photos, remove EXIF data for privacy. Free batch conversion in your browser.",
+  description: "Convert JPG, PNG and WebP images with photo orientation correction and metadata-free re-encoding. Free batch conversion in your browser.",
   keywords: [
     "smart image converter",
     "auto rotate photos",
@@ -17,7 +18,6 @@ export const metadata: Metadata = {
     "PNG to WebP",
     "JPG to PNG", 
     "WebP to JPG",
-    "HEIC converter",
     "batch image conversion",
     "free image converter",
     "online image converter",
@@ -51,7 +51,7 @@ export default function ImageConverterPage() {
               "@context": "https://schema.org",
               "@type": "WebApplication",
               "name": "BravoConvert Smart Image Converter",
-              "description": "Free online image converter with automatic photo rotation and metadata removal for privacy",
+              "description": "Free online JPG, PNG and WebP converter with orientation correction and metadata-free re-encoding",
               "url": "https://bravoconvert.com/convert/img",
               "applicationCategory": "MultimediaApplication",
               "operatingSystem": "Any",
@@ -64,7 +64,7 @@ export default function ImageConverterPage() {
                 "Automatic photo rotation correction",
                 "EXIF metadata removal for privacy",
                 "Batch image conversion",
-                "Support for PNG, JPG, WebP, HEIC formats",
+                "Support for PNG, JPG and WebP formats",
                 "Browser-based processing (no upload required)",
                 "iPhone photo orientation fixing"
               ]
@@ -75,4 +75,4 @@ export default function ImageConverterPage() {
       </ClientRoot>
     </main>
   );
-} 
+}

@@ -87,6 +87,7 @@ export default function Navigation() {
           <Link href="/faq" className="hover:text-black text-black transition-all duration-300 font-medium px-4 py-2.5 rounded-xl hover:bg-gray-200 hover:shadow-sm">FAQ</Link>
           <Link href="/privacy-policy" className="hover:text-black text-black transition-all duration-300 font-medium px-4 py-2.5 rounded-xl hover:bg-gray-200 hover:shadow-sm">Privacy Policy</Link>
           <Link href="/terms" className="hover:text-black text-black transition-all duration-300 font-medium px-4 py-2.5 rounded-xl hover:bg-gray-200 hover:shadow-sm">Terms of Service</Link>
+          <Link href="/about" className="hover:text-black text-black transition-all duration-300 font-medium px-4 py-2.5 rounded-xl hover:bg-gray-200 hover:shadow-sm">About</Link>
         </div>
 
         {/* Mobile hamburger menu button */}
@@ -118,10 +119,12 @@ export default function Navigation() {
               <Link href="/faq" onClick={() => setIsMenuOpen(false)} className="hover:text-black text-black transition-all duration-300 font-medium px-6 py-4 hover:bg-gray-200 border-b border-gray-100">FAQ</Link>
               <Link href="/privacy-policy" onClick={() => setIsMenuOpen(false)} className="hover:text-black text-black transition-all duration-300 font-medium px-6 py-4 hover:bg-gray-200 border-b border-gray-100">Privacy Policy</Link>
               <Link href="/terms" onClick={() => setIsMenuOpen(false)} className="hover:text-black text-black transition-all duration-300 font-medium px-6 py-4 hover:bg-gray-200 border-b border-gray-100 last:border-b-0">Terms of Service</Link>
+              <Link href="/about" onClick={() => setIsMenuOpen(false)} className="hover:text-black text-black transition-all duration-300 font-medium px-6 py-4 hover:bg-gray-200 border-b border-gray-100">About</Link>
+              <Link href="/contact" onClick={() => setIsMenuOpen(false)} className="hover:text-black text-black transition-all duration-300 font-medium px-6 py-4 hover:bg-gray-200 last:border-b-0">Contact</Link>
             </div>
           </div>
         )}
       </nav>
     </div>
   );
-} 
+}

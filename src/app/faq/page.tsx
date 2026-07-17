@@ -1,4 +1,11 @@
+import type { Metadata } from "next";
 import { HelpCircle } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "Image and PDF Converter FAQ | BravoConvert",
+  description: "Answers about supported formats, local file processing, privacy, image conversion, and PDF rendering.",
+  alternates: { canonical: "/faq" },
+};
 
 export default function FAQ() {
   const faqs = [
@@ -7,7 +14,7 @@ export default function FAQ() {
       questions: [
         {
           question: "What image formats can I convert?",
-          answer: "You can convert between PNG, JPG, JPEG, and WebP formats. The tool supports converting any of these formats to any other format, and you can also combine multiple images into a single PDF file."
+          answer: "You can convert JPG/JPEG, PNG, and WebP images to JPG, PNG, or WebP. You can also combine supported images into a single PDF file. Browser capabilities can vary, so keep your original files."
         },
         {
           question: "How does the image conversion process work?",
@@ -15,7 +22,7 @@ export default function FAQ() {
         },
         {
           question: "Can I convert multiple images at once?",
-          answer: "Yes! You can upload multiple images and convert them all at once. Each image can be converted to a different format if needed. For multiple images, you'll receive a ZIP file containing all converted images."
+          answer: "Yes. You can upload multiple images of the same detected input format and convert the batch to one selected output format. Multiple converted files can be downloaded as a ZIP archive."
         },
         {
           question: "How do I combine images into a PDF?",
@@ -31,11 +38,11 @@ export default function FAQ() {
         },
         {
           question: "How does metadata removal work?",
-          answer: "When you enable metadata removal (enabled by default), our tool strips all EXIF data from your images including GPS location, camera model, date taken, and other sensitive information. This protects your privacy when sharing photos online, especially important for social media and professional use."
+          answer: "Converted JPG, PNG, and WebP files are newly encoded by the browser rather than copied byte-for-byte. This output does not include the source EXIF block, such as GPS and camera information. Always verify sensitive files before sharing."
         },
         {
-          question: "Can I turn off auto-rotation or metadata removal?",
-          answer: "Yes! Both features are toggleable options on the converter page. You can enable or disable auto-rotation and metadata removal according to your needs. Auto-rotation is helpful for smartphone photos, while metadata removal is recommended for privacy protection."
+          question: "Can I turn off auto-rotation?",
+          answer: "Yes. Auto-rotation can be switched off. Metadata is not copied into converted image output because the browser creates a newly encoded file."
         }
       ]
     },
@@ -56,11 +63,11 @@ export default function FAQ() {
         },
         {
           question: "What's the quality of the converted images?",
-          answer: "The converted images maintain the original PDF resolution up to 300 DPI. PNG format preserves quality better for text-heavy documents, while JPG is more efficient for photo-heavy documents."
+          answer: "Pages are rendered at a 2× PDF.js scale. PNG uses lossless image compression and is often clearer for text and diagrams, while JPG at high quality usually creates smaller files for photo-heavy pages. Output pixel dimensions depend on the PDF page size."
         },
         {
           question: "How long does PDF conversion take?",
-          answer: "Conversion time depends on the number of pages and file size. Typically, each page takes 1-3 seconds to convert. The process happens entirely in your browser, so it's safe and private."
+          answer: "Conversion time depends on page count, page complexity, browser, memory, and device performance. Processing occurs in your browser and no PDF contents are uploaded to BravoConvert."
         }
       ]
     },
@@ -77,7 +84,7 @@ export default function FAQ() {
         },
         {
           question: "Does metadata removal affect image quality?",
-          answer: "No, metadata removal only removes the hidden data tags and doesn't affect the actual image pixels or visual quality. Your images will look exactly the same but without the privacy-sensitive information attached."
+          answer: "Re-encoding can change file size and may slightly change image quality for lossy JPG or WebP output. The source EXIF block is not copied to the converted output."
         },
         {
           question: "Which smartphones benefit most from auto-rotation?",
@@ -94,7 +101,7 @@ export default function FAQ() {
       questions: [
         {
           question: "Is my data safe and private?",
-          answer: "Absolutely! All file processing happens directly in your browser using advanced web workers. Your files are never uploaded to our servers, ensuring complete privacy and security. Additionally, our metadata removal feature strips location data and other sensitive information from your photos for extra privacy protection."
+          answer: "File contents are processed in your browser and are not uploaded to BravoConvert. The website still uses Google Analytics and Google AdSense, which may process usage, device, cookie, and advertising information as described in our Privacy Policy."
         },
         {
           question: "Do I need to create an account?",
@@ -102,7 +109,7 @@ export default function FAQ() {
         },
         {
           question: "What browsers are supported?",
-          answer: "BravoConvert works on all modern browsers including Chrome, Firefox, Safari, and Edge. For the best experience, we recommend using the latest version of your browser."
+          answer: "BravoConvert targets current Chrome, Edge, Firefox, and Safari releases. Image worker, PDF rendering, download, and encoding support can vary by browser and device; use an up-to-date browser and keep original files."
         },
         {
           question: "Are there any usage limits?",
@@ -162,4 +169,4 @@ export default function FAQ() {
       </div>
     </main>
   );
-} 
+}
