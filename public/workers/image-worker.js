@@ -56,15 +56,36 @@ function createOrientedCanvas(bitmap, orientation) {
   return canvas;
 }
 
+async function encodeToTarget(canvas, type, quality, targetBytes) {
+  let outputBlob = await canvas.convertToBlob({ type, quality });
+  if (!targetBytes || !['image/jpeg', 'image/webp'].includes(type) || outputBlob.size <= targetBytes) return outputBlob;
+
+  let low = 0.1;
+  let high = Math.max(0.1, quality || 0.85);
+  let best = outputBlob;
+  for (let attempt = 0; attempt < 7; attempt += 1) {
+    const candidateQuality = (low + high) / 2;
+    const candidate = await canvas.convertToBlob({ type, quality: candidateQuality });
+    if (candidate.size < best.size) best = candidate;
+    if (candidate.size <= targetBytes) {
+      best = candidate;
+      low = candidateQuality;
+    } else {
+      high = candidateQuality;
+    }
+  }
+  return best;
+}
+
 async function convertImage(payload) {
-  const { buffer, autorotate, outType, quality, originalName } = payload;
+  const { buffer, autorotate, outType, quality, originalName, targetBytes } = payload;
   const orientation = autorotate ? readJpegOrientation(buffer) : 1;
   const sourceBlob = new Blob([buffer]);
   const bitmap = await createImageBitmap(sourceBlob, { imageOrientation: 'none' });
 
   try {
     const canvas = createOrientedCanvas(bitmap, orientation);
-    const outputBlob = await canvas.convertToBlob({ type: outType, quality });
+    const outputBlob = await encodeToTarget(canvas, outType, quality, targetBytes);
     if (outputBlob.type !== outType) {
       throw new Error(`This browser cannot encode ${outType}.`);
     }

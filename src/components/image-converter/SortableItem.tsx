@@ -159,6 +159,9 @@ export function SortableItem({
                   <div className="text-xs text-gray-500">
                     {result.inSize} → {result.outSize} ({result.time}s)
                   </div>
+                  <div className={`text-xs font-medium ${result.savings >= 0 ? 'text-green-700' : 'text-amber-700'}`}>
+                    {result.width} × {result.height}px · {result.savings >= 0 ? `${result.savings}% smaller` : `${Math.abs(result.savings)}% larger`}
+                  </div>
                   <Button
                     size="sm"
                     onClick={() => onDownload(idx)}
@@ -238,6 +241,10 @@ export function SortableItem({
                 <span>Converted</span>
               </div>
               <span>{result.inSize} → {result.outSize}</span>
+              <span>{result.width} × {result.height}px</span>
+              <span className={result.savings >= 0 ? 'text-green-700' : 'text-amber-700'}>
+                {result.savings >= 0 ? `${result.savings}% smaller` : `${Math.abs(result.savings)}% larger`}
+              </span>
               <span>{result.time}s</span>
             </div>
           ) : (

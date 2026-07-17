@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Navigation from "@/components/Navigation";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
+import AdSenseAutoAds from "@/components/AdSenseAutoAds";
 import Link from "next/link";
 
 export const metadata: Metadata = {
@@ -94,19 +95,12 @@ export default function RootLayout({
         
         {/* Canonical URL and RSS Feed */}
         <link rel="alternate" type="application/rss+xml" title="BravoConvert File Converter RSS Feed" href="https://bravoconvert.com/feed.xml" />
-        
-        
-        {/* Google AdSense 자동 광고 */}
-        <script 
-          async 
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6552891879490275"
-          crossOrigin="anonymous"
-        ></script>
       </head>
       <body
         className="antialiased text-black"
       >
         <GoogleAnalytics />
+        <AdSenseAutoAds />
         <Navigation />
         <div className="pt-8">
           {children}

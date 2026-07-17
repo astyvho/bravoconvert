@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useReducer, useCallback, useMemo, useEffect } from "react";
+import { useRef, useReducer, useCallback, useMemo, useEffect, useState } from "react";
 import JSZip from "jszip";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -158,6 +158,24 @@ export default function ImageConverter() {
   const activeConversionsRef = useRef(0);
   const MAX_CONCURRENT_CONVERSIONS = 2;
   const MAX_IMAGE_SIZE = 10 * 1024 * 1024;
+  const [compressionEnabled, setCompressionEnabled] = useState(false);
+  const [quality, setQuality] = useState(85);
+  const [targetSizeKb, setTargetSizeKb] = useState('');
+
+  const conversionOptions = useMemo<ConvertOptions>(() => ({
+    autorotate,
+    stripMetadata,
+    quality: compressionEnabled ? quality / 100 : 0.92,
+    targetBytes: compressionEnabled && targetSizeKb ? Number(targetSizeKb) * 1024 : undefined,
+  }), [autorotate, stripMetadata, compressionEnabled, quality, targetSizeKb]);
+
+  const resetConvertedResults = useCallback(() => {
+    resultArr.forEach((result) => {
+      if (result?.url) URL.revokeObjectURL(result.url);
+      if (result?.thumb) URL.revokeObjectURL(result.thumb);
+    });
+    if (fileArr.length > 0) dispatch({ type: 'SET_RESULTS', payload: fileArr.map(() => null) });
+  }, [fileArr, resultArr]);
 
   // Worker initialization and cleanup
   useEffect(() => {
@@ -357,7 +375,8 @@ export default function ImageConverter() {
   // Fallback conversion using main thread
   const convertWithCanvas = useCallback(async (
     file: File, 
-    format: string
+    format: string,
+    options: ConvertOptions = {}
   ): Promise<any> => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -377,7 +396,7 @@ export default function ImageConverter() {
           canvas.height = img.height;
           
           // Draw image
-          ctx.drawImage(img, 0, 0);
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
           
           // Convert to blob
           canvas.toBlob((blob) => {
@@ -418,7 +437,7 @@ export default function ImageConverter() {
                 });
               }, 'image/webp', 0.7);
             });
-          }, `image/${format}`, format === 'jpeg' || format === 'webp' ? 0.9 : undefined);
+          }, `image/${format}`, format === 'jpeg' || format === 'webp' ? options.quality ?? 0.85 : undefined);
         };
         
         img.onerror = () => reject(new Error('Image load failed'));
@@ -449,7 +468,7 @@ export default function ImageConverter() {
     try {
       if (!workerRef.current) {
         console.warn('Worker not available, using fallback');
-        return await convertWithCanvas(file, format);
+        return await convertWithCanvas(file, format, options);
       }
       
       return new Promise(async (resolve, reject) => {
@@ -463,7 +482,7 @@ export default function ImageConverter() {
         const timeout = setTimeout(() => {
           conversionQueueRef.current = conversionQueueRef.current.filter(item => item.id !== id);
           console.warn('Worker timeout, using fallback');
-          convertWithCanvas(file, format).then(resolve).catch(reject);
+          convertWithCanvas(file, format, options).then(resolve).catch(reject);
         }, 15000);
         
         // Store promise handlers for this conversion
@@ -489,7 +508,8 @@ export default function ImageConverter() {
             autorotate: enableAutorotate,
             stripMetadata: enableStripMetadata,
             outType: `image/${format}`,
-            quality: (format === 'jpeg' || format === 'webp') ? 0.9 : undefined,
+            quality: (format === 'jpeg' || format === 'webp') ? options.quality ?? 0.85 : undefined,
+            targetBytes: options.targetBytes,
             originalName: file.name
           }
         }, [buffer]); // Transfer ownership
@@ -497,7 +517,7 @@ export default function ImageConverter() {
       
     } catch (error) {
       console.warn('Worker failed, using fallback:', error);
-      return await convertWithCanvas(file, format);
+      return await convertWithCanvas(file, format, options);
     }
   }, [convertWithCanvas]);
 
@@ -524,7 +544,7 @@ export default function ImageConverter() {
           item.file, 
           idx,
           outputCodec,
-          { autorotate, stripMetadata }
+          conversionOptions
         );
         
         const t1 = performance.now();
@@ -547,6 +567,9 @@ export default function ImageConverter() {
           time: ((t1 - t0) / 1000).toFixed(2),
           thumb,
           blob: outputBlob,
+          savings: Math.round((1 - workerResult.outputSize / workerResult.originalSize) * 100),
+          width: workerResult.width,
+          height: workerResult.height,
         };
         
         successCount++;
@@ -941,6 +964,54 @@ export default function ImageConverter() {
           </div>
         )}
       </motion.div>
+
+      {toFormat.label !== "PDF" && (
+        <section className="mb-6 space-y-4" aria-labelledby="image-optimization-title">
+          <div className="flex items-end justify-between gap-3 px-1">
+            <div>
+              <h2 id="image-optimization-title" className="text-lg font-bold text-black">Image options</h2>
+              <p className="text-sm text-gray-600">Optionally reduce the converted image file size.</p>
+            </div>
+            {compressionEnabled && (
+              <button
+                type="button"
+                className="shrink-0 text-sm font-medium underline text-gray-700 hover:text-black"
+                onClick={() => {
+                  resetConvertedResults();
+                  setCompressionEnabled(false);
+                  setQuality(85);
+                  setTargetSizeKb('');
+                }}
+              >
+                Reset all
+              </button>
+            )}
+          </div>
+
+          <div className={`rounded-2xl bg-white shadow-lg border p-5 transition-colors ${compressionEnabled ? 'border-black' : 'border-gray-200'}`}>
+            <button type="button" aria-expanded={compressionEnabled} disabled={toFormat.label === 'PNG'} className="flex w-full items-center justify-between gap-4 text-left disabled:cursor-not-allowed disabled:opacity-60" onClick={() => { resetConvertedResults(); setCompressionEnabled((enabled) => !enabled); }}>
+              <span>
+                <span className="flex items-center gap-2 text-base font-bold text-black">Compress</span>
+                <span className="mt-1 block text-sm text-gray-600">Balance image quality and file size.{toFormat.label === 'PNG' ? ' Choose JPG or WebP to use compression.' : ''}</span>
+              </span>
+              <span className={`rounded-full px-3 py-1 text-xs font-semibold ${compressionEnabled ? 'bg-black text-white' : 'bg-gray-100 text-gray-600'}`}>{compressionEnabled ? 'On' : 'Optional'}</span>
+            </button>
+
+            {compressionEnabled && toFormat.label !== 'PNG' && (
+              <div className="mt-5 grid gap-5 border-t border-gray-100 pt-5 md:grid-cols-2">
+                <label className="text-sm font-medium text-gray-700">Quality: {quality}%
+                  <input type="range" min="10" max="100" step="1" value={quality} onChange={(event) => { resetConvertedResults(); setQuality(Number(event.target.value)); }} className="mt-4 w-full accent-black" />
+                  <span className="mt-1 flex justify-between text-xs font-normal text-gray-500"><span>Smaller file</span><span>Higher quality</span></span>
+                </label>
+                <label className="text-sm font-medium text-gray-700">Target size (KB) <span className="font-normal text-gray-500">— optional</span>
+                  <input type="number" min="10" inputMode="numeric" value={targetSizeKb} onChange={(event) => { resetConvertedResults(); setTargetSizeKb(event.target.value); }} placeholder="No size limit" className="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2.5 text-black focus:border-black focus:outline-none" />
+                  <span className="mt-1 block text-xs font-normal text-gray-500">We reduce quality only as much as needed to approach this size.</span>
+                </label>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
 
       {/* EXIF Options */}
       <div className="flex flex-wrap gap-4 items-center justify-center text-xs text-gray-600 mb-4">

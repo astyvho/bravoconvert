@@ -7,10 +7,15 @@ export type ResultItem = {
   outSize: string;
   time: string;
   thumb: string;
-  blob: Blob; // 변환된 blob을 직접 저장
+  blob: Blob;
+  savings: number;
+  width: number;
+  height: number;
 };
 
 export type ConvertOptions = {
   autorotate?: boolean;
   stripMetadata?: boolean;
+  quality?: number;
+  targetBytes?: number;
 };
