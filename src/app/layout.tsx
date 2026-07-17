@@ -90,7 +90,7 @@ export default function RootLayout({
         <meta name="naver-site-verification" content="d6ff057d950b725e2fa3332f0d42c3b1d9546034" />
         
         {/* Google 애드센스 소유권 확인 */}
-        <meta name="google-adsense-account" content="ca-pub-5227371483154382" />
+        <meta name="google-adsense-account" content="ca-pub-6552891879490275" />
         
         {/* Canonical URL and RSS Feed */}
         <link rel="alternate" type="application/rss+xml" title="BravoConvert File Converter RSS Feed" href="https://bravoconvert.com/feed.xml" />
@@ -99,7 +99,7 @@ export default function RootLayout({
         {/* Google AdSense 자동 광고 */}
         <script 
           async 
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5227371483154382"
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6552891879490275"
           crossOrigin="anonymous"
         ></script>
       </head>
