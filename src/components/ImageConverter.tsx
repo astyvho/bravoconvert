@@ -270,7 +270,7 @@ export default function ImageConverter() {
     return null;
   }, []);
 
-  const addFiles = useCallback((files: FileList | null) => {
+  const addFiles = useCallback((files: FileList | File[] | null) => {
     if (!files) return;
     
     const fileArray = Array.from(files);
@@ -336,6 +336,57 @@ export default function ImageConverter() {
     
     dispatch({ type: 'ADD_FILES', payload: validFiles });
   }, [addFormat, detectFileFormat, MAX_IMAGE_SIZE]);
+
+  useEffect(() => {
+    const handlePaste = (event: ClipboardEvent) => {
+      if (isLoading || !event.clipboardData) return;
+
+      const target = event.target;
+      if (target instanceof HTMLElement && (
+        target.isContentEditable ||
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA'
+      )) return;
+
+      const imageItems = Array.from(event.clipboardData.items)
+        .filter(item => item.kind === 'file' && ['image/jpeg', 'image/png', 'image/webp'].includes(item.type));
+      if (imageItems.length === 0) return;
+
+      const now = new Date();
+      const timestamp = [
+        now.getFullYear(),
+        String(now.getMonth() + 1).padStart(2, '0'),
+        String(now.getDate()).padStart(2, '0'),
+        '-',
+        String(now.getHours()).padStart(2, '0'),
+        String(now.getMinutes()).padStart(2, '0'),
+        String(now.getSeconds()).padStart(2, '0'),
+      ].join('');
+      const extensionByMime: Record<string, string> = {
+        'image/jpeg': 'jpg',
+        'image/png': 'png',
+        'image/webp': 'webp',
+      };
+      const pastedFiles = imageItems.flatMap((item, index) => {
+        const blob = item.getAsFile();
+        if (!blob) return [];
+        const suffix = imageItems.length > 1 ? `-${index + 1}` : '';
+        return [new File(
+          [blob],
+          `pasted-image-${timestamp}${suffix}.${extensionByMime[item.type]}`,
+          { type: item.type, lastModified: now.getTime() },
+        )];
+      });
+
+      if (pastedFiles.length > 0) {
+        event.preventDefault();
+        addFiles(pastedFiles);
+      }
+    };
+
+    window.addEventListener('paste', handlePaste);
+    return () => window.removeEventListener('paste', handlePaste);
+  }, [addFiles, isLoading]);
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -828,7 +879,7 @@ export default function ImageConverter() {
         </p>
         <p className="text-sm text-gray-600 mb-2 flex items-center justify-center">
           <Sparkles className="w-4 h-4 text-gray-600 mr-2" />
-          Drag and drop JPG, PNG or WebP images — the input type is detected automatically.
+          Drag and drop or paste JPG, PNG or WebP images — the input type is detected automatically.
         </p>
       </div>
       
@@ -885,7 +936,7 @@ export default function ImageConverter() {
               Add Images to Convert
             </div>
             <div className="text-black text-base mb-2">
-              Drag & drop or {" "}
+              Drag & drop, paste with Ctrl+V / ⌘V, or {" "}
               <span className="text-black font-bold cursor-pointer underline hover:text-gray-700" onClick={e => { e.stopPropagation(); fileInputRef.current?.click(); }}>
                 Select Images
               </span>
