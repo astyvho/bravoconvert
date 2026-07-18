@@ -205,6 +205,12 @@ export default function ImageConverter() {
     
     workerRef.current.onerror = (error) => {
       console.error('Worker error:', error);
+      const pendingConversions = conversionQueueRef.current;
+      conversionQueueRef.current = [];
+      activeConversionsRef.current = 0;
+      pendingConversions.forEach(item => item.reject(new Error('Image worker stopped unexpectedly.')));
+      workerRef.current?.terminate();
+      workerRef.current = null;
     };
     
     return () => {
@@ -404,6 +410,10 @@ export default function ImageConverter() {
               reject(new Error('Canvas conversion failed'));
               return;
             }
+            if (blob.type !== `image/${format}`) {
+              reject(new Error(`This browser cannot encode image/${format}.`));
+              return;
+            }
             
             blob.arrayBuffer().then(outputBuffer => {
               // Create thumbnail
@@ -471,18 +481,19 @@ export default function ImageConverter() {
         return await convertWithCanvas(file, format, options);
       }
       
-      return new Promise(async (resolve, reject) => {
-        const { autorotate: enableAutorotate = true, stripMetadata: enableStripMetadata = true } = options;
-        
-        // Read file as ArrayBuffer
-        const buffer = await file.arrayBuffer();
+      const { autorotate: enableAutorotate = true, stripMetadata: enableStripMetadata = true } = options;
+      // The File remains intact after this transferable buffer is detached, so the
+      // main-thread fallback can safely read the image again.
+      const buffer = await file.arrayBuffer();
+
+      const workerResult = await new Promise<any>((resolve, reject) => {
         const id = `${file.name}_${fileIndex}_${Date.now()}`;
         
         // Set timeout for worker response
         const timeout = setTimeout(() => {
           conversionQueueRef.current = conversionQueueRef.current.filter(item => item.id !== id);
-          console.warn('Worker timeout, using fallback');
-          convertWithCanvas(file, format, options).then(resolve).catch(reject);
+          activeConversionsRef.current = Math.max(0, activeConversionsRef.current - 1);
+          reject(new Error('Image worker timed out.'));
         }, 15000);
         
         // Store promise handlers for this conversion
@@ -498,6 +509,7 @@ export default function ImageConverter() {
             reject(error);
           }
         });
+        activeConversionsRef.current++;
         
         // Send to worker with transferable
         workerRef.current!.postMessage({
@@ -514,7 +526,7 @@ export default function ImageConverter() {
           }
         }, [buffer]); // Transfer ownership
       });
-      
+      return workerResult;
     } catch (error) {
       console.warn('Worker failed, using fallback:', error);
       return await convertWithCanvas(file, format, options);
