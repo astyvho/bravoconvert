@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { Image, FileText } from "lucide-react";
+import { CircleAlert, FileImage, FileText, Image, ImageIcon as ImageFormatIcon, ShieldCheck } from "lucide-react";
 
 export default function Home() {
   return (
@@ -60,21 +60,33 @@ export default function Home() {
 
         <section className="max-w-3xl mx-auto mt-16 space-y-10 text-gray-800">
           <div>
-            <h2 className="text-3xl font-bold text-black mb-4">File conversion that stays on your device</h2>
+            <h2 className="mb-4 flex items-center gap-3 text-3xl font-bold text-black">
+              <ShieldCheck className="h-8 w-8 flex-shrink-0 text-gray-700" aria-hidden="true" />
+              File conversion that stays on your device
+            </h2>
             <p className="leading-7">BravoConvert performs image conversion and PDF rendering in your browser. The contents of files you select are not uploaded to a BravoConvert conversion server. This avoids waiting for an upload and is useful for documents you prefer to keep on your own device.</p>
           </div>
           <div className="grid md:grid-cols-2 gap-6">
             <div className="rounded-xl border border-gray-200 p-6 bg-gray-50">
-              <h2 className="text-xl font-bold text-black mb-3">Choose an image format</h2>
+              <h2 className="mb-3 flex items-center gap-3 text-xl font-bold text-black">
+                <ImageFormatIcon className="h-6 w-6 flex-shrink-0 text-gray-700" aria-hidden="true" />
+                Choose an image format
+              </h2>
               <p className="leading-7">Use JPG for compact photographs, PNG for lossless graphics and transparency, or WebP for modern web delivery. Supported files can be processed as a batch and downloaded together as a ZIP archive.</p>
             </div>
             <div className="rounded-xl border border-gray-200 p-6 bg-gray-50">
-              <h2 className="text-xl font-bold text-black mb-3">Turn PDF pages into images</h2>
+              <h2 className="mb-3 flex items-center gap-3 text-xl font-bold text-black">
+                <FileImage className="h-6 w-6 flex-shrink-0 text-gray-700" aria-hidden="true" />
+                Turn PDF pages into images
+              </h2>
               <p className="leading-7">PDF pages are rendered with PDF.js and exported as JPG or PNG. PNG is often suitable for text and diagrams; JPG generally produces smaller files for pages dominated by photographs.</p>
             </div>
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-black mb-3">Before converting</h2>
+            <h2 className="mb-3 flex items-center gap-3 text-2xl font-bold text-black">
+              <CircleAlert className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+              Before converting
+            </h2>
             <p className="leading-7">Keep a backup of every original. Conversion quality, speed, memory use and format support depend on your browser and device. Image uploads are limited to 10MB per file and PDF uploads to 50MB. Password-protected PDFs are not supported.</p>
           </div>
         </section>

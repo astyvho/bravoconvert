@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Info, ListChecks, ShieldCheck, Wrench } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "About BravoConvert",
@@ -12,19 +13,31 @@ export default function AboutPage() {
     <main className="min-h-screen bg-gray-50 py-12 px-4">
       <article className="max-w-4xl mx-auto bg-white rounded-2xl p-6 md:p-10 shadow-lg border border-gray-200 space-y-8">
         <header>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">About BravoConvert</h1>
+          <h1 className="mb-4 flex items-center gap-4 text-4xl font-bold md:text-5xl">
+            <Info className="h-10 w-10 flex-shrink-0 text-gray-700 md:h-12 md:w-12" aria-hidden="true" />
+            About BravoConvert
+          </h1>
           <p className="text-xl text-gray-700">Straightforward file conversion with local browser processing.</p>
         </header>
         <section>
-          <h2 className="text-2xl font-bold mb-3">What the service does</h2>
+          <h2 className="mb-3 flex items-center gap-3 text-2xl font-bold">
+            <Wrench className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+            What the service does
+          </h2>
           <p className="text-gray-700 leading-7">BravoConvert converts common image formats, combines images into PDF documents, and renders PDF pages as JPG or PNG images. The conversion work runs on your device, so selected files are not uploaded to a BravoConvert conversion server.</p>
         </section>
         <section>
-          <h2 className="text-2xl font-bold mb-3">Why local processing matters</h2>
+          <h2 className="mb-3 flex items-center gap-3 text-2xl font-bold">
+            <ShieldCheck className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+            Why local processing matters
+          </h2>
           <p className="text-gray-700 leading-7">Local processing reduces upload time and limits exposure of document contents. Performance and format compatibility still depend on your browser, available memory, and device capabilities, so keeping original backups is recommended.</p>
         </section>
         <section>
-          <h2 className="text-2xl font-bold mb-3">Supported workflows</h2>
+          <h2 className="mb-3 flex items-center gap-3 text-2xl font-bold">
+            <ListChecks className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+            Supported workflows
+          </h2>
           <ul className="list-disc pl-6 space-y-2 text-gray-700">
             <li>JPG/JPEG, PNG, and WebP conversion</li>
             <li>Batch conversion and ZIP download</li>

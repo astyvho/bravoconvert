@@ -1,5 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import {
+  BarChart3,
+  Cookie,
+  Database,
+  Globe,
+  Lock,
+  RefreshCw,
+  ShieldCheck,
+  SlidersHorizontal,
+  UserCheck,
+} from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Privacy Policy | BravoConvert",
@@ -38,12 +49,17 @@ const sections = [
   },
 ];
 
+const sectionIcons = [Lock, BarChart3, Cookie, SlidersHorizontal, Globe, Database, UserCheck];
+
 export default function PrivacyPolicyPage() {
   return (
     <main className="min-h-screen bg-gray-50 py-12 px-4">
       <article className="max-w-4xl mx-auto bg-white rounded-2xl p-6 md:p-10 shadow-lg border border-gray-200">
         <header className="mb-10">
-          <h1 className="text-4xl md:text-5xl font-bold text-black mb-4">Privacy Policy</h1>
+          <h1 className="mb-4 flex items-center gap-4 text-4xl font-bold text-black md:text-5xl">
+            <ShieldCheck className="h-10 w-10 flex-shrink-0 text-gray-700 md:h-12 md:w-12" aria-hidden="true" />
+            Privacy Policy
+          </h1>
           <p className="text-gray-700">Effective and last updated: July 17, 2026</p>
         </header>
 
@@ -52,9 +68,15 @@ export default function PrivacyPolicyPage() {
         </div>
 
         <div className="space-y-9">
-          {sections.map((section, index) => (
+          {sections.map((section, index) => {
+            const SectionIcon = sectionIcons[index];
+
+            return (
             <section key={section.title}>
-              <h2 className="text-2xl font-bold text-black mb-3">{index + 1}. {section.title}</h2>
+              <h2 className="mb-3 flex items-center gap-3 text-2xl font-bold text-black">
+                <SectionIcon className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+                {index + 1}. {section.title}
+              </h2>
               <p className="text-gray-700 leading-7">{section.body}</p>
               {section.title === "Consent and your choices" && (
                 <p className="mt-3 text-gray-700">
@@ -67,11 +89,15 @@ export default function PrivacyPolicyPage() {
                 </p>
               )}
             </section>
-          ))}
+            );
+          })}
         </div>
 
         <section className="mt-10 pt-8 border-t border-gray-200">
-          <h2 className="text-2xl font-bold text-black mb-3">8. Changes to this policy</h2>
+          <h2 className="mb-3 flex items-center gap-3 text-2xl font-bold text-black">
+            <RefreshCw className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+            8. Changes to this policy
+          </h2>
           <p className="text-gray-700 leading-7">We may update this policy when the service or applicable requirements change. The current effective date will be shown at the top of this page.</p>
           <p className="mt-4 text-gray-700">Questions? See our <Link className="underline font-medium" href="/contact">contact page</Link>.</p>
         </section>
