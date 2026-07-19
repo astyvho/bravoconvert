@@ -15,18 +15,14 @@ import { ADD_FORMATS, TO_FORMATS } from "./image-converter/formats";
 // import { readOrientation, getCanvasWithOrientation } from "@/lib/image-exif";
 
 /**
- * ImageConverter Component with EXIF Auto-Rotation Support
+ * Browser-based image conversion component
  * 
  * Features:
- * - Automatic EXIF orientation detection and correction
  * - Metadata removal during conversion process
- * - User toggleable options for autorotate and stripMetadata
- * - Fallback to basic conversion if EXIF processing fails
- * - Support for all EXIF orientations (1-8)
+ * - Batch conversion and ZIP download
  * - Performance optimized with OffscreenCanvas and ImageBitmap
  * 
  * Quick Test Checklist:
- * - iPhone vertical photo upload with autorotate ON/OFF comparison
  * - stripMetadata ON should remove EXIF from re-encoded results
  * - Multiple file selection should apply options to all files
  */
@@ -1076,26 +1072,10 @@ export default function ImageConverter() {
         </section>
       )}
 
-      {/* EXIF Options */}
-      <div className="flex flex-wrap gap-4 items-center justify-center text-xs text-gray-600 mb-4">
-        <label className="flex items-center gap-1.5 cursor-pointer hover:text-gray-800 transition-colors">
-          <input
-            type="checkbox"
-            checked={autorotate}
-            onChange={() => dispatch({ type: 'TOGGLE_AUTOROTATE' })}
-            className="w-3.5 h-3.5 text-black bg-gray-100 border-gray-300 rounded focus:ring-black focus:ring-1"
-            aria-label="Auto-rotate images"
-          />
-          <span className="font-medium">Auto-rotate images</span>
-        </label>
-        
-        <span className="font-medium">Converted images are re-encoded without EXIF metadata.</span>
-      </div>
-
-      {/* Feature Description */}
+      {/* Processing description */}
       <div className="text-center text-sm text-gray-600 mb-6 max-w-2xl mx-auto space-y-2">
-        <p><span className="font-medium text-gray-700">Auto-rotate:</span> Automatically detects and corrects orientation of iPhone/camera photos</p>
-        <p><span className="font-medium text-gray-700">Metadata:</span> Converted JPG, PNG and WebP files are newly encoded without EXIF metadata.</p>
+        <p><span className="font-medium text-gray-700">Private by design:</span> Image conversion runs locally in your browser.</p>
+        <p><span className="font-medium text-gray-700">Fresh output:</span> Converted JPG, PNG and WebP files are newly encoded without copying source EXIF metadata.</p>
       </div>
 
       {toFormat.label === "PDF" && fileArr.length > 0 && (

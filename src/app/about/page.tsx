@@ -30,7 +30,7 @@ export default function AboutPage() {
             <li>Batch conversion and ZIP download</li>
             <li>Multiple images combined into one PDF</li>
             <li>PDF pages rendered to JPG or PNG</li>
-            <li>EXIF orientation correction and metadata-free re-encoding for supported JPEG images</li>
+            <li>Quality controls and optional target file size for JPG and WebP output</li>
           </ul>
         </section>
         <p className="text-gray-700">Read the <Link className="underline font-medium" href="/how-to-use">usage guide</Link>, review the <Link className="underline font-medium" href="/faq">FAQ</Link>, or <Link className="underline font-medium" href="/contact">contact us</Link>.</p>

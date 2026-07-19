@@ -7,18 +7,14 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://bravoconvert.com"),
-  title: "BravoConvert - Free Online Image Converter with Auto-Rotation & Privacy Protection",
-  description: "Convert images and PDFs with automatic photo rotation correction and metadata removal for privacy. Free EXIF auto-rotate, batch conversion, and instant processing in your browser. Perfect for iPhone photos, social media, and professional use.",
+  title: "BravoConvert - Free Online Image and PDF Converter",
+  description: "Convert JPG, PNG and WebP images, combine images into PDF, or render PDF pages as JPG and PNG. Free batch conversion processed locally in your browser.",
   keywords: [
     "file converter",
     "free file converter",
     "online file converter",
     "image converter",
     "PDF converter",
-    "auto rotate images",
-    "EXIF rotation fix",
-    "photo orientation correction",
-    "iPhone photo rotation",
     "metadata removal",
     "EXIF data removal",
     "privacy protection",
@@ -44,20 +40,19 @@ export const metadata: Metadata = {
     "file conversion tool",
     "image format converter",
     "PDF image converter",
-    "rotate photos automatically",
-    "fix sideways photos",
-    "correct image orientation"
+    "image compression",
+    "images to PDF"
   ],
   openGraph: {
-    title: "BravoConvert - Smart Image Converter with Auto-Rotation",
-    description: "Automatically fix photo orientation and remove metadata for privacy. Free online converter with EXIF auto-rotate feature.",
+    title: "BravoConvert - Free Online Image and PDF Converter",
+    description: "Convert images in batches, combine images into PDF, and turn PDF pages into JPG or PNG—all in your browser.",
     type: "website",
     url: "https://bravoconvert.com"
   },
   twitter: {
     card: "summary_large_image",
-    title: "BravoConvert - Auto-Rotate & Privacy-Safe Image Converter",
-    description: "Fix sideways iPhone photos automatically! Remove metadata for privacy. Free online image converter."
+    title: "BravoConvert - Browser-Based Image and PDF Converter",
+    description: "Convert JPG, PNG and WebP images or export PDF pages as images. Free, fast and no installation required."
   },
   alternates: {
     canonical: "/",

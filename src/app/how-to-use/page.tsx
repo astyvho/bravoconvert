@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Upload, Image, FileText, Download, Zap, Shield, BookOpen, RotateCw, EyeOff } from "lucide-react";
+import { Upload, Image, FileText, Download, Zap, Shield, BookOpen, Archive, SlidersHorizontal } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "How to Use BravoConvert",
@@ -73,25 +73,25 @@ export default function HowToUsePage() {
             </div>
           </div>
 
-          {/* New Smart Features Section */}
+          {/* Conversion Features Section */}
           <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
             <h4 className="text-lg font-bold text-black mb-4 flex items-center">
               <span className="mr-2">🎯</span>
-              Smart Features (NEW!)
+              Useful Conversion Tools
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex items-start space-x-3">
-                <RotateCw className="w-5 h-5 text-blue-600 mt-1 flex-shrink-0" />
+                <SlidersHorizontal className="w-5 h-5 text-blue-600 mt-1 flex-shrink-0" />
                 <div>
-                  <div className="font-semibold text-black">Auto-Rotate Photos</div>
-                  <div className="text-sm text-gray-700">Automatically fixes sideways iPhone photos using EXIF data</div>
+                  <div className="font-semibold text-black">Quality & File Size Controls</div>
+                  <div className="text-sm text-gray-700">Adjust JPG and WebP quality or set an optional target size</div>
                 </div>
               </div>
               <div className="flex items-start space-x-3">
-                <EyeOff className="w-5 h-5 text-blue-600 mt-1 flex-shrink-0" />
+                <Archive className="w-5 h-5 text-blue-600 mt-1 flex-shrink-0" />
                 <div>
-                  <div className="font-semibold text-black">Privacy Protection</div>
-                  <div className="text-sm text-gray-700">Creates new output files without copying source EXIF metadata</div>
+                  <div className="font-semibold text-black">Batch Downloads</div>
+                  <div className="text-sm text-gray-700">Convert multiple images and download the results together as ZIP</div>
                 </div>
               </div>
             </div>
@@ -102,7 +102,7 @@ export default function HowToUsePage() {
             <ul className="text-base text-gray-700 space-y-2">
               <li>• <strong className="text-black">Multiple Files:</strong> You can upload multiple images at once</li>
               <li>• <strong className="text-black">PDF Creation:</strong> Combine multiple images into a single PDF</li>
-              <li>• <strong className="text-black">Smart Option:</strong> Toggle EXIF orientation correction as needed</li>
+              <li>• <strong className="text-black">Compression:</strong> Adjust quality or choose a target size for JPG and WebP</li>
               <li>• <strong className="text-black">File Size:</strong> Each image supports up to 10MB</li>
             </ul>
           </div>
@@ -198,7 +198,7 @@ export default function HowToUsePage() {
                 <li>• Fast processing regardless of internet speed</li>
                 <li>• Real-time conversion progress tracking</li>
                 <li>• No limits on number of conversions</li>
-                <li>• Clean interface without ads</li>
+                <li>• No software installation or account required</li>
               </ul>
             </div>
           </div>

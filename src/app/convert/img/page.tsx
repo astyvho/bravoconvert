@@ -3,13 +3,10 @@ import ImageConverter from "@/components/ImageConverter";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/convert/img" },
-  title: "Smart Image Converter with Auto-Rotation & Privacy Protection | BravoConvert",
-  description: "Convert JPG, PNG and WebP images with photo orientation correction and metadata-free re-encoding. Free batch conversion in your browser.",
+  title: "Free Image Converter - JPG, PNG, WebP and PDF | BravoConvert",
+  description: "Convert JPG, PNG and WebP images in batches, adjust output quality, reduce file size, or combine images into one PDF. Processing stays in your browser.",
   keywords: [
-    "smart image converter",
-    "auto rotate photos",
-    "EXIF rotation fix",
-    "iPhone photo orientation",
+    "image format converter",
     "metadata removal",
     "privacy protection",
     "strip EXIF data",
@@ -21,20 +18,20 @@ export const metadata: Metadata = {
     "free image converter",
     "online image converter",
     "browser image processing",
-    "fix sideways photos",
-    "correct photo orientation",
+    "image compression",
+    "images to PDF",
     "social media image prep",
     "professional photo converter"
   ],
   openGraph: {
-    title: "Smart Image Converter - Auto-Rotate & Privacy Protection",
-    description: "Automatically fix photo orientation and remove metadata. Perfect for iPhone photos and privacy-conscious users.",
+    title: "Free JPG, PNG and WebP Image Converter",
+    description: "Batch-convert images, control output quality, reduce file size, and combine images into PDF in your browser.",
     type: "website"
   },
   twitter: {
     card: "summary_large_image",
-    title: "Fix Sideways Photos Automatically!",
-    description: "Smart image converter with auto-rotation and privacy protection. Convert and fix iPhone photos instantly."
+    title: "Convert Images Without Installing Software",
+    description: "Convert JPG, PNG and WebP images in batches or combine them into a PDF directly in your browser."
   }
 };
 
@@ -49,7 +46,7 @@ export default function ImageConverterPage() {
             "@context": "https://schema.org",
             "@type": "WebApplication",
             "name": "BravoConvert Smart Image Converter",
-            "description": "Free online JPG, PNG and WebP converter with orientation correction and metadata-free re-encoding",
+            "description": "Free browser-based JPG, PNG and WebP batch converter with quality controls and PDF creation",
             "url": "https://bravoconvert.com/convert/img",
             "applicationCategory": "MultimediaApplication",
             "operatingSystem": "Any",
@@ -59,12 +56,11 @@ export default function ImageConverterPage() {
               "priceCurrency": "USD"
             },
             "featureList": [
-              "Automatic photo rotation correction",
               "EXIF metadata removal for privacy",
               "Batch image conversion",
               "Support for PNG, JPG and WebP formats",
               "Browser-based processing (no upload required)",
-              "iPhone photo orientation fixing"
+              "Image compression and PDF creation"
             ]
           })
         }}

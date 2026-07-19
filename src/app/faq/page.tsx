@@ -33,16 +33,16 @@ export default function FAQ() {
           answer: "Each image file can be up to 10MB. For PDF creation, the total size of all images should not exceed 50MB for optimal performance."
         },
         {
-          question: "What is the auto-rotation feature?",
-          answer: "Our auto-rotation feature automatically detects and corrects photo orientation using EXIF data. This is especially useful for iPhone photos that appear sideways. The feature reads the camera's orientation information and rotates images to display correctly, eliminating the need to manually rotate photos."
+          question: "Can I control image quality or file size?",
+          answer: "Yes. For JPG and WebP output, enable compression to choose a quality level and optionally enter a target size in KB. The result depends on the image and browser, so the target is an estimate rather than a guaranteed exact size."
         },
         {
           question: "How does metadata removal work?",
           answer: "Converted JPG, PNG, and WebP files are newly encoded by the browser rather than copied byte-for-byte. This output does not include the source EXIF block, such as GPS and camera information. Always verify sensitive files before sharing."
         },
         {
-          question: "Can I turn off auto-rotation?",
-          answer: "Yes. Auto-rotation can be switched off. Metadata is not copied into converted image output because the browser creates a newly encoded file."
+          question: "Do I need to install software?",
+          answer: "No. BravoConvert runs in a current web browser and does not require an app, extension, account, or login."
         }
       ]
     },
@@ -72,11 +72,11 @@ export default function FAQ() {
       ]
     },
     {
-      category: "Smart Features",
+      category: "Conversion Features",
       questions: [
         {
-          question: "Why are my iPhone photos appearing sideways?",
-          answer: "iPhone and other smartphones save orientation information in EXIF data rather than physically rotating the image. Some applications don't read this data correctly, causing photos to appear sideways. Our auto-rotation feature fixes this by reading the EXIF orientation data and physically rotating the image."
+          question: "Can I paste images from the clipboard?",
+          answer: "Yes. The image converter accepts supported JPG, PNG, and WebP images pasted from the clipboard in compatible browsers."
         },
         {
           question: "What EXIF data is removed for privacy?",
@@ -87,12 +87,12 @@ export default function FAQ() {
           answer: "Re-encoding can change file size and may slightly change image quality for lossy JPG or WebP output. The source EXIF block is not copied to the converted output."
         },
         {
-          question: "Which smartphones benefit most from auto-rotation?",
-          answer: "All modern smartphones including iPhone, Samsung Galaxy, Google Pixel, and others benefit from auto-rotation. This feature is particularly useful for photos taken in portrait mode or when the phone was rotated during capture."
+          question: "Can I change the order of images before creating a PDF?",
+          answer: "Yes. When PDF is selected as the output, use the reorder controls to arrange images before combining them into one PDF."
         },
         {
-          question: "Is the auto-rotation feature safe for professional use?",
-          answer: "Yes, our auto-rotation feature is safe for professional use. It reads standardized EXIF orientation values (1-8) and applies the correct rotation mathematically. This ensures accuracy and preserves image quality while fixing orientation issues."
+          question: "How are multiple converted files downloaded?",
+          answer: "You can download converted images individually or download multiple results together as a ZIP archive."
         }
       ]
     },
