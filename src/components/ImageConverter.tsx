@@ -462,49 +462,53 @@ export default function ImageConverter() {
           ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
           
           // Convert to blob
-          canvas.toBlob((blob) => {
-            if (!blob) {
-              reject(new Error('Canvas conversion failed'));
-              return;
-            }
-            if (blob.type !== `image/${format}`) {
-              reject(new Error(`This browser cannot encode image/${format}.`));
-              return;
-            }
-            
-            blob.arrayBuffer().then(outputBuffer => {
-              // Create thumbnail
+          canvas.toBlob(async (blob) => {
+            try {
+              let outputBuffer: ArrayBuffer;
+
+              if (blob?.type === `image/${format}`) {
+                outputBuffer = await blob.arrayBuffer();
+              } else if (format === 'webp') {
+                const { encode } = await import('@jsquash/webp');
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                outputBuffer = await encode(imageData, {
+                  quality: (options.quality ?? 0.85) * 100,
+                  low_memory: 1,
+                });
+              } else {
+                throw new Error(`This browser cannot encode image/${format}.`);
+              }
+
               const thumbCanvas = document.createElement('canvas');
               const thumbCtx = thumbCanvas.getContext('2d');
-              if (!thumbCtx) {
-                reject(new Error('Thumbnail canvas context not available'));
-                return;
-              }
+              if (!thumbCtx) throw new Error('Thumbnail canvas context not available');
+
               thumbCanvas.width = 150;
               thumbCanvas.height = 150;
               thumbCtx.drawImage(img, 0, 0, 150, 150);
-              
-              thumbCanvas.toBlob((thumbBlob) => {
-                if (!thumbBlob) {
-                  reject(new Error('Thumbnail creation failed'));
-                  return;
-                }
-                
-                thumbBlob.arrayBuffer().then(thumbBuffer => {
-                  resolve({
-                    outputBuffer,
-                    thumbBuffer,
-                    originalSize: file.size,
-                    outputSize: outputBuffer.byteLength,
-                    width: img.width,
-                    height: img.height,
-                    originalName: file.name,
-                    orientation: 1,
-                    thumbMimeType: 'image/jpeg'
-                  });
-                });
-              }, 'image/jpeg', 0.75);
-            });
+
+              const thumbBlob = await new Promise<Blob>((thumbResolve, thumbReject) => {
+                thumbCanvas.toBlob((result) => {
+                  if (result) thumbResolve(result);
+                  else thumbReject(new Error('Thumbnail creation failed'));
+                }, 'image/jpeg', 0.75);
+              });
+              const thumbBuffer = await thumbBlob.arrayBuffer();
+
+              resolve({
+                outputBuffer,
+                thumbBuffer,
+                originalSize: file.size,
+                outputSize: outputBuffer.byteLength,
+                width: img.width,
+                height: img.height,
+                originalName: file.name,
+                orientation: 1,
+                thumbMimeType: 'image/jpeg'
+              });
+            } catch (error) {
+              reject(error);
+            }
           }, `image/${format}`, format === 'jpeg' || format === 'webp' ? options.quality ?? 0.85 : undefined);
         };
         
