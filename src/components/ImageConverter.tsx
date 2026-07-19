@@ -77,6 +77,13 @@ const naturalSort = (a: string, b: string) => {
     return a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' });
 };
 
+const prefersMainThreadImageConversion = () => {
+  if (typeof navigator === 'undefined') return false;
+
+  return /iPad|iPhone|iPod/.test(navigator.userAgent)
+    || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+};
+
 function reducer(state: State, action: Action): State {
   switch (action.type) {
     case 'ADD_FILES': {
@@ -157,6 +164,7 @@ export default function ImageConverter() {
   const [compressionEnabled, setCompressionEnabled] = useState(false);
   const [quality, setQuality] = useState(85);
   const [targetSizeKb, setTargetSizeKb] = useState('');
+  const [conversionError, setConversionError] = useState<string | null>(null);
 
   const conversionOptions = useMemo<ConvertOptions>(() => ({
     autorotate,
@@ -175,6 +183,8 @@ export default function ImageConverter() {
 
   // Worker initialization and cleanup
   useEffect(() => {
+    if (prefersMainThreadImageConversion()) return;
+
     // Initialize worker
     workerRef.current = new Worker('/workers/image-worker.js');
     
@@ -489,10 +499,11 @@ export default function ImageConverter() {
                     width: img.width,
                     height: img.height,
                     originalName: file.name,
-                    orientation: 1
+                    orientation: 1,
+                    thumbMimeType: 'image/jpeg'
                   });
                 });
-              }, 'image/webp', 0.7);
+              }, 'image/jpeg', 0.75);
             });
           }, `image/${format}`, format === 'jpeg' || format === 'webp' ? options.quality ?? 0.85 : undefined);
         };
@@ -523,6 +534,10 @@ export default function ImageConverter() {
   ): Promise<any> => {
     // Try worker first, fallback to canvas if it fails
     try {
+      if (prefersMainThreadImageConversion()) {
+        return await convertWithCanvas(file, format, options);
+      }
+
       if (!workerRef.current) {
         console.warn('Worker not available, using fallback');
         return await convertWithCanvas(file, format, options);
@@ -581,13 +596,14 @@ export default function ImageConverter() {
   }, [convertWithCanvas]);
 
   const convertIndividualImages = async () => {
+    setConversionError(null);
     dispatch({ type: 'START_CONVERSION' });
     const results: (ResultItem | null)[] = [...resultArr];
     let successCount = 0;
     let failureCount = 0;
+    let firstFailureMessage = '';
     
-    // Process all files concurrently with worker queue
-    const conversionPromises = fileArr.map(async (item, idx) => {
+    const convertOne = async (item: FileItem, idx: number) => {
       if (results[idx]) { // Skip already converted
         successCount++;
         return;
@@ -614,7 +630,7 @@ export default function ImageConverter() {
           type: `image/${outputCodec}`
         });
         const thumbBlob = new Blob([workerResult.thumbBuffer], { 
-          type: 'image/webp' 
+          type: workerResult.thumbMimeType || 'image/webp'
         });
         const thumb = URL.createObjectURL(thumbBlob);
         
@@ -640,6 +656,9 @@ export default function ImageConverter() {
         
       } catch (error) {
         failureCount++;
+        if (!firstFailureMessage) {
+          firstFailureMessage = error instanceof Error ? error.message : 'Image conversion failed.';
+        }
         console.error(`✗ Failed to convert ${item.file.name}:`, error);
         
         // Keep slot as null for failed conversions
@@ -648,10 +667,16 @@ export default function ImageConverter() {
         // Update progress
         dispatch({ type: 'UPDATE_PROGRESS', payload: ((successCount + failureCount) / fileArr.length) * 100 });
       }
-    });
+    };
     
-    // Wait for all conversions to complete
-    await Promise.all(conversionPromises);
+    if (prefersMainThreadImageConversion()) {
+      // Keep iOS memory usage bounded to one full-resolution canvas at a time.
+      for (let idx = 0; idx < fileArr.length; idx++) {
+        await convertOne(fileArr[idx], idx);
+      }
+    } else {
+      await Promise.all(fileArr.map(convertOne));
+    }
     
     // Final update
     dispatch({ type: 'SET_RESULTS', payload: [...results] });
@@ -659,6 +684,11 @@ export default function ImageConverter() {
     // Summary notification
     if (failureCount > 0) {
       console.warn(`Conversion completed: ${successCount} successful, ${failureCount} failed`);
+      setConversionError(
+        successCount > 0
+          ? `${failureCount} image${failureCount === 1 ? '' : 's'} could not be converted. ${firstFailureMessage}`
+          : `Conversion failed. ${firstFailureMessage}`
+      );
     } else {
       console.log(`All ${successCount} files converted successfully!`);
     }
@@ -1020,6 +1050,14 @@ export default function ImageConverter() {
                 </Button>
               )}
             </div>
+            {conversionError && (
+              <p
+                role="alert"
+                className="mt-3 w-full rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
+              >
+                {conversionError} Try a smaller image or reload the page and try again.
+              </p>
+            )}
           </div>
         )}
       </motion.div>
