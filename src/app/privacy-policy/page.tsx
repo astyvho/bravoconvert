@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 const sections = [
   {
     title: "Files you convert",
-    body: "Images and PDF files selected in BravoConvert are processed locally in your browser. BravoConvert does not upload, receive, or store the contents of those files on its servers. Closing or refreshing the page clears the working session, although downloaded files remain on your device.",
+    body: "Images and PDF files selected for editing or conversion in BravoConvert are processed locally in your browser. BravoConvert does not upload, receive, or store the contents of those files on its servers. Closing or refreshing the page clears the working session, although downloaded files remain on your device.",
   },
   {
     title: "Analytics and technical information",

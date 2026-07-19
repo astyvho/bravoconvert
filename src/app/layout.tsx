@@ -7,13 +7,17 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://bravoconvert.com"),
-  title: "BravoConvert - Free Online Image and PDF Converter",
-  description: "Convert JPG, PNG and WebP images, combine images into PDF, or render PDF pages as JPG and PNG. Free batch conversion processed locally in your browser.",
+  title: "BravoConvert - Free Online Image Editor and File Converter",
+  description: "Resize, rotate and flip images, convert JPG, PNG and WebP files, combine images into PDF, or render PDF pages as images. Processing stays in your browser.",
   keywords: [
     "file converter",
     "free file converter",
     "online file converter",
     "image converter",
+    "online image editor",
+    "resize image",
+    "rotate image",
+    "flip image",
     "PDF converter",
     "metadata removal",
     "EXIF data removal",
@@ -44,15 +48,15 @@ export const metadata: Metadata = {
     "images to PDF"
   ],
   openGraph: {
-    title: "BravoConvert - Free Online Image and PDF Converter",
-    description: "Convert images in batches, combine images into PDF, and turn PDF pages into JPG or PNG—all in your browser.",
+    title: "BravoConvert - Free Online Image Editor and File Converter",
+    description: "Edit images, convert image formats, combine images into PDF, and turn PDF pages into JPG or PNG—all in your browser.",
     type: "website",
     url: "https://bravoconvert.com"
   },
   twitter: {
     card: "summary_large_image",
-    title: "BravoConvert - Browser-Based Image and PDF Converter",
-    description: "Convert JPG, PNG and WebP images or export PDF pages as images. Free, fast and no installation required."
+    title: "BravoConvert - Browser-Based Image Editor and Converter",
+    description: "Resize, rotate and flip images, convert image formats, or export PDF pages as images. Free and no installation required."
   },
   alternates: {
     canonical: "/",
@@ -89,7 +93,7 @@ export default function RootLayout({
         <meta name="google-adsense-account" content="ca-pub-6552891879490275" />
         
         {/* Canonical URL and RSS Feed */}
-        <link rel="alternate" type="application/rss+xml" title="BravoConvert File Converter RSS Feed" href="https://bravoconvert.com/feed.xml" />
+        <link rel="alternate" type="application/rss+xml" title="BravoConvert Image Tools RSS Feed" href="https://bravoconvert.com/feed.xml" />
       </head>
       <body
         className="antialiased text-black"

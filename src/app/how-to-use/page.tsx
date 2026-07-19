@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { Upload, Image, FileText, Download, Zap, Shield, BookOpen, Archive, SlidersHorizontal } from "lucide-react";
+import { Upload, Image, FileText, Download, Zap, Shield, BookOpen, Archive, SlidersHorizontal, PencilRuler, RotateCw } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "How to Use BravoConvert",
-  description: "Step-by-step instructions for converting JPG, PNG and WebP images and rendering PDF pages as images.",
+  description: "Step-by-step instructions for editing images, converting JPG, PNG and WebP files, and rendering PDF pages as images.",
   alternates: { canonical: "/how-to-use" },
 };
 
@@ -21,7 +21,7 @@ export default function HowToUsePage() {
             BravoConvert is really easy to use!
           </p>
           <p className="text-base text-gray-600">
-            Complete file conversion in just 3 steps
+            Convert or edit a file in just 3 steps
           </p>
         </div>
 
@@ -164,6 +164,61 @@ export default function HowToUsePage() {
               <li>• <strong className="text-black">Local Processing:</strong> PDF pages are rendered on your device</li>
               <li>• <strong className="text-black">File Size:</strong> PDFs support up to 50MB</li>
             </ul>
+          </div>
+        </div>
+
+        {/* Image Editor Usage */}
+        <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 mb-8">
+          <h2 className="text-3xl font-bold text-black mb-3 flex items-center">
+            <span className="w-2 h-8 bg-black rounded mr-3"></span>
+            Image Editor
+          </h2>
+          <p className="mb-8 text-gray-600 leading-7">Use the image editor when you need to change one image&apos;s dimensions or orientation. Use the image converter instead when you need batch conversion, ZIP downloads, compression targets, or an image-based PDF.</p>
+
+          <div className="space-y-6">
+            <div className="bg-gray-50 rounded-lg p-6 border-l-4 border-black hover:bg-gray-100 transition-all duration-300">
+              <h3 className="text-xl font-bold text-black mb-4 flex items-center">
+                <span className="w-8 h-8 bg-gradient-to-br from-black to-gray-800 text-white rounded-full flex items-center justify-center text-sm font-bold mr-4 shadow-md">1</span>
+                Add One Image
+              </h3>
+              <p className="text-base text-gray-700 leading-relaxed pl-12 flex items-start">
+                <Upload className="w-6 h-6 text-gray-700 mr-3 mt-0.5 flex-shrink-0" />
+                Drop, select, or paste a JPG, PNG, or WebP image. The file must be 10MB or smaller and is processed on your device.
+              </p>
+            </div>
+
+            <div className="bg-gray-50 rounded-lg p-6 border-l-4 border-black hover:bg-gray-100 transition-all duration-300">
+              <h3 className="text-xl font-bold text-black mb-4 flex items-center">
+                <span className="w-8 h-8 bg-gradient-to-br from-black to-gray-800 text-white rounded-full flex items-center justify-center text-sm font-bold mr-4 shadow-md">2</span>
+                Resize, Rotate, or Flip
+              </h3>
+              <p className="text-base text-gray-700 leading-relaxed pl-12 flex items-start">
+                <RotateCw className="w-6 h-6 text-gray-700 mr-3 mt-0.5 flex-shrink-0" />
+                Enter exact pixel dimensions or use a percentage preset. Keep the aspect ratio locked to prevent stretching, then rotate or flip the preview as needed.
+              </p>
+            </div>
+
+            <div className="bg-gray-50 rounded-lg p-6 border-l-4 border-black hover:bg-gray-100 transition-all duration-300">
+              <h3 className="text-xl font-bold text-black mb-4 flex items-center">
+                <span className="w-8 h-8 bg-gradient-to-br from-black to-gray-800 text-white rounded-full flex items-center justify-center text-sm font-bold mr-4 shadow-md">3</span>
+                Export the Edited Image
+              </h3>
+              <p className="text-base text-gray-700 leading-relaxed pl-12 flex items-start">
+                <Download className="w-6 h-6 text-gray-700 mr-3 mt-0.5 flex-shrink-0" />
+                Choose JPG, PNG, or WebP, set quality where available, enter a file name, and download the edited result. Choose a background color when exporting transparency to JPG.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4 rounded-lg border border-gray-200 bg-gray-50 p-6">
+            <div className="flex items-start gap-3">
+              <PencilRuler className="w-5 h-5 text-gray-700 mt-1 flex-shrink-0" />
+              <div><div className="font-semibold text-black">Non-destructive preview</div><div className="text-sm text-gray-700">Undo, redo, or reset without changing the original file</div></div>
+            </div>
+            <div className="flex items-start gap-3">
+              <Shield className="w-5 h-5 text-gray-700 mt-1 flex-shrink-0" />
+              <div><div className="font-semibold text-black">Local processing</div><div className="text-sm text-gray-700">The source image is not uploaded to BravoConvert</div></div>
+            </div>
           </div>
         </div>
 

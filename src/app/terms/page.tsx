@@ -3,7 +3,7 @@ import { Shield, User, Check, Settings, AlertTriangle, RotateCcw, FileText, Mail
 
 export const metadata: Metadata = {
   title: "Terms of Service | BravoConvert",
-  description: "Terms governing use of BravoConvert's browser-based image and PDF conversion tools.",
+  description: "Terms governing use of BravoConvert's browser-based image editing, image conversion, and PDF tools.",
   alternates: { canonical: "/terms" },
 };
 
@@ -35,10 +35,11 @@ export default function TermsPage() {
               <div className="bg-gray-50 rounded-lg p-6 border-l-4 border-black">
                 <p className="text-base text-gray-700 mb-4 flex items-start">
                   <Settings className="w-6 h-6 text-gray-700 mr-3 mt-0.5 flex-shrink-0" />
-                  <span><strong className="text-black">BravoConvert Services:</strong> We provide free online file conversion tools with a focus on privacy and security.</span>
+                  <span><strong className="text-black">BravoConvert Services:</strong> We provide free online image editing and file conversion tools with a focus on privacy and security.</span>
                 </p>
                 <ul className="text-base text-gray-700 space-y-2">
                   <li>• <strong>Image Converter:</strong> Convert between PNG, JPG, JPEG, and WebP formats</li>
+                  <li>• <strong>Image Editor:</strong> Resize, rotate, flip, and export supported images</li>
                   <li>• <strong>PDF Creation:</strong> Combine multiple images into a single PDF document</li>
                   <li>• <strong>PDF to Image:</strong> Extract pages from PDF files as JPG or PNG images</li>
                   <li>• <strong>Free Access:</strong> All services are available without registration or payment</li>

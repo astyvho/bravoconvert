@@ -4,7 +4,7 @@ import { Info, ListChecks, ShieldCheck, Wrench } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "About BravoConvert",
-  description: "Learn how BravoConvert provides practical browser-based image and PDF conversion tools.",
+  description: "Learn how BravoConvert provides practical browser-based image editing, image conversion, and PDF-to-image tools.",
   alternates: { canonical: "/about" },
 };
 
@@ -17,7 +17,7 @@ export default function AboutPage() {
             <Info className="mr-4 h-16 w-16 flex-shrink-0 text-gray-700" aria-hidden="true" />
             About BravoConvert
           </h1>
-          <p className="mb-8 text-xl text-black">Straightforward file conversion with local browser processing</p>
+          <p className="mb-8 text-xl text-black">Straightforward image editing and file conversion in your browser</p>
           <p className="text-base text-gray-600">Learn what BravoConvert does and why your files stay on your device</p>
         </header>
 
@@ -27,7 +27,7 @@ export default function AboutPage() {
             <Wrench className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
             What the service does
           </h2>
-          <p className="text-gray-700 leading-7">BravoConvert converts common image formats, combines images into PDF documents, and renders PDF pages as JPG or PNG images. The conversion work runs on your device, so selected files are not uploaded to a BravoConvert conversion server.</p>
+          <p className="text-gray-700 leading-7">BravoConvert resizes, rotates, and flips images, converts common image formats, combines images into PDF documents, and renders PDF pages as JPG or PNG images. Editing and conversion run on your device, so selected files are not uploaded to a BravoConvert processing server.</p>
         </section>
         <section>
           <h2 className="mb-3 flex items-center gap-3 text-2xl font-bold">
@@ -42,6 +42,9 @@ export default function AboutPage() {
             Supported workflows
           </h2>
           <ul className="list-disc pl-6 space-y-2 text-gray-700">
+            <li>Single-image resizing with optional aspect ratio locking</li>
+            <li>90-degree rotation and horizontal or vertical flipping</li>
+            <li>Edited image export as JPG, PNG, or WebP</li>
             <li>JPG/JPEG, PNG, and WebP conversion</li>
             <li>Batch conversion and ZIP download</li>
             <li>Multiple images combined into one PDF</li>

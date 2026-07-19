@@ -77,6 +77,10 @@ export default function Navigation() {
                   <div className="font-medium">PDF to Image</div>
                   <div className="text-xs text-gray-600">Convert PDF to JPG, PNG</div>
                 </Link>
+                <Link href="/edit/image" className="block px-4 py-3 text-black hover:bg-gray-100 transition-all duration-200 border-b border-gray-100">
+                  <div className="font-medium">Image Editor</div>
+                  <div className="text-xs text-gray-600">Resize, rotate and flip</div>
+                </Link>
                 {/* Bottom virtual padding area - expand mouse over area */}
                 <div className="h-4 bg-transparent"></div>
               </div>
@@ -114,6 +118,10 @@ export default function Navigation() {
               <Link href="/convert/pdf" onClick={() => setIsMenuOpen(false)} className="hover:text-black text-black transition-all duration-300 font-medium px-6 py-4 hover:bg-gray-200 border-b border-gray-100">
                 <div className="font-medium">PDF to Image</div>
                 <div className="text-xs text-gray-600">Convert PDF to JPG, PNG</div>
+              </Link>
+              <Link href="/edit/image" onClick={() => setIsMenuOpen(false)} className="hover:text-black text-black transition-all duration-300 font-medium px-6 py-4 hover:bg-gray-200 border-b border-gray-100">
+                <div className="font-medium">Image Editor</div>
+                <div className="text-xs text-gray-600">Resize, rotate and flip</div>
               </Link>
               <Link href="/how-to-use" onClick={() => setIsMenuOpen(false)} className="hover:text-black text-black transition-all duration-300 font-medium px-6 py-4 hover:bg-gray-200 border-b border-gray-100">How to Use</Link>
               <Link href="/faq" onClick={() => setIsMenuOpen(false)} className="hover:text-black text-black transition-all duration-300 font-medium px-6 py-4 hover:bg-gray-200 border-b border-gray-100">FAQ</Link>

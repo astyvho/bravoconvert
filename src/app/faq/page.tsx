@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { HelpCircle } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Image and PDF Converter FAQ | BravoConvert",
-  description: "Answers about supported formats, local file processing, privacy, image conversion, and PDF rendering.",
+  title: "Image Editor and Converter FAQ | BravoConvert",
+  description: "Answers about image editing, supported formats, local file processing, privacy, image conversion, and PDF rendering.",
   alternates: { canonical: "/faq" },
 };
 
@@ -68,6 +68,35 @@ export default function FAQ() {
         {
           question: "How long does PDF conversion take?",
           answer: "Conversion time depends on page count, page complexity, browser, memory, and device performance. Processing occurs in your browser and no PDF contents are uploaded to BravoConvert."
+        }
+      ]
+    },
+    {
+      category: "Image Editor",
+      questions: [
+        {
+          question: "What can I do with the image editor?",
+          answer: "You can resize one JPG, PNG, or WebP image, rotate it in 90-degree steps, flip it horizontally or vertically, preview the changes, and export the result as JPG, PNG, or WebP. The editor also provides undo, redo, and reset controls."
+        },
+        {
+          question: "Does resizing preserve the image proportions?",
+          answer: "Aspect ratio locking is enabled by default. When it is locked, changing the width automatically calculates the height and changing the height calculates the width. You can unlock it when you intentionally need independent dimensions."
+        },
+        {
+          question: "What happens to transparency when I export as JPG?",
+          answer: "JPG cannot store transparent pixels. The image editor fills transparent areas with the background color selected in the export settings. Choose PNG or WebP when transparency must be retained."
+        },
+        {
+          question: "What is the difference between the image editor and image converter?",
+          answer: "The image editor changes the size and orientation of one image. The image converter is designed for format conversion, compression controls, multiple-image batches, ZIP downloads, and combining images into a PDF."
+        },
+        {
+          question: "Is my original image changed?",
+          answer: "No. Editing is non-destructive and the original file on your device is not overwritten. BravoConvert creates a new file only when you choose Export image. Keep the original until you have reviewed the result."
+        },
+        {
+          question: "Why is there a maximum image resolution?",
+          answer: "Decoded images can use much more memory than their compressed file size suggests. The editor limits very large dimensions and pixel counts to reduce crashes or frozen tabs, especially on mobile devices."
         }
       ]
     },

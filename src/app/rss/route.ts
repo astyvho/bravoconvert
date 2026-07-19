@@ -6,21 +6,28 @@ export async function GET() {
   const rssXml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>BravoConvert - File Conversion Tools</title>
-    <description>Convert images and PDFs for free, fast, and securely in your browser. No installation required.</description>
+    <title>BravoConvert - Image Editor and File Conversion Tools</title>
+    <description>Edit images and convert image or PDF files for free in your browser. No installation required.</description>
     <link>${baseUrl}</link>
     <language>en-us</language>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
     <atom:link href="${baseUrl}/rss" rel="self" type="application/rss+xml"/>
     
     <item>
-      <title>BravoConvert - Free Online File Conversion Tools</title>
-      <description>Convert images and PDFs for free, fast, and securely in your browser. Batch upload, bulk conversion, privacy protected.</description>
+      <title>BravoConvert - Free Online Image Editor and Converters</title>
+      <description>Resize, rotate and flip images, convert image formats, or render PDF pages securely in your browser.</description>
       <link>${baseUrl}</link>
       <pubDate>${new Date().toUTCString()}</pubDate>
       <guid isPermaLink="false">${baseUrl}-home</guid>
     </item>
-    
+
+    <item>
+      <title>Image Editor - Resize, Rotate and Flip Images</title>
+      <description>Edit JPG, PNG, and WebP images in your browser, then export the result without uploading the source file.</description>
+      <link>${baseUrl}/edit/image</link>
+      <pubDate>${new Date().toUTCString()}</pubDate>
+      <guid isPermaLink="false">${baseUrl}-edit-image</guid>
+    </item>
 
     
     <item>
@@ -43,15 +50,15 @@ export async function GET() {
     
     <item>
       <title>How to Use BravoConvert</title>
-      <description>Learn how to convert your files easily with our step-by-step guide.</description>
+      <description>Learn how to edit images and convert files with our step-by-step guide.</description>
       <link>${baseUrl}/how-to-use</link>
       <pubDate>${new Date().toUTCString()}</pubDate>
       <guid isPermaLink="false">${baseUrl}-how-to-use</guid>
     </item>
     
     <item>
-      <title>FAQ - BravoConvert File Converters</title>
-      <description>Frequently asked questions about BravoConvert file conversion tools. Find answers to common questions.</description>
+      <title>FAQ - BravoConvert Image Editor and Converters</title>
+      <description>Frequently asked questions about BravoConvert image editing and file conversion tools.</description>
       <link>${baseUrl}/faq</link>
       <pubDate>${new Date().toUTCString()}</pubDate>
       <guid isPermaLink="false">${baseUrl}-faq</guid>
@@ -75,7 +82,7 @@ export async function GET() {
 
     <item>
       <title>About BravoConvert</title>
-      <description>Learn how BravoConvert processes image and PDF files locally in your browser.</description>
+      <description>Learn how BravoConvert edits images and processes image and PDF files locally in your browser.</description>
       <link>${baseUrl}/about</link>
       <pubDate>${new Date().toUTCString()}</pubDate>
       <guid isPermaLink="false">${baseUrl}-about</guid>
