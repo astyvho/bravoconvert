@@ -54,14 +54,17 @@ const sectionIcons = [Lock, BarChart3, Cookie, SlidersHorizontal, Globe, Databas
 export default function PrivacyPolicyPage() {
   return (
     <main className="min-h-screen bg-gray-50 py-12 px-4">
-      <article className="max-w-4xl mx-auto bg-white rounded-2xl p-6 md:p-10 shadow-lg border border-gray-200">
-        <header className="mb-10">
-          <h1 className="mb-4 flex items-center gap-4 text-4xl font-bold text-black md:text-5xl">
-            <ShieldCheck className="h-10 w-10 flex-shrink-0 text-gray-700 md:h-12 md:w-12" aria-hidden="true" />
+      <div className="max-w-4xl mx-auto">
+        <header className="mb-12 text-center">
+          <h1 className="mb-4 flex items-center justify-center text-4xl font-bold text-black md:text-6xl">
+            <ShieldCheck className="mr-4 h-16 w-16 flex-shrink-0 text-gray-700" aria-hidden="true" />
             Privacy Policy
           </h1>
-          <p className="text-gray-700">Effective and last updated: July 17, 2026</p>
+          <p className="mb-8 text-xl text-black">How BravoConvert handles files, analytics, and advertising data</p>
+          <p className="text-base text-gray-600">Effective and last updated: July 17, 2026</p>
         </header>
+
+        <article className="rounded-xl border border-gray-200 bg-white p-6 shadow-lg transition-all duration-300 hover:shadow-xl md:p-10">
 
         <div className="mb-8 rounded-xl bg-blue-50 border border-blue-200 p-5 text-gray-800">
           <strong>Important distinction:</strong> files are converted locally and are not uploaded to BravoConvert, while normal website analytics and advertising technologies may process usage and device information.
@@ -101,7 +104,8 @@ export default function PrivacyPolicyPage() {
           <p className="text-gray-700 leading-7">We may update this policy when the service or applicable requirements change. The current effective date will be shown at the top of this page.</p>
           <p className="mt-4 text-gray-700">Questions? See our <Link className="underline font-medium" href="/contact">contact page</Link>.</p>
         </section>
-      </article>
+        </article>
+      </div>
     </main>
   );
 }

@@ -11,14 +11,17 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <main className="min-h-screen bg-gray-50 py-12 px-4">
-      <article className="max-w-4xl mx-auto bg-white rounded-2xl p-6 md:p-10 shadow-lg border border-gray-200 space-y-8">
-        <header>
-          <h1 className="mb-4 flex items-center gap-4 text-4xl font-bold md:text-5xl">
-            <Info className="h-10 w-10 flex-shrink-0 text-gray-700 md:h-12 md:w-12" aria-hidden="true" />
+      <div className="max-w-4xl mx-auto">
+        <header className="mb-12 text-center">
+          <h1 className="mb-4 flex items-center justify-center text-4xl font-bold text-black md:text-6xl">
+            <Info className="mr-4 h-16 w-16 flex-shrink-0 text-gray-700" aria-hidden="true" />
             About BravoConvert
           </h1>
-          <p className="text-xl text-gray-700">Straightforward file conversion with local browser processing.</p>
+          <p className="mb-8 text-xl text-black">Straightforward file conversion with local browser processing</p>
+          <p className="text-base text-gray-600">Learn what BravoConvert does and why your files stay on your device</p>
         </header>
+
+        <article className="space-y-8 rounded-xl border border-gray-200 bg-white p-6 shadow-lg transition-all duration-300 hover:shadow-xl md:p-10">
         <section>
           <h2 className="mb-3 flex items-center gap-3 text-2xl font-bold">
             <Wrench className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
@@ -47,7 +50,8 @@ export default function AboutPage() {
           </ul>
         </section>
         <p className="text-gray-700">Read the <Link className="underline font-medium" href="/how-to-use">usage guide</Link>, review the <Link className="underline font-medium" href="/faq">FAQ</Link>, or <Link className="underline font-medium" href="/contact">contact us</Link>.</p>
-      </article>
+        </article>
+      </div>
     </main>
   );
 }
