@@ -4,7 +4,7 @@ import { History } from "lucide-react";
 export const metadata: Metadata = {
   title: "Changelog | BravoConvert",
   description: "What's changed in BravoConvert's image editor, image converter, and PDF-to-image tools over time.",
-  alternates: { canonical: "/changelog" },
+  alternates: { canonical: "/changelog/" },
 };
 
 const entries = [

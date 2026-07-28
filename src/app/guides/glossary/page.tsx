@@ -4,7 +4,7 @@ import { Library } from "lucide-react";
 export const metadata: Metadata = {
   title: "Image and PDF Terminology Glossary | BravoConvert",
   description: "Plain-language definitions for resolution, DPI, compression, alpha channel, EXIF, and other terms used across BravoConvert.",
-  alternates: { canonical: "/guides/glossary" },
+  alternates: { canonical: "/guides/glossary/" },
 };
 
 const terms = [

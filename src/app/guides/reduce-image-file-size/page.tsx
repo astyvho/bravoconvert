@@ -5,7 +5,7 @@ import { Layers, Gauge, Minimize2, SlidersHorizontal } from "lucide-react";
 export const metadata: Metadata = {
   title: "How to Reduce Image File Size Without Losing Quality | BravoConvert",
   description: "Four practical ways to shrink a photo or graphic: choosing the right format, adjusting quality, resizing dimensions, and removing metadata.",
-  alternates: { canonical: "/guides/reduce-image-file-size" },
+  alternates: { canonical: "/guides/reduce-image-file-size/" },
 };
 
 export default function ReduceFileSizeGuide() {

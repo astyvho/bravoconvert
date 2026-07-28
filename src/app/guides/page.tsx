@@ -13,7 +13,7 @@ import {
 export const metadata: Metadata = {
   title: "Guides | BravoConvert",
   description: "Practical guides on image formats, file size, PDF-to-image workflows, EXIF privacy, and common conversion problems.",
-  alternates: { canonical: "/guides" },
+  alternates: { canonical: "/guides/" },
 };
 
 const guides = [

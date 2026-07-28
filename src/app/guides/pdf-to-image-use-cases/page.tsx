@@ -5,7 +5,7 @@ import { Files, Presentation, Printer, ScanEye, Share2, Sheet } from "lucide-rea
 export const metadata: Metadata = {
   title: "Why and When to Convert PDF Pages to Images | BravoConvert",
   description: "Common real-world situations where turning a PDF page into a JPG or PNG is more useful than sharing the whole document.",
-  alternates: { canonical: "/guides/pdf-to-image-use-cases" },
+  alternates: { canonical: "/guides/pdf-to-image-use-cases/" },
 };
 
 const cases = [

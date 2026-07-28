@@ -5,7 +5,7 @@ import { LifeBuoy } from "lucide-react";
 export const metadata: Metadata = {
   title: "Troubleshooting Common Conversion Problems | BravoConvert",
   description: "Fixes for files that won't upload, conversions that fail, blurry output, and downloads that don't appear.",
-  alternates: { canonical: "/guides/troubleshooting" },
+  alternates: { canonical: "/guides/troubleshooting/" },
 };
 
 const issues = [

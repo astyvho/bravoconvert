@@ -5,7 +5,7 @@ import { BarChart3, CheckCircle2, Image as ImageIcon, Layers, XCircle } from "lu
 export const metadata: Metadata = {
   title: "JPG vs PNG vs WebP: Which Format Should You Use? | BravoConvert",
   description: "A practical comparison of JPG, PNG, and WebP covering compression, transparency, typical file size, and when to choose each format.",
-  alternates: { canonical: "/guides/jpg-png-webp-comparison" },
+  alternates: { canonical: "/guides/jpg-png-webp-comparison/" },
 };
 
 const sizeBars = [

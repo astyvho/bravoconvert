@@ -15,7 +15,7 @@ import {
 export const metadata: Metadata = {
   title: "Privacy Policy | BravoConvert",
   description: "How BravoConvert processes files locally and how Google Analytics and Google AdSense may use cookies and usage data.",
-  alternates: { canonical: "/privacy-policy" },
+  alternates: { canonical: "/privacy-policy/" },
 };
 
 const sections = [

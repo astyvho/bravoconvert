@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  alternates: { canonical: "/convert/img" },
+  alternates: { canonical: "/convert/img/" },
   title: "Free Image Converter - JPG, PNG, WebP and PDF | BravoConvert",
   description: "Convert JPG, PNG and WebP images in batches, adjust output quality, reduce file size, or combine images into one PDF. Processing stays in your browser.",
   keywords: [

@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 
 export const metadata: Metadata = {
-  alternates: { canonical: '/convert/pdf' },
+  alternates: { canonical: '/convert/pdf/' },
   title: 'PDF to Image Converter - Convert PDF to JPG, PNG Online Free | BravoConvert',
   description: 'Render PDF pages as high-quality JPG or PNG images online. Free browser-based PDF converter with batch download.',
   keywords: 'PDF to image, PDF to JPG, PDF to PNG, convert PDF, PDF converter, free PDF converter, online PDF to image',

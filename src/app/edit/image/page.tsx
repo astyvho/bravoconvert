@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  alternates: { canonical: "/edit/image" },
+  alternates: { canonical: "/edit/image/" },
   title: "Free Online Image Editor - Resize, Rotate and Flip | BravoConvert",
   description: "Resize, rotate, flip, and export JPG, PNG, or WebP images privately in your browser. No upload or installation required.",
   keywords: ["online image editor", "resize image", "rotate image", "flip image", "browser image editor", "private image editor"],

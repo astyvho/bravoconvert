@@ -4,7 +4,7 @@ import { HelpCircle } from "lucide-react";
 export const metadata: Metadata = {
   title: "Image Editor and Converter FAQ | BravoConvert",
   description: "Answers about image editing, supported formats, local file processing, privacy, image conversion, and PDF rendering.",
-  alternates: { canonical: "/faq" },
+  alternates: { canonical: "/faq/" },
 };
 
 export default function FAQ() {

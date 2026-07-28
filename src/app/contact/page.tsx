@@ -5,7 +5,7 @@ import { Bug, Copyright, LifeBuoy, ShieldCheck } from "lucide-react";
 export const metadata: Metadata = {
   title: "Contact BravoConvert",
   description: "Contact BravoConvert for support, privacy, copyright, or service questions.",
-  alternates: { canonical: "/contact" },
+  alternates: { canonical: "/contact/" },
 };
 
 const categories = [

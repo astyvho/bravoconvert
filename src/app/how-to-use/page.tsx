@@ -4,7 +4,7 @@ import { Upload, Image, FileText, Download, Zap, Shield, BookOpen, Archive, Slid
 export const metadata: Metadata = {
   title: "How to Use BravoConvert",
   description: "Step-by-step instructions for editing images, converting JPG, PNG and WebP files, and rendering PDF pages as images.",
-  alternates: { canonical: "/how-to-use" },
+  alternates: { canonical: "/how-to-use/" },
 };
 
 export default function HowToUsePage() {

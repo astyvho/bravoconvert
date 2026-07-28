@@ -5,7 +5,7 @@ import { Camera, Fingerprint, MapPin, RefreshCw, ShieldAlert } from "lucide-reac
 export const metadata: Metadata = {
   title: "What Is EXIF Data, and Why Removing It Matters | BravoConvert",
   description: "How EXIF metadata embedded in photos can expose your location and device, and how re-encoding an image removes it.",
-  alternates: { canonical: "/guides/exif-metadata-privacy" },
+  alternates: { canonical: "/guides/exif-metadata-privacy/" },
 };
 
 export default function ExifPrivacyGuide() {

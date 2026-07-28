@@ -4,7 +4,7 @@ import { Shield, User, Check, Settings, AlertTriangle, RotateCcw, FileText, Mail
 export const metadata: Metadata = {
   title: "Terms of Service | BravoConvert",
   description: "Terms governing use of BravoConvert's browser-based image editing, image conversion, and PDF tools.",
-  alternates: { canonical: "/terms" },
+  alternates: { canonical: "/terms/" },
 };
 
 export default function TermsPage() {

@@ -5,7 +5,7 @@ import { Compass, Info, ListChecks, Map, ShieldCheck, Wrench } from "lucide-reac
 export const metadata: Metadata = {
   title: "About BravoConvert",
   description: "Learn how BravoConvert provides practical browser-based image editing, image conversion, and PDF-to-image tools.",
-  alternates: { canonical: "/about" },
+  alternates: { canonical: "/about/" },
 };
 
 export default function AboutPage() {
