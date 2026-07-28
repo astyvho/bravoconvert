@@ -21,7 +21,7 @@
     "title": "Convertidor de Imágenes",
     "description": "Convierte formatos de imagen fácilmente",
     "uploadText": "Arrastra y suelta imágenes aquí o haz clic para subir",
-    "supportedFormats": "Formatos soportados: JPG, PNG, WebP, GIF, BMP",
+    "supportedFormats": "Formatos compatibles: JPG/JPEG, PNG, WebP",
     "convert": "Convertir",
     "download": "Descargar",
     "quality": "Calidad",
@@ -66,15 +66,15 @@
     "title": "Preguntas Frecuentes",
     "questions": {
       "q1": "¿Qué formatos de imagen son compatibles?",
-      "a1": "Soportamos formatos JPG, PNG, WebP, GIF y BMP.",
+      "a1": "La entrada de imágenes admite JPG/JPEG, PNG y WebP.",
       "q2": "¿Qué calidad puedo esperar de la conversión PDF?",
       "a2": "La conversión de alta calidad mantiene la misma calidad que el original.",
       "q3": "¿Hay un límite de tamaño de archivo?",
-      "a3": "Puedes subir archivos de hasta 50MB.",
+      "a3": "Cada imagen está limitada a 10 MB y los PDF a 50 MB.",
       "q4": "¿Mis datos están seguros?",
-      "a4": "Los archivos subidos se eliminan inmediatamente después de la conversión y no se almacenan en nuestros servidores.",
+      "a4": "El contenido de los archivos se procesa en el navegador y no se carga en un servidor de procesamiento de BravoConvert.",
       "q5": "¿Puedo usar esto en dispositivos móviles?",
-      "a5": "Sí, funciona en todos los dispositivos."
+      "a5": "Funciona en navegadores actuales compatibles; la compatibilidad y el rendimiento varían según el navegador y el dispositivo."
     }
   },
   "privacyPolicy": {
@@ -109,4 +109,4 @@
     "confirm": "Confirmar",
     "close": "Cerrar"
   }
-} 
+}

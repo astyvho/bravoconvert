@@ -165,6 +165,27 @@ export default function ImageConverterPage() {
 
         <section>
           <h2 className="flex items-center gap-3 text-2xl font-bold text-black">
+            <Images className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+            Three practical conversion recipes
+          </h2>
+          <div className="mt-5 grid gap-5 md:grid-cols-3">
+            <div className="rounded-2xl border border-gray-200 p-5">
+              <h3 className="text-lg font-semibold text-black">Prepare camera photos for sharing</h3>
+              <p className="mt-2 leading-7">Keep JPG output, enable compression, and compare the downloaded result at full size. This avoids the much larger files often produced by converting photographs to PNG. Use a separate batch for each detected source format.</p>
+            </div>
+            <div className="rounded-2xl border border-gray-200 p-5">
+              <h3 className="text-lg font-semibold text-black">Publish transparent artwork</h3>
+              <p className="mt-2 leading-7">Choose PNG when compatibility and exact transparent edges matter, or WebP when the destination explicitly supports it and download size matters. Do not choose JPG for a logo or cutout that must remain transparent.</p>
+            </div>
+            <div className="rounded-2xl border border-gray-200 p-5">
+              <h3 className="text-lg font-semibold text-black">Assemble images into a document</h3>
+              <p className="mt-2 leading-7">Select PDF output, arrange the images in reading order, and review every source before creating the document. This produces one page per image; it does not add searchable text, margins, headers, or page numbers.</p>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2 className="flex items-center gap-3 text-2xl font-bold text-black">
             <CircleAlert className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
             Troubleshooting a failed image conversion
           </h2>

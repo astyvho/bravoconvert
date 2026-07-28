@@ -123,6 +123,36 @@ export default function ImageEditorPage() {
 
         <section>
           <h2 className="flex items-center gap-3 text-2xl font-bold text-black">
+            <RotateCw className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+            A repeatable editing workflow
+          </h2>
+          <ol className="mt-3 list-decimal space-y-2 pl-6 leading-7">
+            <li>Open, drop, or paste one supported image and confirm its original pixel dimensions.</li>
+            <li>Correct orientation first so the width and height fields describe the final portrait or landscape direction.</li>
+            <li>Apply horizontal or vertical mirroring, then set the target dimensions with aspect ratio locking enabled unless stretching is intentional.</li>
+            <li>Use Undo and Redo to compare recent states. Reset returns to the loaded image state, while Replace starts with a different source file.</li>
+            <li>Choose the output format, quality, and—when exporting transparent pixels to JPG—the fill color. Compare the preview before exporting.</li>
+          </ol>
+          <p className="mt-4 leading-7">
+            The preview is generated from the current edit state rather than by repeatedly modifying the source file. Export performs one final Canvas render, so several rotations and flips do not create a chain of intermediate downloaded files. The new encoding does not copy the source EXIF block, but visible information inside the picture remains part of the pixels.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="flex items-center gap-3 text-2xl font-bold text-black">
+            <Maximize2 className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+            File and canvas limits explained
+          </h2>
+          <p className="mt-3 leading-7">
+            The editor accepts one JPG/JPEG, PNG, or WebP file up to 10MB. It also limits either side to 16,384 pixels and the total output area to 64 megapixels. The compressed file size is not a reliable measure of working memory: a 10MB photograph can expand to hundreds of megabytes once decoded into pixels and copied through preview and export canvases.
+          </p>
+          <p className="mt-3 leading-7">
+            If a requested width and height would exceed 64 megapixels, reduce one dimension and keep the aspect ratio locked. Closing other image-heavy tabs can help on mobile devices, but the limits remain in place to reduce frozen tabs and failed exports. The editor does not crop, sharpen, remove backgrounds, add text, or apply filters; use a dedicated editor when those changes are required.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="flex items-center gap-3 text-2xl font-bold text-black">
             <CircleAlert className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
             Troubleshooting image editing
           </h2>

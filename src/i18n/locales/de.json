@@ -21,7 +21,7 @@
     "title": "Bildkonverter",
     "description": "Konvertieren Sie Bildformate einfach",
     "uploadText": "Ziehen Sie Bilder hierher oder klicken Sie zum Hochladen",
-    "supportedFormats": "Unterstützte Formate: JPG, PNG, WebP, GIF, BMP",
+    "supportedFormats": "Unterstützte Formate: JPG/JPEG, PNG, WebP",
     "convert": "Konvertieren",
     "download": "Herunterladen",
     "quality": "Qualität",
@@ -66,11 +66,11 @@
     "title": "Häufig gestellte Fragen",
     "questions": {
       "q1": "Welche Bildformate werden unterstützt?",
-      "a1": "Wir unterstützen JPG, PNG, WebP, GIF und BMP Formate.",
+      "a1": "Als Bildeingabe werden JPG/JPEG, PNG und WebP unterstützt.",
       "q2": "Welche Qualität kann ich von der PDF-Konvertierung erwarten?",
       "a2": "Hochwertige Konvertierung behält die gleiche Qualität wie das Original.",
       "q3": "Gibt es eine Dateigrößenbeschränkung?",
-      "a3": "Sie können Dateien bis zu 50MB hochladen.",
+      "a3": "Bilder sind auf jeweils 10 MB und PDF-Dateien auf 50 MB begrenzt.",
       "q4": "Sind meine Daten sicher?",
       "a4": "Hochgeladene Dateien werden sofort nach der Konvertierung gelöscht und nicht auf unseren Servern gespeichert.",
       "q5": "Kann ich dies auf mobilen Geräten verwenden?",
@@ -109,4 +109,4 @@
     "confirm": "Bestätigen",
     "close": "Schließen"
   }
-} 
+}

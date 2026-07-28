@@ -451,7 +451,7 @@ export default function PDFConverter() {
           Convert your PDF files to high-quality images quickly and easily
         </p>
         <p className="text-black font-extrabold">
-          100% Free, No installation required!
+          Free to use, no installation required
         </p>
       </div>
 

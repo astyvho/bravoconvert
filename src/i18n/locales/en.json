@@ -21,7 +21,7 @@
     "title": "Image Converter",
     "description": "Convert image formats easily",
     "uploadText": "Drag and drop images here or click to upload",
-    "supportedFormats": "Supported formats: JPG, PNG, WebP, GIF, BMP",
+    "supportedFormats": "Supported formats: JPG/JPEG, PNG, WebP",
     "convert": "Convert",
     "download": "Download",
     "quality": "Quality",
@@ -66,15 +66,15 @@
     "title": "Frequently Asked Questions",
     "questions": {
       "q1": "What image formats are supported?",
-      "a1": "We support JPG, PNG, WebP, GIF, and BMP formats.",
+      "a1": "Image input supports JPG/JPEG, PNG, and WebP.",
       "q2": "What quality can I expect from PDF conversion?",
-      "a2": "High-quality conversion maintains the same quality as the original.",
+      "a2": "PDF pages are rendered at a 2× scale; output quality and dimensions depend on the source page and selected format.",
       "q3": "Is there a file size limit?",
-      "a3": "You can upload files up to 50MB.",
+      "a3": "Images are limited to 10MB each and PDFs to 50MB.",
       "q4": "Is my data safe?",
-      "a4": "Uploaded files are deleted immediately after conversion and are not stored on our servers.",
+      "a4": "File contents are processed in your browser and are not uploaded to a BravoConvert processing server.",
       "q5": "Can I use this on mobile devices?",
-      "a5": "Yes, it works on all devices."
+      "a5": "It works in compatible current browsers; support and performance vary by browser and device."
     }
   },
   "privacyPolicy": {
@@ -82,10 +82,10 @@
     "lastUpdated": "Last updated: January 1, 2024",
     "sections": {
       "intro": "PNG Converter values your privacy and data protection.",
-      "dataCollection": "Data collected: Only uploaded files are temporarily processed.",
-      "dataUsage": "Data usage: Used solely for file conversion purposes.",
-      "dataRetention": "Data retention: Files are deleted immediately after conversion.",
-      "dataSecurity": "Data security: Processed securely through SSL encryption."
+      "dataCollection": "File processing: Selected file contents are processed locally in your browser.",
+      "dataUsage": "Website data: Analytics and advertising services may process usage, device, cookie, and advertising information.",
+      "dataRetention": "File retention: BravoConvert does not receive or retain selected file contents.",
+      "dataSecurity": "Security: Local processing reduces file exposure, but no website or device can be guaranteed completely secure."
     }
   },
   "termsOfService": {
@@ -109,4 +109,4 @@
     "confirm": "Confirm",
     "close": "Close"
   }
-} 
+}

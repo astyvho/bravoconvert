@@ -18,7 +18,7 @@ export default function FAQ() {
         },
         {
           question: "How does the image conversion process work?",
-          answer: "All conversion is processed directly in your browser using JavaScript. Your files are never uploaded to our servers, ensuring complete privacy and faster processing. Simply upload your images, select the desired output format, and click convert."
+          answer: "Conversion runs directly in your browser using JavaScript. The contents of selected files are not uploaded to a BravoConvert processing server. Speed depends on the file, browser, available memory, and device."
         },
         {
           question: "Can I convert multiple images at once?",
@@ -109,7 +109,7 @@ export default function FAQ() {
         },
         {
           question: "What EXIF data is removed for privacy?",
-          answer: "We remove all EXIF metadata including GPS coordinates (location where photo was taken), camera make and model, date and time, camera settings (ISO, aperture, shutter speed), and other technical data. This ensures your privacy when sharing photos online."
+          answer: "Supported images are decoded and newly encoded, so the source EXIF block—including common GPS and camera fields—is not copied to JPG, PNG, or WebP output. This is not a guarantee that every possible metadata byte or visible identifying detail is removed, so verify sensitive files before sharing."
         },
         {
           question: "Does metadata removal affect image quality?",
@@ -134,7 +134,7 @@ export default function FAQ() {
         },
         {
           question: "Do I need to create an account?",
-          answer: "No account is required! BravoConvert is completely free to use and doesn't require any registration or login. Simply upload your files and start converting immediately."
+          answer: "No account, registration, or payment is currently required to use BravoConvert. Select a supported file to begin processing it in your browser."
         },
         {
           question: "What browsers are supported?",
@@ -142,7 +142,7 @@ export default function FAQ() {
         },
         {
           question: "Are there any usage limits?",
-          answer: "There are no daily or monthly limits on conversions. You can convert as many files as you need, whenever you need them. The only limits are the file size restrictions mentioned above."
+          answer: "BravoConvert does not currently impose an account-based daily or monthly conversion quota. File-size limits, browser memory, device performance, and browser download behavior still limit how much can be processed at once."
         },
         {
           question: "What if I encounter an error?",

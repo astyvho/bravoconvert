@@ -41,9 +41,9 @@ export default function TermsPage() {
                   <li>• <strong>Image Converter:</strong> Convert between PNG, JPG, JPEG, and WebP formats</li>
                   <li>• <strong>Image Editor:</strong> Resize, rotate, flip, and export supported images</li>
                   <li>• <strong>PDF Creation:</strong> Combine multiple images into a single PDF document</li>
-                  <li>• <strong>PDF to Image:</strong> Extract pages from PDF files as JPG or PNG images</li>
+                  <li>• <strong>PDF to Image:</strong> Render PDF pages as JPG or PNG images</li>
                   <li>• <strong>Free Access:</strong> All services are available without registration or payment</li>
-                  <li>• <strong>Client-Side Processing:</strong> All conversions happen in your browser for maximum privacy</li>
+                  <li>• <strong>Client-Side Processing:</strong> Supported editing and conversion tasks run in your browser without sending file contents to BravoConvert</li>
                 </ul>
               </div>
             </div>
@@ -56,14 +56,14 @@ export default function TermsPage() {
               <div className="bg-gray-50 rounded-lg p-6 border-l-4 border-black">
                 <p className="text-base text-gray-700 mb-4 flex items-start">
                   <User className="w-6 h-6 text-gray-700 mr-3 mt-0.5 flex-shrink-0" />
-                  <span><strong className="text-black">Your Rights:</strong> You have complete control over your files and data.</span>
+                  <span><strong className="text-black">Your Files:</strong> You choose the files processed by the browser and remain responsible for keeping backups.</span>
                 </p>
                 <ul className="text-base text-gray-700 space-y-2">
-                  <li>• <strong>File Ownership:</strong> You retain full ownership and copyright of all uploaded files</li>
-                  <li>• <strong>Privacy Control:</strong> Your files never leave your device during processing</li>
+                  <li>• <strong>File Ownership:</strong> You retain any rights you already hold in the files you select</li>
+                  <li>• <strong>Local File Processing:</strong> Selected file contents are not sent to a BravoConvert processing server</li>
                   <li>• <strong>Website Data:</strong> Analytics and advertising services may process usage and device information as described in our Privacy Policy</li>
                   <li>• <strong>Immediate Use:</strong> Start using our services without any registration requirements</li>
-                  <li>• <strong>Unlimited Access:</strong> No daily or monthly limits on file conversions</li>
+                  <li>• <strong>Current Access:</strong> No account-based daily or monthly quota is currently imposed; technical limits still apply</li>
                 </ul>
               </div>
             </div>

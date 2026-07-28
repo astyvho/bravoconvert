@@ -21,7 +21,7 @@
     "title": "图片转换器",
     "description": "轻松转换图片格式",
     "uploadText": "拖拽图片到此处或点击上传",
-    "supportedFormats": "支持格式: JPG、PNG、WebP、GIF、BMP",
+    "supportedFormats": "支持格式：JPG/JPEG、PNG、WebP",
     "convert": "转换",
     "download": "下载",
     "quality": "质量",
@@ -66,15 +66,15 @@
     "title": "常见问题",
     "questions": {
       "q1": "支持哪些图片格式？",
-      "a1": "我们支持JPG、PNG、WebP、GIF和BMP格式。",
+      "a1": "图片输入支持JPG/JPEG、PNG和WebP格式。",
       "q2": "PDF转换的质量如何？",
       "a2": "高质量转换保持与原始文件相同的质量。",
       "q3": "有文件大小限制吗？",
-      "a3": "您可以上传最大50MB的文件。",
+      "a3": "每张图片最大10MB，PDF文件最大50MB。",
       "q4": "我的数据安全吗？",
-      "a4": "上传的文件在转换后立即删除，不会存储在我们的服务器上。",
+      "a4": "文件内容在浏览器中处理，不会上传到BravoConvert处理服务器。",
       "q5": "可以在移动设备上使用吗？",
-      "a5": "是的，适用于所有设备。"
+      "a5": "可在兼容的现代浏览器中使用；支持情况和性能因浏览器及设备而异。"
     }
   },
   "privacyPolicy": {
@@ -109,4 +109,4 @@
     "confirm": "确认",
     "close": "关闭"
   }
-} 
+}

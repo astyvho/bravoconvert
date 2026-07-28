@@ -25,23 +25,23 @@ const sections = [
   },
   {
     title: "Analytics and technical information",
-    body: "We use Google Analytics to understand site usage and improve the service. Google may process information such as pages visited, approximate location derived from IP address, browser and device information, referring pages, and interaction events. This information is separate from the files you convert; file contents are not sent to Analytics.",
+    body: "On bravoconvert.com, Google Analytics loads only after you select Accept optional cookies. It may then process pages visited, approximate location derived from IP address, browser and device information, referring pages, and interaction events. BravoConvert requests IP anonymization in its Analytics configuration. File contents and image pixels are not sent to Analytics.",
   },
   {
     title: "Advertising and cookies",
-    body: "We use Google AdSense. Google and its advertising partners may use cookies, web beacons, IP addresses, or similar identifiers to provide, personalize, measure, and limit advertising. Third-party vendors, including Google, may use advertising cookies based on visits to this and other websites. Advertising tags never receive the contents of files selected for conversion.",
+    body: "On bravoconvert.com, the Google AdSense script loads only after you select Accept optional cookies. Google and its advertising partners may then use cookies, local storage, web beacons, IP addresses, or similar identifiers to serve, personalize, limit, and measure advertising. Whether personalized, non-personalized, or limited ads are available depends on your region, consent signals, Google requirements, and the site's AdSense configuration. File contents and image pixels are not passed to the AdSense tag.",
   },
   {
     title: "Consent and your choices",
-    body: "Where required, a consent message allows you to accept, reject, or manage advertising and analytics choices. You may also block or delete cookies in your browser. You can manage personalized Google advertising at My Ad Center. Withdrawing consent does not affect processing that occurred before withdrawal.",
+    body: "The Privacy choices panel stores either granted or denied in your browser's local storage under bravoconvert-consent-v1. The default Google Consent Mode state is denied for analytics storage, ad storage, advertising user data, and ad personalization. Accepting updates all four signals to granted and permits the Analytics and AdSense scripts to load; rejecting keeps them denied and the scripts do not load. You can reopen Privacy choices at any time. A later rejection updates future consent signals but does not undo earlier processing or automatically delete cookies already stored, which you can remove in browser settings.",
   },
   {
     title: "Third-party services",
-    body: "Google Analytics and Google AdSense are provided by Google. Their processing is governed by Google's own privacy terms. External links are governed by the privacy policies of their operators. We do not sell the files you convert or disclose their contents to advertisers.",
+    body: "Google Analytics and Google AdSense are provided by Google. For ad requests from the EEA, the UK, and Switzerland, Google requires publishers serving personalized ads to use a Google-certified CMP integrated with the IAB Transparency and Consent Framework. That certified Google or third-party CMP is configured through the AdSense account and is distinct from BravoConvert's site-level Privacy choices panel. Google may restrict ad serving when a required certified CMP signal is unavailable. External links follow their operators' privacy policies. BravoConvert does not sell selected file contents or disclose them to advertisers.",
   },
   {
     title: "Retention and security",
-    body: "BravoConvert does not retain converted file contents. Analytics and advertising data may be retained by Google according to the settings and policies of those services. Browser-based processing reduces file exposure, but no internet service or device can be guaranteed completely secure.",
+    body: "BravoConvert does not retain converted file contents. Your consent choice remains in local storage until you change it, clear site data, or use another browser or device. Analytics and advertising data may be retained by Google according to the applicable account settings and Google policies. Browser-based file processing reduces exposure but cannot guarantee complete security.",
   },
   {
     title: "Your rights and contact",
@@ -61,7 +61,7 @@ export default function PrivacyPolicyPage() {
             Privacy Policy
           </h1>
           <p className="mb-8 text-xl text-black">How BravoConvert handles files, analytics, and advertising data</p>
-          <p className="text-base text-gray-600">Effective and last updated: July 17, 2026</p>
+          <p className="text-base text-gray-600">Effective and last updated: July 28, 2026</p>
         </header>
 
         <article className="rounded-xl border border-gray-200 bg-white p-6 shadow-lg transition-all duration-300 hover:shadow-xl md:p-10">

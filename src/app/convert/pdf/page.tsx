@@ -109,6 +109,32 @@ export default function PDFConvertPage() {
 
           <section>
             <h2 className="flex items-center gap-3 text-2xl font-bold text-black">
+              <ScanLine className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+              Estimate the resulting pixel dimensions
+            </h2>
+            <p className="mt-3 leading-7">
+              PDF pages are measured in points rather than image pixels. At BravoConvert&apos;s fixed 2× render scale, a common US Letter page defined as 612 × 792 points becomes approximately 1224 × 1584 pixels, while an A4 page near 595 × 842 points becomes approximately 1190 × 1684 pixels. A PDF can define a different page box, so the exact downloaded dimensions follow the source document rather than a universal paper preset.
+            </p>
+            <p className="mt-3 leading-7">
+              These pixel dimensions are useful for screens, slides, and online publishing, but they do not by themselves guarantee a particular print quality. Printing a 1224-pixel-wide page at 300 pixels per inch yields only about 4.1 inches of image width. For high-resolution commercial printing, keep the vector PDF or render it with a desktop tool that offers a chosen DPI.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="flex items-center gap-3 text-2xl font-bold text-black">
+              <FileCheck2 className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+              Know when PDF-to-image is the wrong tool
+            </h2>
+            <ul className="mt-3 list-disc space-y-2 pl-6 leading-7">
+              <li>Use a PDF editor when you need to change selectable text, links, forms, annotations, or page order.</li>
+              <li>Use an OCR tool when you need searchable text from a scanned page; BravoConvert creates pixels and does not recognize text.</li>
+              <li>Keep the original PDF for accessible reading because image output does not preserve tags, reading order, or alternative text.</li>
+              <li>Use the image editor only after conversion when a single rendered page needs resizing, rotation, or flipping.</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="flex items-center gap-3 text-2xl font-bold text-black">
               <Sparkles className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
               Tips for clearer and smaller output
             </h2>

@@ -3,6 +3,7 @@ import "./globals.css";
 import Navigation from "@/components/Navigation";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import AdSenseAutoAds from "@/components/AdSenseAutoAds";
+import ConsentManager from "@/components/ConsentManager";
 import Link from "next/link";
 
 export const metadata: Metadata = {
@@ -100,6 +101,7 @@ export default function RootLayout({
       >
         <GoogleAnalytics />
         <AdSenseAutoAds />
+        <ConsentManager />
         <Navigation />
         <div className="pt-8">
           {children}
