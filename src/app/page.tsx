@@ -51,6 +51,7 @@ export default function Home() {
                 <p>• Batch conversion support</p>
                 <p>• Local browser processing</p>
               </div>
+              <p className="text-sm text-gray-500 text-center">Use this to switch formats, shrink file size, or combine photos into one PDF</p>
             </Link>
             {/* 추천 배지 */}
             <div className="absolute -top-3 -right-3 bg-gradient-to-r from-yellow-400 to-orange-400 text-white text-sm px-3 py-1 rounded-full font-bold shadow-lg">
@@ -70,6 +71,7 @@ export default function Home() {
                 <p>• Split by pages</p>
                 <p>• High-quality conversion</p>
               </div>
+              <p className="text-sm text-gray-500 text-center">Use this to preview, print, or embed a single PDF page as an image</p>
             </Link>
           </div>
 
@@ -85,6 +87,7 @@ export default function Home() {
                 <p>• Rotate and flip images</p>
                 <p>• Export JPG, PNG, or WebP</p>
               </div>
+              <p className="text-sm text-gray-500 text-center">Use this to fix a sideways photo or resize one image to exact pixel dimensions</p>
             </Link>
             <div className="absolute -top-3 -right-3 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-3 py-1 text-sm font-bold text-white shadow-lg">
               NEW
@@ -131,6 +134,12 @@ export default function Home() {
               Before converting
             </h2>
             <p className="leading-7">Keep a backup of every original. Conversion quality, speed, memory use and format support depend on your browser and device. Image uploads are limited to 10MB per file and PDF uploads to 50MB. Password-protected PDFs are not supported.</p>
+          </div>
+          <div className="rounded-xl border border-gray-200 bg-gray-50 p-6">
+            <h2 className="mb-2 text-xl font-bold text-black">Not sure which format or setting to use?</h2>
+            <p className="leading-7">
+              The <Link href="/guides" className="underline font-medium">guides section</Link> covers when to use JPG, PNG, or WebP, how to reduce file size without losing quality, why EXIF metadata matters for privacy, and fixes for common conversion problems.
+            </p>
           </div>
         </section>
       </div>

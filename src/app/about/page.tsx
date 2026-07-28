@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Info, ListChecks, ShieldCheck, Wrench } from "lucide-react";
+import { Compass, Info, ListChecks, Map, ShieldCheck, Wrench } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "About BravoConvert",
@@ -22,6 +22,13 @@ export default function AboutPage() {
         </header>
 
         <article className="space-y-8 rounded-xl border border-gray-200 bg-white p-6 shadow-lg transition-all duration-300 hover:shadow-xl md:p-10">
+        <section>
+          <h2 className="mb-3 flex items-center gap-3 text-2xl font-bold">
+            <Compass className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+            Why BravoConvert exists
+          </h2>
+          <p className="text-gray-700 leading-7">BravoConvert started from a simple frustration: most online image and PDF tools ask you to upload a file to a server before doing something as basic as changing its format or resizing it. That means waiting for an upload, trusting a third party with the file's contents, and often creating an account first. This site was built to do the same everyday tasks — convert a format, resize a photo, turn a PDF page into an image — entirely inside your browser instead.</p>
+        </section>
         <section>
           <h2 className="mb-3 flex items-center gap-3 text-2xl font-bold">
             <Wrench className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
@@ -52,7 +59,14 @@ export default function AboutPage() {
             <li>Quality controls and optional target file size for JPG and WebP output</li>
           </ul>
         </section>
-        <p className="text-gray-700">Read the <Link className="underline font-medium" href="/how-to-use">usage guide</Link>, review the <Link className="underline font-medium" href="/faq">FAQ</Link>, or <Link className="underline font-medium" href="/contact">contact us</Link>.</p>
+        <section>
+          <h2 className="mb-3 flex items-center gap-3 text-2xl font-bold">
+            <Map className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+            What's next
+          </h2>
+          <p className="text-gray-700 leading-7">The Image Editor currently covers resize, rotate, and flip. Free-form cropping, batch editing, and support for additional input formats are being considered for future releases, added only once they can be delivered reliably in the browser. The <Link className="underline font-medium" href="/changelog">changelog</Link> tracks what has actually shipped.</p>
+        </section>
+        <p className="text-gray-700">Read the <Link className="underline font-medium" href="/how-to-use">usage guide</Link>, browse the <Link className="underline font-medium" href="/guides">guides</Link>, review the <Link className="underline font-medium" href="/faq">FAQ</Link>, or <Link className="underline font-medium" href="/contact">contact us</Link>.</p>
         </article>
       </div>
     </main>

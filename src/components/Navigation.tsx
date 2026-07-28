@@ -88,6 +88,7 @@ export default function Navigation() {
           </div>
           
           <Link href="/how-to-use" className="hover:text-black text-black transition-all duration-300 font-medium px-4 py-2.5 rounded-xl hover:bg-gray-200 hover:shadow-sm">How to Use</Link>
+          <Link href="/guides" className="hover:text-black text-black transition-all duration-300 font-medium px-4 py-2.5 rounded-xl hover:bg-gray-200 hover:shadow-sm">Guides</Link>
           <Link href="/faq" className="hover:text-black text-black transition-all duration-300 font-medium px-4 py-2.5 rounded-xl hover:bg-gray-200 hover:shadow-sm">FAQ</Link>
           <Link href="/privacy-policy" className="hover:text-black text-black transition-all duration-300 font-medium px-4 py-2.5 rounded-xl hover:bg-gray-200 hover:shadow-sm">Privacy Policy</Link>
           <Link href="/terms" className="hover:text-black text-black transition-all duration-300 font-medium px-4 py-2.5 rounded-xl hover:bg-gray-200 hover:shadow-sm">Terms of Service</Link>
@@ -124,6 +125,7 @@ export default function Navigation() {
                 <div className="text-xs text-gray-600">Resize, rotate and flip</div>
               </Link>
               <Link href="/how-to-use" onClick={() => setIsMenuOpen(false)} className="hover:text-black text-black transition-all duration-300 font-medium px-6 py-4 hover:bg-gray-200 border-b border-gray-100">How to Use</Link>
+              <Link href="/guides" onClick={() => setIsMenuOpen(false)} className="hover:text-black text-black transition-all duration-300 font-medium px-6 py-4 hover:bg-gray-200 border-b border-gray-100">Guides</Link>
               <Link href="/faq" onClick={() => setIsMenuOpen(false)} className="hover:text-black text-black transition-all duration-300 font-medium px-6 py-4 hover:bg-gray-200 border-b border-gray-100">FAQ</Link>
               <Link href="/privacy-policy" onClick={() => setIsMenuOpen(false)} className="hover:text-black text-black transition-all duration-300 font-medium px-6 py-4 hover:bg-gray-200 border-b border-gray-100">Privacy Policy</Link>
               <Link href="/terms" onClick={() => setIsMenuOpen(false)} className="hover:text-black text-black transition-all duration-300 font-medium px-6 py-4 hover:bg-gray-200 border-b border-gray-100 last:border-b-0">Terms of Service</Link>

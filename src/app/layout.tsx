@@ -116,7 +116,11 @@ export default function RootLayout({
               <div className="hidden sm:block">
                 <Link href="/how-to-use" className="hover:text-gray-700 mx-3 text-black transition-colors duration-300">How to Use</Link>
                 <span className="text-gray-400">•</span>
+                <Link href="/guides" className="hover:text-gray-700 mx-3 text-black transition-colors duration-300">Guides</Link>
+                <span className="text-gray-400">•</span>
                 <Link href="/faq" className="hover:text-gray-700 mx-3 text-black transition-colors duration-300">FAQ</Link>
+                <span className="text-gray-400">•</span>
+                <Link href="/changelog" className="hover:text-gray-700 mx-3 text-black transition-colors duration-300">Changelog</Link>
                 <span className="text-gray-400">•</span>
                 <Link href="/privacy-policy" className="hover:text-gray-700 mx-3 text-black transition-colors duration-300">Privacy Policy</Link>
                 <span className="text-gray-400">•</span>
@@ -126,11 +130,13 @@ export default function RootLayout({
                 <span className="text-gray-400">•</span>
                 <Link href="/contact" className="hover:text-gray-700 mx-3 text-black transition-colors duration-300">Contact</Link>
               </div>
-              
+
               {/* 모바일 푸터 링크 */}
               <div className="sm:hidden flex flex-wrap justify-center gap-2">
                 <Link href="/how-to-use" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">How to Use</Link>
+                <Link href="/guides" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">Guides</Link>
                 <Link href="/faq" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">FAQ</Link>
+                <Link href="/changelog" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">Changelog</Link>
                 <Link href="/privacy-policy" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">Privacy Policy</Link>
                 <Link href="/terms" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">Terms of Service</Link>
                 <Link href="/about" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">About</Link>
