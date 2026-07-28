@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Crop, Fingerprint, Gauge, Minimize2, SlidersHorizontal } from "lucide-react";
+import { Layers, Gauge, Minimize2, SlidersHorizontal } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "How to Reduce Image File Size Without Losing Quality | BravoConvert",
@@ -80,7 +80,7 @@ export default function ReduceFileSizeGuide() {
                 <p className="text-sm text-gray-700">Convert to JPG or WebP, quality around 75–85%, resize to the dimensions the destination actually displays.</p>
               </div>
               <div className="rounded-lg border border-gray-200 bg-gray-50 p-5">
-                <div className="mb-2 flex items-center gap-2 font-bold text-black"><Crop className="h-5 w-5" /> A logo or screenshot with transparency</div>
+                <div className="mb-2 flex items-center gap-2 font-bold text-black"><Layers className="h-5 w-5" /> A logo or screenshot with transparency</div>
                 <p className="text-sm text-gray-700">Keep PNG or use WebP for a smaller file; avoid JPG since it cannot preserve transparent pixels.</p>
               </div>
             </div>

@@ -31,7 +31,7 @@ const issues = [
   },
   {
     problem: "Transparency turned black or a solid color after converting to JPG",
-    fix: "JPG cannot store transparent pixels, so transparent areas are filled with the background color chosen in the export settings. Use PNG or WebP instead if transparency needs to be preserved.",
+    fix: "JPG cannot store transparent pixels. In the Image Editor, transparent areas are filled with the background color you choose in the export settings. In the Image Converter, transparent areas are filled automatically without a color picker. Either way, choose PNG or WebP instead if transparency needs to be preserved.",
   },
   {
     problem: "The page feels unresponsive on mobile",

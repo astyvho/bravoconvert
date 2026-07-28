@@ -7,7 +7,6 @@ import {
   LifeBuoy,
   Library,
   Minimize2,
-  Smartphone,
   Files,
 } from "lucide-react";
 
@@ -41,12 +40,6 @@ const guides = [
     icon: Fingerprint,
     title: "What Is EXIF Data, and Why Removing It Matters",
     description: "How camera and phone metadata can expose your location and device, and how re-encoding removes it.",
-  },
-  {
-    href: "/guides/heic-iphone-photos",
-    icon: Smartphone,
-    title: "Why iPhone Photos (HEIC) Won't Open Everywhere",
-    description: "What HEIC is, why some apps and devices reject it, and how to get a widely compatible JPG or PNG instead.",
   },
   {
     href: "/guides/troubleshooting",
