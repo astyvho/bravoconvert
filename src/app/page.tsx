@@ -41,7 +41,7 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {/* 이미지 변환 */}
           <div className="group bg-white rounded-xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 group-hover:-translate-y-1 border border-gray-200 hover:border-gray-400 relative">
-            <Link href="/convert/img" className="block">
+            <Link href="/convert/img/" className="block">
               <div className="text-gray-600 mb-6 flex justify-center">
                 <Image size={64} />
               </div>
@@ -61,7 +61,7 @@ export default function Home() {
 
           {/* PDF를 이미지로 변환 */}
           <div className="group bg-white rounded-xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 group-hover:-translate-y-1 border border-gray-200 hover:border-gray-400">
-            <Link href="/convert/pdf" className="block">
+            <Link href="/convert/pdf/" className="block">
               <div className="text-gray-600 mb-6 flex justify-center">
                 <FileText size={64} />
               </div>
@@ -77,7 +77,7 @@ export default function Home() {
 
           {/* Image editor */}
           <div className="group bg-white rounded-xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 group-hover:-translate-y-1 border border-gray-200 hover:border-gray-400 relative">
-            <Link href="/edit/image" className="block">
+            <Link href="/edit/image/" className="block">
               <div className="text-gray-600 mb-6 flex justify-center">
                 <PencilRuler size={64} />
               </div>
@@ -138,7 +138,7 @@ export default function Home() {
           <div className="rounded-xl border border-gray-200 bg-gray-50 p-6">
             <h2 className="mb-2 text-xl font-bold text-black">Not sure which format or setting to use?</h2>
             <p className="leading-7">
-              The <Link href="/guides" className="underline font-medium">guides section</Link> covers when to use JPG, PNG, or WebP, how to reduce file size without losing quality, why EXIF metadata matters for privacy, and fixes for common conversion problems.
+              The <Link href="/guides/" className="underline font-medium">guides section</Link> covers when to use JPG, PNG, or WebP, how to reduce file size without losing quality, why EXIF metadata matters for privacy, and fixes for common conversion problems.
             </p>
           </div>
         </section>

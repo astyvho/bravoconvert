@@ -107,7 +107,7 @@ export default function ImageEditorPage() {
             </div>
           </div>
           <p className="mt-5 leading-7">
-            The quality control applies to JPG and WebP. Higher values normally retain more visual detail and produce larger files. For batch format conversion, image compression controls, ZIP downloads, or combining several images into a PDF, use the <Link href="/convert/img" className="font-medium text-black underline">image converter</Link> instead.
+            The quality control applies to JPG and WebP. Higher values normally retain more visual detail and produce larger files. For batch format conversion, image compression controls, ZIP downloads, or combining several images into a PDF, use the <Link href="/convert/img/" className="font-medium text-black underline">image converter</Link> instead.
           </p>
         </section>
 
@@ -164,7 +164,7 @@ export default function ImageEditorPage() {
             <li>Try JPG or PNG if another application cannot open the exported WebP file.</li>
           </ul>
           <p className="mt-4 leading-7">
-            If a supported image consistently fails, see the <Link href="/faq" className="font-medium text-black underline">FAQ</Link> or use the <Link href="/contact" className="font-medium text-black underline">contact page</Link> and include the browser, device, source format, and displayed error message—but do not send a private source image.
+            If a supported image consistently fails, see the <Link href="/faq/" className="font-medium text-black underline">FAQ</Link> or use the <Link href="/contact/" className="font-medium text-black underline">contact page</Link> and include the browser, device, source format, and displayed error message—but do not send a private source image.
           </p>
         </section>
       </article>

@@ -63,7 +63,7 @@ export default function ConsentManager() {
         >
           <h2 id="privacy-choices-title" className="text-lg font-bold text-black">Privacy choices</h2>
           <p className="mt-2 text-sm leading-6 text-gray-700">
-            BravoConvert processes selected files in your browser. With your permission, Google Analytics measures site usage and Google AdSense may store or access information for advertising. Rejecting optional storage does not affect the conversion tools. See the <Link href="/privacy-policy" className="font-medium underline">Privacy Policy</Link>.
+            BravoConvert processes selected files in your browser. With your permission, Google Analytics measures site usage and Google AdSense may store or access information for advertising. Rejecting optional storage does not affect the conversion tools. See the <Link href="/privacy-policy/" className="font-medium underline">Privacy Policy</Link>.
           </p>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             <button type="button" onClick={() => saveChoice("denied")} className="rounded-xl border border-black bg-white px-4 py-3 text-sm font-semibold text-black hover:bg-gray-100">

@@ -32,7 +32,7 @@ export default function ReduceFileSizeGuide() {
               Choose the right format first
             </h2>
             <p className="text-gray-700 leading-7">
-              This is usually the single biggest factor. A photograph saved as PNG can be several times larger than the same photo saved as JPG or WebP, because PNG is lossless and photographs rarely need pixel-perfect accuracy. See the <Link className="underline font-medium" href="/guides/jpg-png-webp-comparison">format comparison guide</Link> for details. If the image needs transparency, WebP is usually smaller than PNG at similar quality.
+              This is usually the single biggest factor. A photograph saved as PNG can be several times larger than the same photo saved as JPG or WebP, because PNG is lossless and photographs rarely need pixel-perfect accuracy. See the <Link className="underline font-medium" href="/guides/jpg-png-webp-comparison/">format comparison guide</Link> for details. If the image needs transparency, WebP is usually smaller than PNG at similar quality.
             </p>
           </section>
 
@@ -65,7 +65,7 @@ export default function ReduceFileSizeGuide() {
               Remove embedded metadata
             </h2>
             <p className="text-gray-700 leading-7">
-              Camera and phone photos often carry an EXIF block with camera settings, timestamps, and sometimes GPS coordinates. This metadata is usually small compared to pixel data, so it rarely explains a large file on its own, but converting through BravoConvert re-encodes the image and does not carry the source EXIF block into JPG, PNG, or WebP output. See the <Link className="underline font-medium" href="/guides/exif-metadata-privacy">EXIF and privacy guide</Link> for why that also matters beyond file size.
+              Camera and phone photos often carry an EXIF block with camera settings, timestamps, and sometimes GPS coordinates. This metadata is usually small compared to pixel data, so it rarely explains a large file on its own, but converting through BravoConvert re-encodes the image and does not carry the source EXIF block into JPG, PNG, or WebP output. See the <Link className="underline font-medium" href="/guides/exif-metadata-privacy/">EXIF and privacy guide</Link> for why that also matters beyond file size.
             </p>
           </section>
 
@@ -88,7 +88,7 @@ export default function ReduceFileSizeGuide() {
 
           <div className="rounded-xl border border-gray-200 bg-gray-50 p-6">
             <p className="text-gray-700">
-              Start with the <Link className="underline font-medium" href="/convert/img">Image Converter</Link> for format and quality control, or the <Link className="underline font-medium" href="/edit/image">Image Editor</Link> to resize a single image first.
+              Start with the <Link className="underline font-medium" href="/convert/img/">Image Converter</Link> for format and quality control, or the <Link className="underline font-medium" href="/edit/image/">Image Editor</Link> to resize a single image first.
             </p>
           </div>
         </article>

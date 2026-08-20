@@ -67,7 +67,7 @@ export default function TroubleshootingGuide() {
 
           <div className="rounded-xl border border-gray-200 bg-white p-6 mt-8">
             <p className="text-gray-700">
-              Still stuck? Check the <Link className="underline font-medium" href="/faq">FAQ</Link> for more detail, or <Link className="underline font-medium" href="/contact">contact us</Link> with your browser, file format, and the exact error message.
+              Still stuck? Check the <Link className="underline font-medium" href="/faq/">FAQ</Link> for more detail, or <Link className="underline font-medium" href="/contact/">contact us</Link> with your browser, file format, and the exact error message.
             </p>
           </div>
         </article>

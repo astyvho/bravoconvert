@@ -102,7 +102,7 @@ export default function PrivacyPolicyPage() {
             8. Changes to this policy
           </h2>
           <p className="text-gray-700 leading-7">We may update this policy when the service or applicable requirements change. The current effective date will be shown at the top of this page.</p>
-          <p className="mt-4 text-gray-700">Questions? See our <Link className="underline font-medium" href="/contact">contact page</Link>.</p>
+          <p className="mt-4 text-gray-700">Questions? See our <Link className="underline font-medium" href="/contact/">contact page</Link>.</p>
         </section>
         </article>
       </div>

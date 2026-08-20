@@ -60,7 +60,7 @@ export default function ContactPage() {
         </div>
 
         <p className="text-sm text-gray-600 mt-6">
-          Many common questions are already answered in the <Link className="underline font-medium" href="/faq">FAQ</Link> and the <Link className="underline font-medium" href="/guides/troubleshooting">troubleshooting guide</Link>.
+          Many common questions are already answered in the <Link className="underline font-medium" href="/faq/">FAQ</Link> and the <Link className="underline font-medium" href="/guides/troubleshooting/">troubleshooting guide</Link>.
         </p>
       </article>
     </main>

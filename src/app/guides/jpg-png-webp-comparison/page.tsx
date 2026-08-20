@@ -142,7 +142,7 @@ export default function JpgPngWebpGuide() {
 
           <div className="rounded-xl border border-gray-200 bg-gray-50 p-6">
             <p className="text-gray-700">
-              Ready to convert? Use the <Link className="underline font-medium" href="/convert/img">Image Converter</Link> to switch between JPG, PNG, and WebP, or read <Link className="underline font-medium" href="/guides/reduce-image-file-size">how to reduce file size</Link> for more control over the result.
+              Ready to convert? Use the <Link className="underline font-medium" href="/convert/img/">Image Converter</Link> to switch between JPG, PNG, and WebP, or read <Link className="underline font-medium" href="/guides/reduce-image-file-size/">how to reduce file size</Link> for more control over the result.
             </p>
           </div>
         </article>

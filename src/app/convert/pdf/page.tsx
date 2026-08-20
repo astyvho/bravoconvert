@@ -143,7 +143,7 @@ export default function PDFConvertPage() {
               <li>Choose JPG when pages are scans or photographs and a smaller download is more important than perfectly sharp edges.</li>
               <li>Judge quality at the size where the image will actually be read, not only from the thumbnail.</li>
               <li>If a social network or content system resizes uploads, preserve a copy of the original converted page before uploading it.</li>
-              <li>For converting standalone JPG, PNG, or WebP files—or combining images into a PDF—use the <Link href="/convert/img" className="font-medium text-black underline">image converter</Link>.</li>
+              <li>For converting standalone JPG, PNG, or WebP files—or combining images into a PDF—use the <Link href="/convert/img/" className="font-medium text-black underline">image converter</Link>.</li>
             </ul>
           </section>
 
@@ -156,7 +156,7 @@ export default function PDFConvertPage() {
               If the document does not load, first confirm that it opens normally in another PDF viewer and is not password protected. Reload the page, close other memory-heavy browser tabs, and try again with an up-to-date browser. On a phone, a shorter PDF may succeed when a long, graphics-heavy document exceeds available memory. If only one page fails, the PDF itself may contain damaged or unusual page data.
             </p>
             <p className="mt-4 leading-7">
-              The <Link href="/how-to-use" className="font-medium text-black underline">usage guide</Link> explains the normal workflow, and the <Link href="/faq" className="font-medium text-black underline">FAQ</Link> covers supported formats and privacy. For a repeatable error, contact us through the <Link href="/contact" className="font-medium text-black underline">support page</Link> with the browser, device, page count, file size, and error message. Do not attach a confidential document.
+              The <Link href="/how-to-use/" className="font-medium text-black underline">usage guide</Link> explains the normal workflow, and the <Link href="/faq/" className="font-medium text-black underline">FAQ</Link> covers supported formats and privacy. For a repeatable error, contact us through the <Link href="/contact/" className="font-medium text-black underline">support page</Link> with the browser, device, page count, file size, and error message. Do not attach a confidential document.
             </p>
           </section>
         </article>

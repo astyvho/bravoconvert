@@ -72,7 +72,7 @@ export default function PdfUseCasesGuide() {
           <section>
             <h2 className="mb-3 text-2xl font-bold text-black">JPG or PNG for a PDF page?</h2>
             <p className="text-gray-700 leading-7">
-              Pages that are mostly text, line art, or diagrams usually look sharper as PNG, since lossless compression avoids the soft edges JPG can introduce around high-contrast lines. Pages dominated by photographs or scanned color images typically produce a smaller file as JPG at a high quality setting. See the <Link className="underline font-medium" href="/guides/jpg-png-webp-comparison">format comparison guide</Link> for more on the tradeoff.
+              Pages that are mostly text, line art, or diagrams usually look sharper as PNG, since lossless compression avoids the soft edges JPG can introduce around high-contrast lines. Pages dominated by photographs or scanned color images typically produce a smaller file as JPG at a high quality setting. See the <Link className="underline font-medium" href="/guides/jpg-png-webp-comparison/">format comparison guide</Link> for more on the tradeoff.
             </p>
           </section>
 
@@ -88,7 +88,7 @@ export default function PdfUseCasesGuide() {
 
           <div className="rounded-xl border border-gray-200 bg-gray-50 p-6">
             <p className="text-gray-700">
-              Try it with the <Link className="underline font-medium" href="/convert/pdf">PDF to Image converter</Link>, or read the <Link className="underline font-medium" href="/how-to-use">step-by-step usage guide</Link>.
+              Try it with the <Link className="underline font-medium" href="/convert/pdf/">PDF to Image converter</Link>, or read the <Link className="underline font-medium" href="/how-to-use/">step-by-step usage guide</Link>.
             </p>
           </div>
         </article>

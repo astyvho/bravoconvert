@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Navigation from "@/components/Navigation";
-import GoogleAnalytics from "@/components/GoogleAnalytics";
-import AdSenseAutoAds from "@/components/AdSenseAutoAds";
 import ConsentManager from "@/components/ConsentManager";
 import Link from "next/link";
 
@@ -95,12 +93,27 @@ export default function RootLayout({
         
         {/* Canonical URL and RSS Feed */}
         <link rel="alternate" type="application/rss+xml" title="BravoConvert Image Tools RSS Feed" href="https://bravoconvert.com/feed.xml" />
+
+        {/*
+          Analytics and AdSense tags load on every page so crawlers and the AdSense
+          reviewer can see them. Storage stays off until ConsentManager sends a
+          `consent update`, per the denied-by-default Consent Mode v2 block above.
+        */}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-2QXJN1E3TF" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `gtag('js',new Date());if(location.hostname==='bravoconvert.com'||location.hostname==='www.bravoconvert.com'){gtag('config','G-2QXJN1E3TF',{anonymize_ip:true})}`,
+          }}
+        />
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6552891879490275"
+          crossOrigin="anonymous"
+        />
       </head>
       <body
         className="antialiased text-black"
       >
-        <GoogleAnalytics />
-        <AdSenseAutoAds />
         <ConsentManager />
         <Navigation />
         <div className="pt-8">
@@ -114,33 +127,33 @@ export default function RootLayout({
               
               {/* 데스크톱 푸터 링크 */}
               <div className="hidden sm:block">
-                <Link href="/how-to-use" className="hover:text-gray-700 mx-3 text-black transition-colors duration-300">How to Use</Link>
+                <Link href="/how-to-use/" className="hover:text-gray-700 mx-3 text-black transition-colors duration-300">How to Use</Link>
                 <span className="text-gray-400">•</span>
-                <Link href="/guides" className="hover:text-gray-700 mx-3 text-black transition-colors duration-300">Guides</Link>
+                <Link href="/guides/" className="hover:text-gray-700 mx-3 text-black transition-colors duration-300">Guides</Link>
                 <span className="text-gray-400">•</span>
-                <Link href="/faq" className="hover:text-gray-700 mx-3 text-black transition-colors duration-300">FAQ</Link>
+                <Link href="/faq/" className="hover:text-gray-700 mx-3 text-black transition-colors duration-300">FAQ</Link>
                 <span className="text-gray-400">•</span>
-                <Link href="/changelog" className="hover:text-gray-700 mx-3 text-black transition-colors duration-300">Changelog</Link>
+                <Link href="/changelog/" className="hover:text-gray-700 mx-3 text-black transition-colors duration-300">Changelog</Link>
                 <span className="text-gray-400">•</span>
-                <Link href="/privacy-policy" className="hover:text-gray-700 mx-3 text-black transition-colors duration-300">Privacy Policy</Link>
+                <Link href="/privacy-policy/" className="hover:text-gray-700 mx-3 text-black transition-colors duration-300">Privacy Policy</Link>
                 <span className="text-gray-400">•</span>
-                <Link href="/terms" className="hover:text-gray-700 mx-3 text-black transition-colors duration-300">Terms of Service</Link>
+                <Link href="/terms/" className="hover:text-gray-700 mx-3 text-black transition-colors duration-300">Terms of Service</Link>
                 <span className="text-gray-400">•</span>
-                <Link href="/about" className="hover:text-gray-700 mx-3 text-black transition-colors duration-300">About</Link>
+                <Link href="/about/" className="hover:text-gray-700 mx-3 text-black transition-colors duration-300">About</Link>
                 <span className="text-gray-400">•</span>
-                <Link href="/contact" className="hover:text-gray-700 mx-3 text-black transition-colors duration-300">Contact</Link>
+                <Link href="/contact/" className="hover:text-gray-700 mx-3 text-black transition-colors duration-300">Contact</Link>
               </div>
 
               {/* 모바일 푸터 링크 */}
               <div className="sm:hidden flex flex-wrap justify-center gap-2">
-                <Link href="/how-to-use" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">How to Use</Link>
-                <Link href="/guides" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">Guides</Link>
-                <Link href="/faq" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">FAQ</Link>
-                <Link href="/changelog" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">Changelog</Link>
-                <Link href="/privacy-policy" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">Privacy Policy</Link>
-                <Link href="/terms" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">Terms of Service</Link>
-                <Link href="/about" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">About</Link>
-                <Link href="/contact" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">Contact</Link>
+                <Link href="/how-to-use/" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">How to Use</Link>
+                <Link href="/guides/" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">Guides</Link>
+                <Link href="/faq/" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">FAQ</Link>
+                <Link href="/changelog/" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">Changelog</Link>
+                <Link href="/privacy-policy/" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">Privacy Policy</Link>
+                <Link href="/terms/" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">Terms of Service</Link>
+                <Link href="/about/" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">About</Link>
+                <Link href="/contact/" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">Contact</Link>
               </div>
             </div>
             <div className="text-black font-medium">© {new Date().getFullYear()} BravoConvert</div>

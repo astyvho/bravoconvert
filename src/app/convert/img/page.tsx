@@ -159,7 +159,7 @@ export default function ImageConverterPage() {
             Batch conversion and PDF creation
           </h2>
           <p className="mt-3 leading-7">
-            Files in one image batch must share the detected input type. Each image can be up to 10MB. Converted images can be downloaded individually, while multiple completed results can be collected in a ZIP archive. Selecting PDF as the destination combines the chosen images into one document, with reorder controls available before creation. For a PDF that already contains pages, use the dedicated <Link href="/convert/pdf" className="font-medium text-black underline">PDF to image converter</Link> instead.
+            Files in one image batch must share the detected input type. Each image can be up to 10MB. Converted images can be downloaded individually, while multiple completed results can be collected in a ZIP archive. Selecting PDF as the destination combines the chosen images into one document, with reorder controls available before creation. For a PDF that already contains pages, use the dedicated <Link href="/convert/pdf/" className="font-medium text-black underline">PDF to image converter</Link> instead.
           </p>
         </section>
 
@@ -197,7 +197,7 @@ export default function ImageConverterPage() {
             <li>Try JPG or PNG when another application does not recognize a downloaded WebP file.</li>
           </ul>
           <p className="mt-4 leading-7">
-            For more detail, see the <Link href="/how-to-use" className="font-medium text-black underline">step-by-step guide</Link> and <Link href="/faq" className="font-medium text-black underline">image converter FAQ</Link>. If a supported file consistently fails, use the <Link href="/contact" className="font-medium text-black underline">contact page</Link> and include the browser, device, input format, output format, and displayed error message—but do not send a private source image.
+            For more detail, see the <Link href="/how-to-use/" className="font-medium text-black underline">step-by-step guide</Link> and <Link href="/faq/" className="font-medium text-black underline">image converter FAQ</Link>. If a supported file consistently fails, use the <Link href="/contact/" className="font-medium text-black underline">contact page</Link> and include the browser, device, input format, output format, and displayed error message—but do not send a private source image.
           </p>
         </section>
       </article>

@@ -64,9 +64,9 @@ export default function AboutPage() {
             <Map className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
             What's next
           </h2>
-          <p className="text-gray-700 leading-7">The Image Editor currently covers resize, rotate, and flip. Free-form cropping, batch editing, and support for additional input formats are being considered for future releases, added only once they can be delivered reliably in the browser. The <Link className="underline font-medium" href="/changelog">changelog</Link> tracks what has actually shipped.</p>
+          <p className="text-gray-700 leading-7">The Image Editor currently covers resize, rotate, and flip. Free-form cropping, batch editing, and support for additional input formats are being considered for future releases, added only once they can be delivered reliably in the browser. The <Link className="underline font-medium" href="/changelog/">changelog</Link> tracks what has actually shipped.</p>
         </section>
-        <p className="text-gray-700">Read the <Link className="underline font-medium" href="/how-to-use">usage guide</Link>, browse the <Link className="underline font-medium" href="/guides">guides</Link>, review the <Link className="underline font-medium" href="/faq">FAQ</Link>, or <Link className="underline font-medium" href="/contact">contact us</Link>.</p>
+        <p className="text-gray-700">Read the <Link className="underline font-medium" href="/how-to-use/">usage guide</Link>, browse the <Link className="underline font-medium" href="/guides/">guides</Link>, review the <Link className="underline font-medium" href="/faq/">FAQ</Link>, or <Link className="underline font-medium" href="/contact/">contact us</Link>.</p>
         </article>
       </div>
     </main>

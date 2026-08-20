@@ -69,7 +69,7 @@ export default function ExifPrivacyGuide() {
 
           <div className="rounded-xl border border-gray-200 bg-gray-50 p-6">
             <p className="text-gray-700">
-              Any conversion through the <Link className="underline font-medium" href="/convert/img">Image Converter</Link> or <Link className="underline font-medium" href="/edit/image">Image Editor</Link> re-encodes the file this way. See the <Link className="underline font-medium" href="/privacy-policy">Privacy Policy</Link> for how the site itself handles data.
+              Any conversion through the <Link className="underline font-medium" href="/convert/img/">Image Converter</Link> or <Link className="underline font-medium" href="/edit/image/">Image Editor</Link> re-encodes the file this way. See the <Link className="underline font-medium" href="/privacy-policy/">Privacy Policy</Link> for how the site itself handles data.
             </p>
           </div>
         </article>
