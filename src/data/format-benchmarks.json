@@ -1,0 +1,139 @@
+{
+  "generatedAt": "2026-09-02",
+  "engine": "151.0.7922.34",
+  "note": "Measured with Canvas toBlob in Chromium, the same encoding path BravoConvert uses in the browser.",
+  "samples": [
+    {
+      "id": "photo",
+      "label": "Photographic",
+      "description": "Soft gradients and grain, the way a camera photo behaves",
+      "width": 900,
+      "height": 600,
+      "png": 963803,
+      "jpeg": [
+        {
+          "quality": 0.4,
+          "bytes": 16460
+        },
+        {
+          "quality": 0.6,
+          "bytes": 31313
+        },
+        {
+          "quality": 0.8,
+          "bytes": 65250
+        },
+        {
+          "quality": 0.95,
+          "bytes": 207092
+        }
+      ],
+      "webp": [
+        {
+          "quality": 0.4,
+          "bytes": 9120
+        },
+        {
+          "quality": 0.6,
+          "bytes": 23340
+        },
+        {
+          "quality": 0.8,
+          "bytes": 63660
+        },
+        {
+          "quality": 0.95,
+          "bytes": 179326
+        }
+      ]
+    },
+    {
+      "id": "graphic",
+      "label": "Flat graphic",
+      "description": "Solid fills, sharp edges and text, the way a logo or UI screenshot behaves",
+      "width": 900,
+      "height": 600,
+      "png": 24882,
+      "jpeg": [
+        {
+          "quality": 0.4,
+          "bytes": 14912
+        },
+        {
+          "quality": 0.6,
+          "bytes": 17589
+        },
+        {
+          "quality": 0.8,
+          "bytes": 21934
+        },
+        {
+          "quality": 0.95,
+          "bytes": 31900
+        }
+      ],
+      "webp": [
+        {
+          "quality": 0.4,
+          "bytes": 6026
+        },
+        {
+          "quality": 0.6,
+          "bytes": 6816
+        },
+        {
+          "quality": 0.8,
+          "bytes": 8028
+        },
+        {
+          "quality": 0.95,
+          "bytes": 11688
+        }
+      ]
+    },
+    {
+      "id": "detail",
+      "label": "Fine detail",
+      "description": "Dense high-frequency texture, the hardest case for any codec",
+      "width": 900,
+      "height": 600,
+      "png": 603604,
+      "jpeg": [
+        {
+          "quality": 0.4,
+          "bytes": 152347
+        },
+        {
+          "quality": 0.6,
+          "bytes": 197156
+        },
+        {
+          "quality": 0.8,
+          "bytes": 284322
+        },
+        {
+          "quality": 0.95,
+          "bytes": 505883
+        }
+      ],
+      "webp": [
+        {
+          "quality": 0.4,
+          "bytes": 188424
+        },
+        {
+          "quality": 0.6,
+          "bytes": 223028
+        },
+        {
+          "quality": 0.8,
+          "bytes": 286546
+        },
+        {
+          "quality": 0.95,
+          "bytes": 432588
+        }
+      ]
+    }
+  ]
+}
