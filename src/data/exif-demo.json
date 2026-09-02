@@ -1,0 +1,78 @@
+{
+  "generatedAt": "2026-09-02",
+  "engine": "151.0.7922.34",
+  "note": "The tagged JPEG was decoded to a bitmap, drawn to a canvas and re-encoded — the same path image-worker.js takes — then re-parsed with exifr.",
+  "sourceFile": "/guides/exif-sample-with-metadata.jpg",
+  "sourceBytes": 9670,
+  "convertedBytes": 11024,
+  "exifBlockBytes": 245,
+  "before": [
+    {
+      "field": "Make",
+      "value": "BravoCam"
+    },
+    {
+      "field": "Model",
+      "value": "BC-900 Demo"
+    },
+    {
+      "field": "DateTimeOriginal",
+      "value": "2026:05:17 14:32:08"
+    },
+    {
+      "field": "Orientation",
+      "value": "Rotate 90 CW"
+    },
+    {
+      "field": "latitude",
+      "value": 51.50806
+    },
+    {
+      "field": "longitude",
+      "value": -0.12806
+    },
+    {
+      "field": "GPSLatitudeRef",
+      "value": "N"
+    },
+    {
+      "field": "GPSLongitudeRef",
+      "value": "W"
+    }
+  ],
+  "after": [
+    {
+      "field": "Make",
+      "value": null
+    },
+    {
+      "field": "Model",
+      "value": null
+    },
+    {
+      "field": "DateTimeOriginal",
+      "value": null
+    },
+    {
+      "field": "Orientation",
+      "value": null
+    },
+    {
+      "field": "latitude",
+      "value": null
+    },
+    {
+      "field": "longitude",
+      "value": null
+    },
+    {
+      "field": "GPSLatitudeRef",
+      "value": null
+    },
+    {
+      "field": "GPSLongitudeRef",
+      "value": null
+    }
+  ],
+  "anyFieldSurvived": false
+}

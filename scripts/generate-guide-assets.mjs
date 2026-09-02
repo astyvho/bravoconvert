@@ -49,6 +49,7 @@ const SAMPLES = [
 ];
 
 const JPEG_QUALITIES = [0.4, 0.6, 0.8, 0.95];
+const RESIZE_SCALES = [1, 0.75, 0.5, 0.25];
 const WEBP_QUALITIES = [0.4, 0.6, 0.8, 0.95];
 
 /** Drawing routines run inside the browser; kept as a string for page.evaluate. */
@@ -181,7 +182,84 @@ function drawDetail(ctx, w, h) {
   }
 }
 
-window.__draw = { photo: drawPhoto, graphic: drawGraphic, detail: drawDetail };
+function drawDocument(ctx, w, h) {
+  const random = makeRandom(4242);
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, w, h);
+
+  const margin = Math.round(w * 0.1);
+  let y = margin;
+
+  ctx.fillStyle = "#111827";
+  ctx.font = "700 " + Math.round(w * 0.038) + "px Georgia, serif";
+  ctx.fillText("Quarterly Operations Review", margin, y);
+  y += Math.round(w * 0.03);
+
+  ctx.fillStyle = "#6b7280";
+  ctx.font = Math.round(w * 0.016) + "px Georgia, serif";
+  ctx.fillText("Prepared for the board  |  Fiscal year 2026", margin, y);
+  y += Math.round(w * 0.045);
+
+  // Body text: grey rules stand in for justified prose at document scale.
+  const lineH = Math.round(w * 0.026);
+  const drawParagraph = (lines) => {
+    ctx.fillStyle = "#374151";
+    for (let i = 0; i < lines; i += 1) {
+      const width = i === lines - 1 ? (w - margin * 2) * (0.4 + random() * 0.35) : w - margin * 2;
+      ctx.fillRect(margin, y, width, Math.round(lineH * 0.42));
+      y += lineH;
+    }
+    y += Math.round(lineH * 0.6);
+  };
+  drawParagraph(6);
+
+  ctx.fillStyle = "#111827";
+  ctx.font = "700 " + Math.round(w * 0.022) + "px Georgia, serif";
+  ctx.fillText("1. Revenue by segment", margin, y);
+  y += Math.round(lineH * 1.2);
+  drawParagraph(4);
+
+  // Table
+  const tableW = w - margin * 2;
+  const rowH = Math.round(lineH * 1.15);
+  ctx.fillStyle = "#f3f4f6";
+  ctx.fillRect(margin, y, tableW, rowH);
+  ctx.strokeStyle = "#d1d5db";
+  ctx.lineWidth = 1;
+  for (let r = 0; r < 6; r += 1) {
+    ctx.strokeRect(margin, y + r * rowH, tableW, rowH);
+    ctx.fillStyle = r === 0 ? "#111827" : "#4b5563";
+    for (let c = 0; c < 4; c += 1) {
+      const cw = tableW / 4;
+      ctx.fillRect(margin + c * cw + 10, y + r * rowH + rowH * 0.35, cw * (0.35 + random() * 0.3), Math.round(lineH * 0.34));
+    }
+  }
+  y += rowH * 6 + Math.round(lineH * 1.4);
+
+  // Bar chart
+  const chartH = Math.round(h * 0.16);
+  const bars = [0.5, 0.72, 0.41, 0.88, 0.63, 0.77];
+  const barW = Math.round((tableW / bars.length) * 0.55);
+  bars.forEach((v, i) => {
+    const x = margin + i * (tableW / bars.length);
+    ctx.fillStyle = "#2563eb";
+    ctx.fillRect(x, y + chartH - v * chartH, barW, v * chartH);
+  });
+  ctx.strokeStyle = "#9ca3af";
+  ctx.beginPath();
+  ctx.moveTo(margin, y + chartH);
+  ctx.lineTo(margin + tableW, y + chartH);
+  ctx.stroke();
+  y += chartH + Math.round(lineH * 1.6);
+
+  drawParagraph(5);
+
+  ctx.fillStyle = "#9ca3af";
+  ctx.font = Math.round(w * 0.014) + "px Georgia, serif";
+  ctx.fillText("Page 4 of 18", margin, h - Math.round(margin * 0.5));
+}
+
+window.__draw = { photo: drawPhoto, graphic: drawGraphic, detail: drawDetail, document: drawDocument };
 `;
 
 async function main() {
@@ -359,6 +437,160 @@ async function main() {
   );
   console.log("Wrote display renditions and jpeg-quality-ladder.webp");
 
+  // Does shrinking dimensions really cut bytes in proportion to pixel count?
+  // Encode the photographic sample at several scales and let the numbers answer.
+  const resize = await page.evaluate(
+    async ({ width, height, scales, quality }) => {
+      const source = document.createElement("canvas");
+      source.width = width;
+      source.height = height;
+      window.__draw.photo(source.getContext("2d", { willReadFrequently: true }), width, height);
+
+      const rows = [];
+      for (const scale of scales) {
+        const w = Math.round(width * scale);
+        const h = Math.round(height * scale);
+        const scaled = document.createElement("canvas");
+        scaled.width = w;
+        scaled.height = h;
+        const sctx = scaled.getContext("2d");
+        sctx.imageSmoothingQuality = "high";
+        sctx.drawImage(source, 0, 0, w, h);
+
+        const encode = (type) =>
+          new Promise((resolve) => scaled.toBlob((b) => resolve(b.size), type, quality));
+
+        rows.push({
+          scale,
+          width: w,
+          height: h,
+          pixels: w * h,
+          jpeg: await encode("image/jpeg"),
+          webp: await encode("image/webp"),
+        });
+      }
+      return rows;
+    },
+    { width: SAMPLE_WIDTH, height: SAMPLE_HEIGHT, scales: RESIZE_SCALES, quality: 0.8 }
+  );
+
+  for (const row of resize) {
+    const full = resize[0];
+    console.log(
+      `scale ${String(row.scale).padEnd(5)} ${String(row.width).padStart(4)}x${String(row.height).padEnd(4)}` +
+        ` pixels ${(row.pixels / full.pixels * 100).toFixed(0).padStart(3)}%` +
+        ` JPEG ${(row.jpeg / 1024).toFixed(0).padStart(3)} KB (${(row.jpeg / full.jpeg * 100).toFixed(0).padStart(3)}%)` +
+        ` WebP ${(row.webp / 1024).toFixed(0).padStart(3)} KB`
+    );
+  }
+
+  // A PDF page rendered at the scale PDFConverter actually uses. PDF user space
+  // is 72 units per inch, so scale 2.0 lands at 144 DPI.
+  const PDF_SCALE = 2.0;
+  const A4_PT = { width: 595, height: 842 };
+  const pdfW = Math.round(A4_PT.width * PDF_SCALE);
+  const pdfH = Math.round(A4_PT.height * PDF_SCALE);
+
+  const pdfPage = await page.evaluate(
+    async ({ width, height, qualities }) => {
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      window.__draw.document(canvas.getContext("2d", { willReadFrequently: true }), width, height);
+
+      const encode = (type, q) =>
+        new Promise((resolve) => canvas.toBlob((b) => resolve(b.size), type, q));
+
+      const jpeg = [];
+      for (const q of qualities) jpeg.push({ quality: q, bytes: await encode("image/jpeg", q) });
+      const webp = [];
+      for (const q of qualities) webp.push({ quality: q, bytes: await encode("image/webp", q) });
+
+      return {
+        png: await encode("image/png", undefined),
+        jpeg,
+        webp,
+        preview: canvas.toDataURL("image/webp", 0.85),
+      };
+    },
+    { width: pdfW, height: pdfH, qualities: JPEG_QUALITIES }
+  );
+
+  await writeFile(
+    path.join(IMAGE_DIR, "pdf-page-render.webp"),
+    Buffer.from(pdfPage.preview.split(",")[1], "base64")
+  );
+  const pdfPageData = {
+    scale: PDF_SCALE,
+    dpi: 72 * PDF_SCALE,
+    pointSize: A4_PT,
+    pixelSize: { width: pdfW, height: pdfH },
+    png: pdfPage.png,
+    jpeg: pdfPage.jpeg,
+    webp: pdfPage.webp,
+  };
+  console.log(
+    `PDF page  ${pdfW}x${pdfH} @ ${72 * PDF_SCALE} DPI   PNG ${(pdfPage.png / 1024).toFixed(0)} KB` +
+      `  JPEG q80 ${(pdfPage.jpeg.find((j) => j.quality === 0.8).bytes / 1024).toFixed(0)} KB` +
+      `  WebP q80 ${(pdfPage.webp.find((x) => x.quality === 0.8).bytes / 1024).toFixed(0)} KB`
+  );
+
+  // Resize strip: the same photo at each scale, drawn at its true relative size
+  // so the reduction is visible rather than just tabulated.
+  const strip = await page.evaluate(
+    async ({ width, height, scales, quality }) => {
+      const source = document.createElement("canvas");
+      source.width = width;
+      source.height = height;
+      window.__draw.photo(source.getContext("2d", { willReadFrequently: true }), width, height);
+
+      const label = 40;
+      const gap = 14;
+      const cellW = Math.round(width * 0.42);
+      const cellH = Math.round(height * 0.42);
+      const out = document.createElement("canvas");
+      out.width = cellW * scales.length + gap * (scales.length - 1);
+      out.height = cellH + label;
+      const ctx = out.getContext("2d");
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, out.width, out.height);
+
+      for (let i = 0; i < scales.length; i += 1) {
+        const scale = scales[i];
+        const w = Math.round(width * scale);
+        const h = Math.round(height * scale);
+        const shrunk = document.createElement("canvas");
+        shrunk.width = w;
+        shrunk.height = h;
+        const sctx = shrunk.getContext("2d");
+        sctx.imageSmoothingQuality = "high";
+        sctx.drawImage(source, 0, 0, w, h);
+        const bytes = await new Promise((r) => shrunk.toBlob((b) => r(b.size), "image/jpeg", quality));
+
+        const x = i * (cellW + gap);
+        const drawW = Math.round(cellW * scale);
+        const drawH = Math.round(cellH * scale);
+        ctx.drawImage(shrunk, x, label + (cellH - drawH), drawW, drawH);
+        ctx.strokeStyle = "#d1d5db";
+        ctx.strokeRect(x + 0.5, label + (cellH - drawH) + 0.5, drawW - 1, drawH - 1);
+
+        ctx.fillStyle = "#111827";
+        ctx.font = "600 17px system-ui, -apple-system, Segoe UI, sans-serif";
+        ctx.fillText(w + " x " + h, x, 18);
+        ctx.fillStyle = "#6b7280";
+        ctx.font = "15px system-ui, -apple-system, Segoe UI, sans-serif";
+        ctx.fillText(Math.round(bytes / 1024) + " KB at quality " + quality, x, 34);
+      }
+      return out.toDataURL("image/webp", 0.9);
+    },
+    { width: SAMPLE_WIDTH, height: SAMPLE_HEIGHT, scales: RESIZE_SCALES, quality: 0.8 }
+  );
+  await writeFile(
+    path.join(IMAGE_DIR, "resize-ladder.webp"),
+    Buffer.from(strip.split(",")[1], "base64")
+  );
+  console.log("Wrote resize-ladder.webp");
+
   await writeFile(
     path.join(DATA_DIR, "format-benchmarks.json"),
     JSON.stringify(
@@ -368,6 +600,8 @@ async function main() {
         note:
           "Measured with Canvas toBlob in Chromium, the same encoding path BravoConvert uses in the browser.",
         samples: results,
+        resize: { quality: 0.8, sourceId: "photo", rows: resize },
+        pdfPage: pdfPageData,
       },
       null,
       2

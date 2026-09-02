@@ -135,5 +135,92 @@
         }
       ]
     }
-  ]
+  ],
+  "resize": {
+    "quality": 0.8,
+    "sourceId": "photo",
+    "rows": [
+      {
+        "scale": 1,
+        "width": 900,
+        "height": 600,
+        "pixels": 540000,
+        "jpeg": 65250,
+        "webp": 63660
+      },
+      {
+        "scale": 0.75,
+        "width": 675,
+        "height": 450,
+        "pixels": 303750,
+        "jpeg": 28695,
+        "webp": 15752
+      },
+      {
+        "scale": 0.5,
+        "width": 450,
+        "height": 300,
+        "pixels": 135000,
+        "jpeg": 11712,
+        "webp": 5016
+      },
+      {
+        "scale": 0.25,
+        "width": 225,
+        "height": 150,
+        "pixels": 33750,
+        "jpeg": 3425,
+        "webp": 1842
+      }
+    ]
+  },
+  "pdfPage": {
+    "scale": 2,
+    "dpi": 144,
+    "pointSize": {
+      "width": 595,
+      "height": 842
+    },
+    "pixelSize": {
+      "width": 1190,
+      "height": 1684
+    },
+    "png": 81243,
+    "jpeg": [
+      {
+        "quality": 0.4,
+        "bytes": 62415
+      },
+      {
+        "quality": 0.6,
+        "bytes": 71537
+      },
+      {
+        "quality": 0.8,
+        "bytes": 85758
+      },
+      {
+        "quality": 0.95,
+        "bytes": 119781
+      }
+    ],
+    "webp": [
+      {
+        "quality": 0.4,
+        "bytes": 16100
+      },
+      {
+        "quality": 0.6,
+        "bytes": 18510
+      },
+      {
+        "quality": 0.8,
+        "bytes": 21576
+      },
+      {
+        "quality": 0.95,
+        "bytes": 32618
+      }
+    ]
+  }
 }
