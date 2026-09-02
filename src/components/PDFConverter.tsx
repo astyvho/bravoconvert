@@ -70,14 +70,14 @@ export default function PDFConverter() {
     }
     
     try {
-      console.log('📦 PDF.js 라이브러리 dynamic import 중...');
+      console.log('Importing PDF.js...');
       const pdfjs = await import('pdfjs-dist');
-      console.log('✅ PDF.js 라이브러리 로딩 완료');
+      console.log('PDF.js loaded');
       setPdfjsLib(pdfjs);
       return pdfjs;
     } catch (error) {
-      console.error('❌ PDF.js 라이브러리 로딩 실패:', error);
-      showError('PDF 라이브러리를 로드할 수 없습니다.');
+      console.error('PDF.js failed to load:', error);
+      showError('Could not load the PDF library. Please reload the page and try again.');
       throw error;
     }
   }, [pdfjsLib, showError]);
@@ -87,19 +87,19 @@ export default function PDFConverter() {
     let isMounted = true;
     
     const initializePDFJS = async () => {
-      console.log('🔄 PDF.js 초기화 시작...');
+      console.log('Initialising PDF.js...');
       
       // Worker 설정 - 로컬 파일만 사용 (안정성 최우선)
       if (typeof window !== "undefined") {
         const workerSrc = `${window.location.origin}/pdf.worker.min.js`;
         GlobalWorkerOptions.workerSrc = workerSrc;
-        console.log('✅ PDF.js Worker 설정 완료:', workerSrc);
+        console.log('PDF.js worker configured:', workerSrc);
       }
       
       // 컴포넌트가 여전히 마운트되어 있을 때만 상태 업데이트
       if (isMounted) {
         setIsReady(true);
-        console.log('🎉 PDF.js 초기화 완료 - 파일 업로드 준비됨!');
+        console.log('PDF.js ready for uploads');
       }
     };
 
@@ -114,12 +114,12 @@ export default function PDFConverter() {
   // PDF 파일 검증
   const validatePdfFile = useCallback((file: File): boolean => {
     if (!file.type.includes('pdf') && !file.name.toLowerCase().endsWith('.pdf')) {
-      showError('PDF 파일만 업로드할 수 있습니다.');
+      showError('Only PDF files can be converted here.');
       return false;
     }
     
     if (file.size > 50 * 1024 * 1024) {
-      showError('파일 크기가 50MB를 초과합니다.');
+      showError('This file is over the 50MB limit. Try splitting the document into smaller parts.');
       return false;
     }
     
@@ -129,36 +129,36 @@ export default function PDFConverter() {
   // PDF 미리보기 렌더링 - 안정성 개선
   const renderPreview = useCallback(async (file: File) => {
     if (!canvasRef.current) {
-      console.warn('Canvas ref가 없습니다');
+      console.warn('Canvas ref is not attached');
       return;
     }
 
     setIsLoading(true);
     try {
-      console.log('🖼️ PDF 미리보기 렌더링 시작');
+      console.log('Rendering PDF preview');
 
       const pdfjs = await loadPDFJS();
       
-      console.log('📄 PDF 파일 로딩 시작');
+      console.log('Loading PDF file');
       
       // 1. PDF 로딩 (URL.createObjectURL 사용)
       const pdf = await pdfjs.getDocument({ data: await file.arrayBuffer() }).promise;
-      console.log(`✅ PDF 로딩 완료: 총 ${pdf.numPages} 페이지`);
+      console.log(`PDF loaded: ${pdf.numPages} pages`);
 
       // 2. 첫 페이지 가져오기
       const page = await pdf.getPage(1);
-      console.log('✅ 첫 페이지 로딩 완료');
+      console.log('First page loaded');
 
       const canvas = canvasRef.current;
       const context = canvas.getContext('2d');
       if (!context) {
-        throw new Error('CanvasContext를 가져올 수 없습니다');
+        throw new Error('Could not get a 2D canvas context.');
       }
 
       // 3. 뷰포트 설정 (PDF.js v3+ 호환)
       const scale = 1.5;
       const viewport = page.getViewport({ scale });
-      console.log(`🖼️ Canvas 설정 완료 (Width: ${viewport.width}, Height: ${viewport.height})`);
+      console.log(`Canvas sized ${viewport.width}x${viewport.height}`);
 
       // 4. Canvas 크기 설정
       canvas.height = viewport.height;
@@ -171,22 +171,22 @@ export default function PDFConverter() {
       };
 
       await page.render(renderContext).promise;
-      console.log('✅ PDF 미리보기 렌더링 완료');
+      console.log('Preview rendered');
 
       const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
       setPreviewUrl(dataUrl);
 
     } catch (error) {
       if (error instanceof Error) {
-        console.error('❌ PDF 미리보기 렌더링 실패:', {
+        console.error('Preview rendering failed:', {
           message: error.message,
           name: error.name,
           stack: error.stack
         });
-        showError(`PDF 미리보기 생성 실패: ${error.message}`);
+        showError(`Could not generate a preview: ${error.message}`);
       } else {
-        console.error('❌ PDF 미리보기 렌더링 실패(원시값):', JSON.stringify(error));
-        showError('PDF 미리보기 생성 중 알 수 없는 오류가 발생했습니다');
+        console.error('Preview rendering failed (raw):', JSON.stringify(error));
+        showError('Something went wrong while generating the preview.');
       }
     } finally {
       setIsLoading(false);
@@ -195,7 +195,7 @@ export default function PDFConverter() {
 
   // 파일 선택 버튼 클릭 핸들러
   const handleAddFileClick = useCallback((e?: React.MouseEvent) => {
-    console.log('🖱️ Add File 영역 클릭됨');
+    console.log('Add File area clicked');
     
     if (e) {
       e.preventDefault();
@@ -203,8 +203,8 @@ export default function PDFConverter() {
     }
     
     if (!isReady) {
-      console.warn('⚠️ PDF 라이브러리가 아직 준비되지 않음');
-      showError('PDF 라이브러리가 로딩 중입니다. 잠시 후 다시 시도해주세요.');
+      console.warn('PDF library not ready yet');
+      showError('The PDF library is still loading. Please try again in a moment.');
       return;
     }
     
@@ -220,26 +220,26 @@ export default function PDFConverter() {
       
       if (files && files.length > 0) {
         const file = files[0];
-        console.log('📄 파일 선택됨:', { name: file.name, size: file.size, type: file.type });
+        console.log('File selected:', { name: file.name, size: file.size, type: file.type });
         
         // PDF.js 초기화 상태 재확인
         if (!isReady) {
-          console.warn('⚠️ PDF.js가 아직 초기화되지 않음');
-          showError('PDF 라이브러리 초기화 중입니다. 잠시 후 다시 시도해주세요.');
+          console.warn('PDF.js not initialised yet');
+          showError('The PDF library is still starting up. Please try again in a moment.');
           return;
         }
         
         if (validatePdfFile(file)) {
-          console.log('✅ 파일 유효성 검사 통과');
+          console.log('File passed validation');
 
           // 상태 초기화
           clearConvertedPages();
           setPreviewUrl(null);
           setSelectedFile(file);
-          console.log('✅ 파일 선택 완료');
+          console.log('File selection complete');
 
           // PDF 미리보기 렌더링 - 초기화 완료 상태에서만 실행
-          console.log('🖼️ PDF 미리보기 시작');
+          console.log('Starting preview');
           await renderPreview(file);
         }
       }
@@ -250,7 +250,7 @@ export default function PDFConverter() {
     
     // DOM에 추가하고 클릭
     document.body.appendChild(fileInput);
-    console.log('✅ 파일 선택 대화상자 열기');
+    console.log('Opening file picker');
     fileInput.click();
   }, [clearConvertedPages, isReady, renderPreview, showError, validatePdfFile]);
 
@@ -269,8 +269,8 @@ export default function PDFConverter() {
       
       // PDF.js 초기화 상태 확인
       if (!isReady) {
-        console.warn('⚠️ PDF.js가 아직 초기화되지 않음 (드래그앤드롭)');
-        showError('PDF 라이브러리 초기화 중입니다. 잠시 후 다시 시도해주세요.');
+        console.warn('PDF.js not initialised yet (drag and drop)');
+        showError('The PDF library is still starting up. Please try again in a moment.');
         return;
       }
       
@@ -279,7 +279,7 @@ export default function PDFConverter() {
         setPreviewUrl(null);
         setSelectedFile(file);
         
-        console.log('🖼️ PDF 미리보기 시작 (드래그앤드롭)');
+        console.log('Starting preview (drag and drop)');
         await renderPreview(file);
       }
     }
@@ -289,24 +289,24 @@ export default function PDFConverter() {
   const convertPdfToImages = useCallback(async () => {
     // PDF.js 초기화 및 파일 상태 확인
     if (!selectedFile) {
-      showError('변환할 PDF 파일을 선택해주세요.');
+      showError('Choose a PDF file to convert first.');
       return;
     }
     
     if (!isReady) {
-      showError('PDF 라이브러리 초기화 중입니다. 잠시 후 다시 시도해주세요.');
+      showError('The PDF library is still starting up. Please try again in a moment.');
       return;
     }
     
     if (!canvasRef.current) {
-      showError('캔버스를 초기화할 수 없습니다.');
+      showError('Could not prepare the canvas used for rendering.');
       return;
     }
 
     setIsConverting(true);
     setProgress(0);
     clearConvertedPages();
-    console.log('🔄 PDF 변환 시작...');
+    console.log('Starting conversion...');
 
     try {
       const pdfjs = await loadPDFJS();
@@ -315,14 +315,14 @@ export default function PDFConverter() {
       const totalPages = pdf.numPages;
       const results: ConvertedPage[] = [];
 
-      console.log(`📖 총 ${totalPages}페이지 변환 시작`);
+      console.log(`Converting ${totalPages} pages`);
 
       for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
         try {
           const page = await pdf.getPage(pageNum);
           const canvas = canvasRef.current;
           const context = canvas.getContext('2d');
-          if (!context) throw new Error('Canvas context 없음');
+          if (!context) throw new Error('No 2D canvas context available.');
 
           // 고화질 렌더링
           const scale = 2.0;
@@ -362,18 +362,18 @@ export default function PDFConverter() {
           setProgress(progressPercent);
           setConvertedPages([...results]);
           
-          console.log(`✅ 페이지 ${pageNum}/${totalPages} 완료 (${progressPercent}%)`);
+          console.log(`Page ${pageNum}/${totalPages} done (${progressPercent}%)`);
 
         } catch (pageError) {
-          console.error(`❌ 페이지 ${pageNum} 변환 실패:`, pageError);
+          console.error(`Page ${pageNum} failed:`, pageError);
         }
       }
 
-      console.log(`🎉 변환 완료: ${results.length}개 페이지`);
+      console.log(`Conversion complete: ${results.length} pages`);
 
     } catch (err) {
-      console.error('❌ PDF 변환 실패:', err);
-      showError('PDF 변환 중 오류가 발생했습니다.');
+      console.error('PDF conversion failed:', err);
+      showError('Something went wrong while converting the PDF. Try again, or use a smaller file.');
     } finally {
       setIsConverting(false);
       setProgress(100);
@@ -414,8 +414,8 @@ export default function PDFConverter() {
       URL.revokeObjectURL(link.href);
       
     } catch (error) {
-      console.error('❌ ZIP 다운로드 실패:', error);
-      showError('전체 다운로드 중 오류가 발생했습니다.');
+      console.error('ZIP download failed:', error);
+      showError('Something went wrong while preparing the download.');
     }
   }, [convertedPages, selectedFile, showError]);
 
