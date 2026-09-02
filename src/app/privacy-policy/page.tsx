@@ -25,15 +25,15 @@ const sections = [
   },
   {
     title: "Analytics and technical information",
-    body: "On bravoconvert.com, Google Analytics loads only after you select Accept optional cookies. It may then process pages visited, approximate location derived from IP address, browser and device information, referring pages, and interaction events. BravoConvert requests IP anonymization in its Analytics configuration. File contents and image pixels are not sent to Analytics.",
+    body: "The Google Analytics tag is present on every page of bravoconvert.com and loads when the page loads. What it is permitted to do depends on your consent: until you select Accept optional cookies, Google Consent Mode holds analytics storage in a denied state, so the tag does not read or write analytics cookies or identifiers on your device. Google still receives the request itself, which necessarily includes your IP address and browser user agent. After you accept, Analytics may additionally process pages visited, approximate location derived from IP address, browser and device information, referring pages, and interaction events. BravoConvert requests IP anonymization in its Analytics configuration. File contents and image pixels are never sent to Analytics.",
   },
   {
     title: "Advertising and cookies",
-    body: "On bravoconvert.com, the Google AdSense script loads only after you select Accept optional cookies. Google and its advertising partners may then use cookies, local storage, web beacons, IP addresses, or similar identifiers to serve, personalize, limit, and measure advertising. Whether personalized, non-personalized, or limited ads are available depends on your region, consent signals, Google requirements, and the site's AdSense configuration. File contents and image pixels are not passed to the AdSense tag.",
+    body: "The Google AdSense script is likewise present on every page and loads when the page loads. Until you accept, Consent Mode holds ad storage, advertising user data, and ad personalization in a denied state, so Google and its partners do not store or read advertising cookies or similar identifiers on your device and do not use your data to personalize ads. Requests to Google's ad servers still occur and necessarily carry your IP address and user agent. After you accept, Google and its advertising partners may use cookies, local storage, web beacons, IP addresses, or similar identifiers to serve, personalize, limit, and measure advertising. Whether personalized, non-personalized, or limited ads are available depends on your region, consent signals, Google requirements, and the site's AdSense configuration. File contents and image pixels are never passed to the AdSense tag.",
   },
   {
     title: "Consent and your choices",
-    body: "The Privacy choices panel stores either granted or denied in your browser's local storage under bravoconvert-consent-v1. The default Google Consent Mode state is denied for analytics storage, ad storage, advertising user data, and ad personalization. Accepting updates all four signals to granted and permits the Analytics and AdSense scripts to load; rejecting keeps them denied and the scripts do not load. You can reopen Privacy choices at any time. A later rejection updates future consent signals but does not undo earlier processing or automatically delete cookies already stored, which you can remove in browser settings.",
+    body: "The Privacy choices panel stores either granted or denied in your browser's local storage under bravoconvert-consent-v1. The default Google Consent Mode state is denied for analytics storage, ad storage, advertising user data, and ad personalization. Accepting updates all four signals to granted. Rejecting leaves all four denied — the Google tags remain loaded, but they are not permitted to use storage on your device for analytics or advertising, and ads are not personalized. This is Google's documented Consent Mode design: the tag loads and then respects the signal, rather than the signal deciding whether the tag loads at all. You can reopen Privacy choices at any time. A later rejection updates future consent signals but does not undo earlier processing or automatically delete cookies already stored, which you can remove in browser settings.",
   },
   {
     title: "Third-party services",
@@ -61,7 +61,7 @@ export default function PrivacyPolicyPage() {
             Privacy Policy
           </h1>
           <p className="mb-8 text-xl text-black">How BravoConvert handles files, analytics, and advertising data</p>
-          <p className="text-base text-gray-600">Effective and last updated: July 28, 2026</p>
+          <p className="text-base text-gray-600">Effective and last updated: September 2, 2026</p>
         </header>
 
         <article className="rounded-xl border border-gray-200 bg-white p-6 shadow-lg transition-all duration-300 hover:shadow-xl md:p-10">

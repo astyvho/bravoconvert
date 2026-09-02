@@ -419,17 +419,33 @@ export default function PDFConverter() {
     }
   }, [convertedPages, selectedFile, showError]);
 
+  // 페이지 헤더는 준비 상태와 무관하게 항상 렌더링한다.
+  // 이 컴포넌트가 로딩 게이트 뒤에 전부 숨어 있으면 정적 HTML에 h1이 사라지고
+  // 크롤러에게는 "Initializing..." 화면만 남는다.
+  const pageHeader = (
+    <div className="mb-10 text-center">
+      <h1 className="text-5xl md:text-7xl font-extrabold text-black mb-2 drop-shadow-none">
+        PDF to Image Converter
+      </h1>
+      <p className="text-lg md:text-2xl text-black font-bold mb-1">
+        Convert your PDF files to high-quality images quickly and easily
+      </p>
+      <p className="text-black font-extrabold">
+        Free to use, no installation required
+      </p>
+    </div>
+  );
+
   // 🎯 조건부 렌더링 - early return 제거하고 여기서 처리
   if (!isReady) {
     return (
-      <div className="w-full max-w-2xl mx-auto py-12 px-2 bg-transparent h-full flex items-center justify-center">
-        <div className="text-center">
-          <Loader2 className="w-16 h-16 border-gray-300 text-gray-600 animate-spin mx-auto mb-6" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            Initializing PDF Engine
-          </h2>
-          <p className="text-gray-600">
-            Setting up conversion system...
+      <div className="w-full max-w-2xl mx-auto py-12 px-2 bg-transparent h-full">
+        {pageHeader}
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-gray-200 bg-gray-50 py-16 text-center">
+          <Loader2 className="mb-4 h-10 w-10 animate-spin text-gray-500" />
+          <p className="text-base font-medium text-gray-700">Loading the converter…</p>
+          <p className="mt-1 text-sm text-gray-500">
+            This takes a moment on first visit. Your files stay on your device.
           </p>
         </div>
       </div>
@@ -443,17 +459,7 @@ export default function PDFConverter() {
       <canvas ref={canvasRef} style={{ display: 'none' }} />
 
       {/* 페이지 헤더 */}
-      <div className="mb-10 text-center">
-        <h1 className="text-5xl md:text-7xl font-extrabold text-black mb-2 drop-shadow-none">
-          PDF to Image Converter
-        </h1>
-        <p className="text-lg md:text-2xl text-black font-bold mb-1">
-          Convert your PDF files to high-quality images quickly and easily
-        </p>
-        <p className="text-black font-extrabold">
-          Free to use, no installation required
-        </p>
-      </div>
+      {pageHeader}
 
       {/* 에러 메시지 */}
       {error && (
