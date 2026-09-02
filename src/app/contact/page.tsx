@@ -60,8 +60,49 @@ export default function ContactPage() {
           <p className="text-sm text-gray-600 mt-3">Typical response time: a few business days, longer for complex requests.</p>
         </div>
 
-        <p className="text-sm text-gray-600 mt-6">
-          Many common questions are already answered in the <Link className="underline font-medium" href="/faq/">FAQ</Link> and the <Link className="underline font-medium" href="/guides/troubleshooting/">troubleshooting guide</Link>.
+        <section className="mt-8">
+          <h2 className="mb-3 text-xl font-bold text-black">What makes a report easy to act on</h2>
+          <p className="mb-4 text-gray-700 leading-7">
+            Because everything runs inside your browser rather than on a server, there are no logs to
+            look at from this end. A problem can usually only be reproduced from what you describe, so
+            these four details do most of the work:
+          </p>
+          <ol className="list-decimal space-y-2 pl-6 text-gray-700 leading-7">
+            <li>Your browser and version, and whether you were on a phone or a computer.</li>
+            <li>
+              The real format and rough size of the file — not the extension, which can be misleading.
+              A file renamed from <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm">.heic</code>{" "}
+              to <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm">.jpg</code> is still HEIC,
+              and that alone explains a lot of rejections.
+            </li>
+            <li>Which tool you used and what settings were showing when it went wrong.</li>
+            <li>The exact wording of any message, and what you expected to happen instead.</li>
+          </ol>
+        </section>
+
+        <section className="mt-8">
+          <h2 className="mb-3 text-xl font-bold text-black">Please do not send files</h2>
+          <p className="text-gray-700 leading-7">
+            There is no facility here for receiving them, and the whole point of the site is that your
+            documents stay on your own device — mailing one in would undo that. Describe the file
+            instead. If a problem only happens with one specific image, saying so is more useful than
+            attaching it: it usually points at the format or the dimensions rather than the picture.
+          </p>
+        </section>
+
+        <section className="mt-8">
+          <h2 className="mb-3 text-xl font-bold text-black">What we cannot help with</h2>
+          <p className="text-gray-700 leading-7">
+            Recovering a file you did not keep a copy of — nothing is stored here, so there is nothing
+            to retrieve. Converting formats the tools do not accept, such as HEIC, RAW, TIFF or GIF.
+            Anything requiring an account, since there are none. And restoring quality lost to an
+            earlier compression: once detail has been discarded by a lossy encoder, no amount of
+            re-converting brings it back.
+          </p>
+        </section>
+
+        <p className="text-sm text-gray-600 mt-8">
+          Many common questions are already answered in the <Link className="underline font-medium" href="/faq/">FAQ</Link> and the <Link className="underline font-medium" href="/guides/troubleshooting/">troubleshooting guide</Link>. For what the site does with data, see the <Link className="underline font-medium" href="/privacy-policy/">privacy policy</Link>; for who runs it, see <Link className="underline font-medium" href="/about/">about</Link>.
         </p>
       </article>
     </main>

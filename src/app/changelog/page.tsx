@@ -9,6 +9,36 @@ export const metadata: Metadata = {
 
 const entries = [
   {
+    date: "September 2, 2026",
+    title: "Contact address no longer obscured",
+    body: "The email address on the Contact and Privacy Policy pages was being rewritten by the CDN into a placeholder behind a link that led nowhere for anyone browsing without JavaScript. Both pages now show the real address, and the link works.",
+  },
+  {
+    date: "September 2, 2026",
+    title: "Corrected the Privacy Policy",
+    body: "The policy still described the previous behaviour, where the Google Analytics and AdSense scripts loaded only after you accepted cookies. Since August that has not been how the site works: both tags load with the page, and Consent Mode holds storage and personalisation off until you choose. The policy now says so, and adds the honest caveat that Google receives the request itself either way.",
+  },
+  {
+    date: "September 2, 2026",
+    title: "Guides rebuilt on measured data",
+    body: "All six guides were rewritten around byte counts measured in the same browser engine the converters use, with the test images published so anyone can reproduce them. Several previous claims turned out to be wrong when tested — downscaling shrinks files by more than the pixel count suggests, WebP is not always smaller than JPG, and for text documents PNG beats JPG on both size and quality.",
+  },
+  {
+    date: "September 2, 2026",
+    title: "English error messages in the PDF converter",
+    body: "Some error messages in the PDF tool were still appearing in Korean on an otherwise English site. All of them are now in English, and several were rewritten to say what to do next rather than only what went wrong.",
+  },
+  {
+    date: "September 2, 2026",
+    title: "PDF page heading fixed",
+    body: "While PDF.js was still loading, the converter page replaced its entire heading with a setup message. The page title and description now stay visible throughout, with a quieter loading indicator beneath them.",
+  },
+  {
+    date: "August 20, 2026",
+    title: "Analytics and advertising tags now load on every page",
+    body: "Both Google tags previously waited for a consent click before loading at all. They now load with the page and rely on Consent Mode, denied by default, to govern what they may store or personalise — the arrangement Google documents for this purpose.",
+  },
+  {
     date: "July 28, 2026",
     title: "Improved cookie consent and privacy verification",
     body: "Clarified the consent flow for optional analytics and advertising cookies, and reviewed production behavior against the Privacy Policy.",

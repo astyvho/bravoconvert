@@ -1,6 +1,52 @@
 "use client";
 import Link from "next/link";
-import { CircleAlert, FileImage, FileText, Image, ImageIcon as ImageFormatIcon, PencilRuler, ShieldCheck } from "lucide-react";
+import { CircleAlert, FileImage, FileText, Gauge, Image, ImageIcon as ImageFormatIcon, ListChecks, PencilRuler, ShieldCheck } from "lucide-react";
+import benchmarks from "@/data/format-benchmarks.json";
+
+const kb = (bytes: number) => `${Math.round(bytes / 1024).toLocaleString()} KB`;
+const homePhoto = benchmarks.samples.find((s) => s.id === "photo")!;
+const homeJpg80 = homePhoto.jpeg.find((e) => e.quality === 0.8)!.bytes;
+const homeWebp80 = homePhoto.webp.find((e) => e.quality === 0.8)!.bytes;
+const homeHalf = benchmarks.resize.rows.find((r) => r.scale === 0.5)!;
+
+const commonTasks = [
+  {
+    task: "A photo is too big to email or upload",
+    how: "Resize it down first, then convert to JPG or WebP at quality 0.8. Resizing preserves apparent sharpness better than heavy compression does.",
+    tool: "Image Editor",
+    href: "/edit/image/",
+  },
+  {
+    task: "A form only accepts JPG or PNG",
+    how: "Convert the file and download the result. Batch conversion returns a ZIP when there is more than one file.",
+    tool: "Image Converter",
+    href: "/convert/img/",
+  },
+  {
+    task: "Someone needs one page of a long PDF",
+    how: "Render that page as an image so it opens instantly anywhere, with no PDF viewer needed. Choose PNG for text-heavy pages.",
+    tool: "PDF Converter",
+    href: "/convert/pdf/",
+  },
+  {
+    task: "A photo is about to be posted publicly",
+    how: "Convert it before sharing. The output is rebuilt from pixels, so camera metadata including GPS coordinates does not carry over.",
+    tool: "Image Converter",
+    href: "/convert/img/",
+  },
+  {
+    task: "Several images need to become one document",
+    how: "Add them in the order you want, then choose PDF as the output format.",
+    tool: "Image Converter",
+    href: "/convert/img/",
+  },
+  {
+    task: "A phone photo came out sideways",
+    how: "Rotate it in 90-degree steps and export. The rotation is baked into the pixels, so it stays correct everywhere.",
+    tool: "Image Editor",
+    href: "/edit/image/",
+  },
+];
 
 export default function Home() {
   return (
@@ -14,10 +60,16 @@ export default function Home() {
             name: "BravoConvert",
             url: "https://bravoconvert.com",
             description: "Free browser-based image editing, image conversion, and PDF-to-image tools.",
+            publisher: {
+              "@type": "Organization",
+              name: "BravoConvert",
+              url: "https://bravoconvert.com/",
+              email: "bravoconvert.help@gmail.com",
+            },
             hasPart: [
-              { "@type": "WebApplication", name: "Image Converter", url: "https://bravoconvert.com/convert/img" },
-              { "@type": "WebApplication", name: "PDF to Image Converter", url: "https://bravoconvert.com/convert/pdf" },
-              { "@type": "WebApplication", name: "Image Editor", url: "https://bravoconvert.com/edit/image" },
+              { "@type": "WebApplication", name: "Image Converter", applicationCategory: "MultimediaApplication", operatingSystem: "Any browser", url: "https://bravoconvert.com/convert/img/", offers: { "@type": "Offer", price: "0", priceCurrency: "USD" } },
+              { "@type": "WebApplication", name: "PDF to Image Converter", applicationCategory: "MultimediaApplication", operatingSystem: "Any browser", url: "https://bravoconvert.com/convert/pdf/", offers: { "@type": "Offer", price: "0", priceCurrency: "USD" } },
+              { "@type": "WebApplication", name: "Image Editor", applicationCategory: "MultimediaApplication", operatingSystem: "Any browser", url: "https://bravoconvert.com/edit/image/", offers: { "@type": "Offer", price: "0", priceCurrency: "USD" } },
             ],
           }),
         }}
@@ -129,11 +181,90 @@ export default function Home() {
             </div>
           </div>
           <div>
+            <h2 className="mb-4 flex items-center gap-3 text-3xl font-bold text-black">
+              <Gauge className="h-8 w-8 flex-shrink-0 text-gray-700" aria-hidden="true" />
+              What it does to a file, in numbers
+            </h2>
+            <p className="leading-7 mb-5">
+              These are measured results, not estimates — produced by encoding a test photograph
+              through the same browser API the converter uses. Your own files will land on different
+              absolute numbers, but the relationships hold.
+            </p>
+            <div className="overflow-x-auto rounded-xl border border-gray-200">
+              <table className="w-full text-left text-sm">
+                <thead className="bg-gray-100 text-black">
+                  <tr>
+                    <th className="p-3 font-bold">Same 900×600 photo, saved as</th>
+                    <th className="p-3 font-bold">Size</th>
+                    <th className="p-3 font-bold">Against the PNG</th>
+                  </tr>
+                </thead>
+                <tbody className="text-gray-700">
+                  <tr className="border-t border-gray-200">
+                    <td className="p-3 font-medium text-black">PNG (lossless)</td>
+                    <td className="p-3">{kb(homePhoto.png)}</td>
+                    <td className="p-3 text-gray-400">—</td>
+                  </tr>
+                  <tr className="border-t border-gray-200">
+                    <td className="p-3 font-medium text-black">JPG, quality 0.8</td>
+                    <td className="p-3">{kb(homeJpg80)}</td>
+                    <td className="p-3">{Math.round((1 - homeJpg80 / homePhoto.png) * 100)}% smaller</td>
+                  </tr>
+                  <tr className="border-t border-gray-200">
+                    <td className="p-3 font-medium text-black">WebP, quality 0.8</td>
+                    <td className="p-3">{kb(homeWebp80)}</td>
+                    <td className="p-3">{Math.round((1 - homeWebp80 / homePhoto.png) * 100)}% smaller</td>
+                  </tr>
+                  <tr className="border-t border-gray-200 bg-gray-50">
+                    <td className="p-3 font-medium text-black">WebP at half the dimensions</td>
+                    <td className="p-3 font-medium text-black">{kb(homeHalf.webp)}</td>
+                    <td className="p-3 font-medium text-black">{Math.round((1 - homeHalf.webp / homePhoto.png) * 100)}% smaller</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p className="mt-4 leading-7">
+              The <Link href="/guides/jpg-png-webp-comparison/" className="underline font-medium">format comparison guide</Link>{" "}
+              publishes every measurement and the test images themselves, including the case where JPG
+              beats WebP — which is not the result most articles will tell you to expect.
+            </p>
+          </div>
+
+          <div>
+            <h2 className="mb-4 flex items-center gap-3 text-3xl font-bold text-black">
+              <ListChecks className="h-8 w-8 flex-shrink-0 text-gray-700" aria-hidden="true" />
+              Common tasks, and where to start
+            </h2>
+            <div className="grid gap-4 md:grid-cols-2">
+              {commonTasks.map((task) => (
+                <div key={task.task} className="rounded-xl border border-gray-200 bg-gray-50 p-5">
+                  <div className="mb-1 font-bold text-black">{task.task}</div>
+                  <p className="text-sm leading-6 text-gray-700">
+                    {task.how}{" "}
+                    <Link href={task.href} className="underline font-medium">
+                      {task.tool}
+                    </Link>
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div>
             <h2 className="mb-3 flex items-center gap-3 text-2xl font-bold text-black">
               <CircleAlert className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
               Before converting
             </h2>
-            <p className="leading-7">Keep a backup of every original. Conversion quality, speed, memory use and format support depend on your browser and device. Image uploads are limited to 10MB per file and PDF uploads to 50MB. Password-protected PDFs are not supported.</p>
+            <p className="leading-7">
+              Keep a backup of every original — conversion makes a copy, it does not manage your
+              files, and nothing is stored here after you close the tab. Speed, memory use and format
+              support depend on your browser and device, because the work happens on your machine
+              rather than on a server. Images are limited to 10MB each and PDFs to 50MB, and
+              password-protected PDFs cannot be opened. Accepted inputs are JPG, PNG and WebP for
+              images, and PDF for documents; HEIC, RAW, TIFF, GIF and BMP are not supported. If
+              something fails, <Link href="/guides/troubleshooting/" className="underline font-medium">troubleshooting</Link>{" "}
+              lists the usual causes.
+            </p>
           </div>
           <div className="rounded-xl border border-gray-200 bg-gray-50 p-6">
             <h2 className="mb-2 text-xl font-bold text-black">Not sure which format or setting to use?</h2>
