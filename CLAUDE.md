@@ -15,14 +15,18 @@ npm install
 # Run development server
 npm run dev
 
-# Build for production
+# Build for production (static export to ./out)
 npm run build
 
-# Start production server
-npm start
+# Build, then serve the export through Wrangler locally
+npm run preview        # `npm start` is an alias for this
+
+# Playwright end-to-end tests
+npm run test:e2e               # tests/e2e/*.spec.ts against a local server
+npm run test:production        # production.spec.ts against https://bravoconvert.com
 ```
 
-Note: This project does not include linting or testing commands. ESLint is configured but no npm script is defined.
+Note: ESLint is configured (`eslint.config.mjs`) but has no npm script — run it with `npx eslint .`. Typecheck with `npx tsc --noEmit`.
 
 ## Architecture & Key Components
 
@@ -35,7 +39,9 @@ Note: This project does not include linting or testing commands. ESLint is confi
 ### Core Components
 
 #### File Conversion Logic
-- **ImageConverter** (`src/components/ImageConverter.tsx`): Main image conversion component using useReducer for state management, supports drag-and-drop file reordering with @dnd-kit/sortable
+- **ImageConverter** (`src/components/ImageConverter.tsx`): Main image conversion component using useReducer for state management, supports drag-and-drop file reordering with @dnd-kit/sortable. It does not encode anything itself — it posts work to the worker below.
+- **image-worker.js** (`public/workers/image-worker.js`): Where image conversion actually happens, off the main thread. Reads the JPEG orientation flag, draws through `createOrientedCanvas`, and encodes with `OffscreenCanvas.convertToBlob`. Because output is re-encoded from decoded pixels, source EXIF never carries over. A target size is reached by binary-searching quality over 7 attempts, so it is approached rather than calculated.
+- **ImageEditor** (`src/components/ImageEditor.tsx`): Single-image resize/rotate/flip at `/edit/image/`, separate from the converter by design — do not merge editing controls into ImageConverter (see AGENTS.md).
 - **PDFConverter** (`src/components/PDFConverter.tsx`): PDF-to-image conversion using PDF.js, renders each page to canvas then converts to blob URLs
 - **CustomDropdown** (`src/components/ui/CustomDropdown.tsx`): Custom select component with 2-column grid layout, animations, and keyboard navigation
 
@@ -58,24 +64,48 @@ Note: This project does not include linting or testing commands. ESLint is confi
 - **Framer Motion**: Smooth animations and transitions
 
 ### File Structure Patterns
-- Page components in `src/app/*/page.tsx` (convert/img, convert/pdf, faq, etc.)
+- Page components in `src/app/*/page.tsx` — tools at `convert/img`, `convert/pdf`, `edit/image`; content at `guides/*`, `faq`, `how-to-use`, `about`, `contact`, `changelog`, `privacy-policy`, `terms`
 - Reusable UI components in `src/components/ui/`
 - Feature-specific components in `src/components/`
 - Type definitions co-located with components (e.g., `image-converter/types.ts`)
+- Generated measurement data in `src/data/*.json`, produced by `scripts/` (see Guide Data Generation) — edit the script and re-run it, never hand-edit the JSON
 
 ### Supported Formats
-- **Image inputs**: BMP, CR3, DNG, HEIC, JFIF, JPG, PNG, TIFF, GIF
-- **Image outputs**: WEBP, AVIF, BMP, GIF, ICO, JFIF, JPG, PNG, TIFF, PDF
-- **PDF processing**: Up to 50MB files, output to JPG/PNG
+
+Verified against the source, not aspirational. The format lists live in
+`src/components/image-converter/formats.ts`; the ceilings are constants in the
+components themselves.
+
+| Tool | Accepts | Produces | Ceiling |
+|---|---|---|---|
+| Image Converter (`/convert/img/`) | JPG / JPEG / JPE / JFIF, PNG, WebP | WebP, JPG, PNG, PDF | 10 MB per image |
+| Image Editor (`/edit/image/`) | JPG / JPEG, PNG, WebP | JPG, PNG, WebP | 10 MB, 16,384 px per side, 64 megapixels |
+| PDF Converter (`/convert/pdf/`) | PDF | PNG, JPG | 50 MB per document |
+
+**HEIC, RAW (CR2/CR3/DNG), TIFF, GIF, BMP, SVG and AVIF are not supported as
+input.** Input is validated by MIME type, so renaming an extension does not get a
+file past the check. Do not describe any of these as supported in marketing copy
+or guides — an earlier revision of this file claimed they were, and the guides had
+to be corrected.
+
+PDF rendering specifics that content frequently needs: `PDFConverter.tsx` renders
+at `scale = 2.0`, and since PDF user space is 72 units per inch that is **144 DPI**
+(A4 → 1190×1684 px). JPG output is encoded at **quality 0.95**, which on a
+text-heavy page produces a file roughly 1.5× the size of the PNG output. Encrypted
+or password-protected PDFs cannot be opened.
 
 ## Important Implementation Details
 
 ### File Processing Flow
-1. Files are validated against supported formats on upload
-2. Canvas API handles image format conversion with quality preservation
-3. PDF.js renders PDF pages to canvas, then converts to image blobs
+1. Files are validated by MIME type and size on upload
+2. Image conversion is handed to `public/workers/image-worker.js`, which decodes to an ImageBitmap, applies EXIF orientation, and re-encodes with `OffscreenCanvas.convertToBlob` — the re-encode is why output carries no source metadata
+3. PDF.js renders PDF pages to canvas at scale 2.0, then converts to image blobs
 4. JSZip creates downloadable archives for batch operations
 5. URL.revokeObjectURL() called for memory management
+
+Nothing is ever uploaded. Every size ceiling above exists because the file has to
+fit in the visitor's own memory, which is also why large jobs fail on phones
+before they fail on desktops.
 
 
 ### State Management Patterns
@@ -89,13 +119,38 @@ Note: This project does not include linting or testing commands. ESLint is confi
 
 ### SEO & Analytics
 - Comprehensive meta tags and keywords in layout.tsx
-- Google Analytics (G-2QXJN1E3TF) and AdSense integration
-- RSS feed at /feed.xml and sitemap generation
+- Google Analytics (G-2QXJN1E3TF) and AdSense (`ca-pub-6552891879490275`) tags load on **every** page from the layout head, unconditionally. Storage is governed by the denied-by-default Consent Mode v2 block above them, which `ConsentManager` updates. Do not gate the script tags behind consent — doing so previously left crawlers and the AdSense reviewer seeing a site with no ad code.
+- Feeds at both `/rss` and `/feed.xml`; `sitemap.ts` generates `/sitemap.xml`
+- `next.config.js` sets `trailingSlash: true`. Every `alternates.canonical` and every sitemap entry **must** end in a slash or Google gets a 308. Note that Next.js already appends the slash when rendering `<Link href="/faq">`, so the emitted HTML is correct even where the JSX omits it — check rendered output, not JSX, before "fixing" this.
 - Domain verification for Google Search Console and Naver
 
+### Guide Data Generation
+
+The `/guides` articles are built on measured numbers rather than rules of thumb.
+Two scripts produce that evidence, and the pages import the JSON, so re-running a
+script updates every figure on the site:
+
+- `node scripts/generate-guide-assets.mjs` → `src/data/format-benchmarks.json` plus imagery in `public/guides/`. Encodes test images through Canvas `toBlob` in Playwright's Chromium — deliberately the same encode path the site uses, so the numbers are the site's own output.
+- `node scripts/generate-exif-demo.mjs` → `src/data/exif-demo.json`. Builds a JPEG with a real EXIF block (make, model, timestamp, orientation, GPS), round-trips it through the worker's canvas path, and re-parses with `exifr` to prove metadata does not survive.
+
+Both need `npx playwright install chromium` once.
+
+### Deployment
+
+`git push` to `main` triggers a **Cloudflare Pages** build that serves
+bravoconvert.com. Verify with
+`npx wrangler pages deployment list --project-name=bravoconvert`, then curl the
+real domain — the CDN can serve the previous HTML for 60–90 seconds after the
+deployment shows Active, and the Pages preview URL for a production deployment
+returns 404 publicly, so it is useless for verification.
+
+`npm run deploy` publishes to a **separate Workers project** that is not attached
+to the custom domain. It does not update production; do not use it to ship.
+
 ### Internationalization Structure
-- i18n folder prepared with locale JSON files (en, ko, de, es, fr, ja, zh)
-- next-international and next-intl dependencies available but not fully implemented
+- `src/i18n` holds locale JSON files (en, ko, de, es, fr, ja, zh), but nothing imports them
+- `next-international` and `next-intl` are installed and unused — no locale routing exists
+- **The site ships in English.** User-facing strings must be English; Korean belongs only in code comments. A batch of Korean error messages shipped in `PDFConverter.tsx` until 2026-09-02 and had to be translated.
 
 ## Development Guidelines
 
