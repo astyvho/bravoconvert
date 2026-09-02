@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import ContactEmail from "@/components/ContactEmail";
 import {
   BarChart3,
   Cookie,
@@ -45,7 +46,7 @@ const sections = [
   },
   {
     title: "Your rights and contact",
-    body: "Depending on your location, you may have rights to access, correct, delete, restrict, or object to processing of personal information. For privacy questions, email bravoconvert.help@gmail.com. We may need your email and message content to respond to your request.",
+    body: "Depending on your location, you may have rights to access, correct, delete, restrict, or object to processing of personal information. We may need your email address and message content in order to respond to your request.",
   },
 ];
 
@@ -84,6 +85,11 @@ export default function PrivacyPolicyPage() {
               {section.title === "Consent and your choices" && (
                 <p className="mt-3 text-gray-700">
                   Visit <a className="underline font-medium" href="https://myadcenter.google.com/" rel="noopener noreferrer" target="_blank">Google My Ad Center</a> to manage Google advertising preferences.
+                </p>
+              )}
+              {section.title === "Your rights and contact" && (
+                <p className="mt-3 text-gray-700">
+                  For privacy questions, email <ContactEmail className="underline font-medium text-gray-700" />.
                 </p>
               )}
               {section.title === "Third-party services" && (

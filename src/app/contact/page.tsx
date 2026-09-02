@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Bug, Copyright, LifeBuoy, ShieldCheck } from "lucide-react";
+import ContactEmail from "@/components/ContactEmail";
 
 export const metadata: Metadata = {
   title: "Contact BravoConvert",
@@ -55,7 +56,7 @@ export default function ContactPage() {
 
         <div className="rounded-xl bg-gray-50 border border-gray-200 p-6">
           <h2 className="text-xl font-bold mb-2">Email</h2>
-          <a className="text-blue-700 underline font-medium" href="mailto:bravoconvert.help@gmail.com">bravoconvert.help@gmail.com</a>
+          <ContactEmail />
           <p className="text-sm text-gray-600 mt-3">Typical response time: a few business days, longer for complex requests.</p>
         </div>
 
