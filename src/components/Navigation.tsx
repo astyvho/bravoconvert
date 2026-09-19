@@ -60,31 +60,29 @@ export default function Navigation() {
               <ChevronDown size={16} className={`transition-transform duration-200 ${isConverterOpen ? 'rotate-180' : ''}`} />
             </button>
             
-            {/* Dropdown menu */}
-            {isConverterOpen && (
-              <div 
-                className="absolute top-full left-0 mt-1 w-48 bg-white/95 backdrop-blur-md rounded-xl shadow-xl border border-gray-200 overflow-hidden"
-                onMouseEnter={openDropdown}
-                onMouseLeave={startCloseTimer}
-              >
-                {/* Top virtual padding area - expand mouse over area */}
-                <div className="h-4 bg-transparent"></div>
-                <Link href="/convert/img/" className="block px-4 py-3 text-black hover:bg-gray-100 transition-all duration-200 border-b border-gray-100">
-                  <div className="font-medium">Image Converter</div>
-                  <div className="text-xs text-gray-600">PNG, JPG, WEBP, PDF & more</div>
-                </Link>
-                <Link href="/convert/pdf/" className="block px-4 py-3 text-black hover:bg-gray-100 transition-all duration-200 border-b border-gray-100">
-                  <div className="font-medium">PDF to Image</div>
-                  <div className="text-xs text-gray-600">Convert PDF to JPG, PNG</div>
-                </Link>
-                <Link href="/edit/image/" className="block px-4 py-3 text-black hover:bg-gray-100 transition-all duration-200 border-b border-gray-100">
-                  <div className="font-medium">Image Editor</div>
-                  <div className="text-xs text-gray-600">Resize, rotate and flip</div>
-                </Link>
-                {/* Bottom virtual padding area - expand mouse over area */}
-                <div className="h-4 bg-transparent"></div>
-              </div>
-            )}
+            {/* Dropdown menu — always in the DOM so crawlers see the tool links; visibility is CSS only */}
+            <div
+              className={`absolute top-full left-0 mt-1 w-48 bg-white/95 backdrop-blur-md rounded-xl shadow-xl border border-gray-200 overflow-hidden transition-opacity duration-200 ${isConverterOpen ? 'opacity-100' : 'pointer-events-none invisible opacity-0'}`}
+              onMouseEnter={openDropdown}
+              onMouseLeave={startCloseTimer}
+            >
+              {/* Top virtual padding area - expand mouse over area */}
+              <div className="h-4 bg-transparent"></div>
+              <Link href="/convert/img/" className="block px-4 py-3 text-black hover:bg-gray-100 transition-all duration-200 border-b border-gray-100">
+                <div className="font-medium">Image Converter</div>
+                <div className="text-xs text-gray-600">PNG, JPG, WEBP, PDF & more</div>
+              </Link>
+              <Link href="/convert/pdf/" className="block px-4 py-3 text-black hover:bg-gray-100 transition-all duration-200 border-b border-gray-100">
+                <div className="font-medium">PDF to Image</div>
+                <div className="text-xs text-gray-600">Convert PDF to JPG, PNG</div>
+              </Link>
+              <Link href="/edit/image/" className="block px-4 py-3 text-black hover:bg-gray-100 transition-all duration-200 border-b border-gray-100">
+                <div className="font-medium">Image Editor</div>
+                <div className="text-xs text-gray-600">Resize, rotate and flip</div>
+              </Link>
+              {/* Bottom virtual padding area - expand mouse over area */}
+              <div className="h-4 bg-transparent"></div>
+            </div>
           </div>
           
           <Link href="/how-to-use/" className="hover:text-black text-black transition-all duration-300 font-medium px-4 py-2.5 rounded-xl hover:bg-gray-200 hover:shadow-sm">How to Use</Link>
@@ -108,32 +106,30 @@ export default function Navigation() {
           </div>
         </button>
 
-        {/* Mobile dropdown menu */}
-        {isMenuOpen && (
-          <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden md:hidden">
-            <div className="flex flex-col">
-              <Link href="/convert/img/" onClick={() => setIsMenuOpen(false)} className="hover:text-black text-black transition-all duration-300 font-medium px-6 py-4 hover:bg-gray-200 border-b border-gray-100">
-                <div className="font-medium">Image Converter</div>
-                <div className="text-xs text-gray-600">PNG, JPG, WEBP, PDF & more</div>
-              </Link>
-              <Link href="/convert/pdf/" onClick={() => setIsMenuOpen(false)} className="hover:text-black text-black transition-all duration-300 font-medium px-6 py-4 hover:bg-gray-200 border-b border-gray-100">
-                <div className="font-medium">PDF to Image</div>
-                <div className="text-xs text-gray-600">Convert PDF to JPG, PNG</div>
-              </Link>
-              <Link href="/edit/image/" onClick={() => setIsMenuOpen(false)} className="hover:text-black text-black transition-all duration-300 font-medium px-6 py-4 hover:bg-gray-200 border-b border-gray-100">
-                <div className="font-medium">Image Editor</div>
-                <div className="text-xs text-gray-600">Resize, rotate and flip</div>
-              </Link>
-              <Link href="/how-to-use/" onClick={() => setIsMenuOpen(false)} className="hover:text-black text-black transition-all duration-300 font-medium px-6 py-4 hover:bg-gray-200 border-b border-gray-100">How to Use</Link>
-              <Link href="/guides/" onClick={() => setIsMenuOpen(false)} className="hover:text-black text-black transition-all duration-300 font-medium px-6 py-4 hover:bg-gray-200 border-b border-gray-100">Guides</Link>
-              <Link href="/faq/" onClick={() => setIsMenuOpen(false)} className="hover:text-black text-black transition-all duration-300 font-medium px-6 py-4 hover:bg-gray-200 border-b border-gray-100">FAQ</Link>
-              <Link href="/privacy-policy/" onClick={() => setIsMenuOpen(false)} className="hover:text-black text-black transition-all duration-300 font-medium px-6 py-4 hover:bg-gray-200 border-b border-gray-100">Privacy Policy</Link>
-              <Link href="/terms/" onClick={() => setIsMenuOpen(false)} className="hover:text-black text-black transition-all duration-300 font-medium px-6 py-4 hover:bg-gray-200 border-b border-gray-100 last:border-b-0">Terms of Service</Link>
-              <Link href="/about/" onClick={() => setIsMenuOpen(false)} className="hover:text-black text-black transition-all duration-300 font-medium px-6 py-4 hover:bg-gray-200 border-b border-gray-100">About</Link>
-              <Link href="/contact/" onClick={() => setIsMenuOpen(false)} className="hover:text-black text-black transition-all duration-300 font-medium px-6 py-4 hover:bg-gray-200 last:border-b-0">Contact</Link>
-            </div>
+        {/* Mobile dropdown menu — always in the DOM so crawlers see the tool links; visibility is CSS only */}
+        <div className={`absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden md:hidden ${isMenuOpen ? '' : 'pointer-events-none invisible opacity-0'}`}>
+          <div className="flex flex-col">
+            <Link href="/convert/img/" onClick={() => setIsMenuOpen(false)} className="hover:text-black text-black transition-all duration-300 font-medium px-6 py-4 hover:bg-gray-200 border-b border-gray-100">
+              <div className="font-medium">Image Converter</div>
+              <div className="text-xs text-gray-600">PNG, JPG, WEBP, PDF & more</div>
+            </Link>
+            <Link href="/convert/pdf/" onClick={() => setIsMenuOpen(false)} className="hover:text-black text-black transition-all duration-300 font-medium px-6 py-4 hover:bg-gray-200 border-b border-gray-100">
+              <div className="font-medium">PDF to Image</div>
+              <div className="text-xs text-gray-600">Convert PDF to JPG, PNG</div>
+            </Link>
+            <Link href="/edit/image/" onClick={() => setIsMenuOpen(false)} className="hover:text-black text-black transition-all duration-300 font-medium px-6 py-4 hover:bg-gray-200 border-b border-gray-100">
+              <div className="font-medium">Image Editor</div>
+              <div className="text-xs text-gray-600">Resize, rotate and flip</div>
+            </Link>
+            <Link href="/how-to-use/" onClick={() => setIsMenuOpen(false)} className="hover:text-black text-black transition-all duration-300 font-medium px-6 py-4 hover:bg-gray-200 border-b border-gray-100">How to Use</Link>
+            <Link href="/guides/" onClick={() => setIsMenuOpen(false)} className="hover:text-black text-black transition-all duration-300 font-medium px-6 py-4 hover:bg-gray-200 border-b border-gray-100">Guides</Link>
+            <Link href="/faq/" onClick={() => setIsMenuOpen(false)} className="hover:text-black text-black transition-all duration-300 font-medium px-6 py-4 hover:bg-gray-200 border-b border-gray-100">FAQ</Link>
+            <Link href="/privacy-policy/" onClick={() => setIsMenuOpen(false)} className="hover:text-black text-black transition-all duration-300 font-medium px-6 py-4 hover:bg-gray-200 border-b border-gray-100">Privacy Policy</Link>
+            <Link href="/terms/" onClick={() => setIsMenuOpen(false)} className="hover:text-black text-black transition-all duration-300 font-medium px-6 py-4 hover:bg-gray-200 border-b border-gray-100 last:border-b-0">Terms of Service</Link>
+            <Link href="/about/" onClick={() => setIsMenuOpen(false)} className="hover:text-black text-black transition-all duration-300 font-medium px-6 py-4 hover:bg-gray-200 border-b border-gray-100">About</Link>
+            <Link href="/contact/" onClick={() => setIsMenuOpen(false)} className="hover:text-black text-black transition-all duration-300 font-medium px-6 py-4 hover:bg-gray-200 last:border-b-0">Contact</Link>
           </div>
-        )}
+        </div>
       </nav>
     </div>
   );

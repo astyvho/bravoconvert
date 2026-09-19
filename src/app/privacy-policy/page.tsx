@@ -30,7 +30,7 @@ const sections = [
   },
   {
     title: "Advertising and cookies",
-    body: "The Google AdSense script is likewise present on every page and loads when the page loads. Until you accept, Consent Mode holds ad storage, advertising user data, and ad personalization in a denied state, so Google and its partners do not store or read advertising cookies or similar identifiers on your device and do not use your data to personalize ads. Requests to Google's ad servers still occur and necessarily carry your IP address and user agent. After you accept, Google and its advertising partners may use cookies, local storage, web beacons, IP addresses, or similar identifiers to serve, personalize, limit, and measure advertising. Whether personalized, non-personalized, or limited ads are available depends on your region, consent signals, Google requirements, and the site's AdSense configuration. File contents and image pixels are never passed to the AdSense tag.",
+    body: "Third party vendors, including Google, use cookies to serve ads based on a user's prior visits to bravoconvert.com or other websites. The Google AdSense script is present on every page and loads when the page loads. Until you accept, Consent Mode holds ad storage, advertising user data, and ad personalization in a denied state, so Google and its partners do not store or read advertising cookies or similar identifiers on your device and do not use your data to personalize ads. Requests to Google's ad servers still occur and necessarily carry your IP address and user agent. After you accept, Google and its advertising partners may use cookies, local storage, web beacons, IP addresses, or similar identifiers to serve, personalize, limit, and measure advertising. Whether personalized, non-personalized, or limited ads are available depends on your region, consent signals, Google requirements, and the site's AdSense configuration. File contents and image pixels are never passed to the AdSense tag.",
   },
   {
     title: "Consent and your choices",
@@ -38,7 +38,7 @@ const sections = [
   },
   {
     title: "Third-party services",
-    body: "Google Analytics and Google AdSense are provided by Google. For ad requests from the EEA, the UK, and Switzerland, Google requires publishers serving personalized ads to use a Google-certified CMP integrated with the IAB Transparency and Consent Framework. That certified Google or third-party CMP is configured through the AdSense account and is distinct from BravoConvert's site-level Privacy choices panel. Google may restrict ad serving when a required certified CMP signal is unavailable. External links follow their operators' privacy policies. BravoConvert does not sell selected file contents or disclose them to advertisers.",
+    body: "Google Analytics and Google AdSense are provided by Google. BravoConvert has not opted out of third-party ad serving, so vendors and ad networks other than Google may also serve ads on this site through Google's advertising partners. Those vendors set and read their own cookies and identifiers under their own privacy policies, and you can review the participating networks and opt out of their personalized advertising at the links below. For ad requests from the EEA, the UK, and Switzerland, Google requires publishers serving personalized ads to use a Google-certified CMP integrated with the IAB Transparency and Consent Framework. That certified Google or third-party CMP is configured through the AdSense account and is distinct from BravoConvert's site-level Privacy choices panel. Google may restrict ad serving when a required certified CMP signal is unavailable. External links follow their operators' privacy policies. BravoConvert does not sell selected file contents or disclose them to advertisers.",
   },
   {
     title: "Retention and security",
@@ -62,7 +62,7 @@ export default function PrivacyPolicyPage() {
             Privacy Policy
           </h1>
           <p className="mb-8 text-xl text-black">How BravoConvert handles files, analytics, and advertising data</p>
-          <p className="text-base text-gray-600">Effective and last updated: September 2, 2026</p>
+          <p className="text-base text-gray-600">Effective and last updated: September 19, 2026</p>
         </header>
 
         <article className="rounded-xl border border-gray-200 bg-white p-6 shadow-lg transition-all duration-300 hover:shadow-xl md:p-10">
@@ -92,9 +92,14 @@ export default function PrivacyPolicyPage() {
                   For privacy questions, email <ContactEmail className="underline font-medium text-gray-700" />.
                 </p>
               )}
+              {section.title === "Advertising and cookies" && (
+                <p className="mt-3 text-gray-700">
+                  You can opt out of personalized advertising by Google at <a className="underline font-medium" href="https://www.google.com/settings/ads" rel="noopener noreferrer" target="_blank">Google Ads Settings</a>, and opt out of personalized advertising by other participating vendors and ad networks at <a className="underline font-medium" href="https://www.aboutads.info/choices/" rel="noopener noreferrer" target="_blank">www.aboutads.info</a>.
+                </p>
+              )}
               {section.title === "Third-party services" && (
                 <p className="mt-3 text-gray-700">
-                  Learn <a className="underline font-medium" href="https://policies.google.com/technologies/partner-sites" rel="noopener noreferrer" target="_blank">how Google uses information from partner sites</a>.
+                  Learn <a className="underline font-medium" href="https://policies.google.com/technologies/partner-sites" rel="noopener noreferrer" target="_blank">how Google uses information from partner sites</a>, review the vendors listed at <a className="underline font-medium" href="https://www.aboutads.info/choices/" rel="noopener noreferrer" target="_blank">www.aboutads.info</a>, or opt out through the <a className="underline font-medium" href="https://optout.networkadvertising.org/" rel="noopener noreferrer" target="_blank">Network Advertising Initiative</a>.
                 </p>
               )}
             </section>

@@ -56,21 +56,19 @@ export default function ConsentManager() {
     <>
       {isOpen && (
         <section
-          className="fixed inset-x-4 bottom-4 z-[100] mx-auto max-w-2xl rounded-2xl border border-gray-300 bg-white p-5 shadow-2xl"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="privacy-choices-title"
+          className="fixed inset-x-2 bottom-2 z-[100] mx-auto flex max-w-4xl flex-col gap-2 rounded-xl border border-gray-300 bg-white px-4 py-3 shadow-xl sm:flex-row sm:items-center sm:gap-4"
+          role="region"
+          aria-label="Privacy choices"
         >
-          <h2 id="privacy-choices-title" className="text-lg font-bold text-black">Privacy choices</h2>
-          <p className="mt-2 text-sm leading-6 text-gray-700">
-            BravoConvert processes selected files in your browser. With your permission, Google Analytics measures site usage and Google AdSense may store or access information for advertising. Rejecting optional storage does not affect the conversion tools. See the <Link href="/privacy-policy/" className="font-medium underline">Privacy Policy</Link>.
+          <p className="flex-1 text-xs leading-5 text-gray-700">
+            Files stay in your browser. With your permission, Google Analytics and AdSense may store cookies for measurement and advertising. <Link href="/privacy-policy/" className="font-medium underline">Privacy Policy</Link>
           </p>
-          <div className="mt-4 grid gap-3 sm:grid-cols-2">
-            <button type="button" onClick={() => saveChoice("denied")} className="rounded-xl border border-black bg-white px-4 py-3 text-sm font-semibold text-black hover:bg-gray-100">
-              Reject optional cookies
+          <div className="flex shrink-0 gap-2">
+            <button type="button" onClick={() => saveChoice("denied")} className="flex-1 whitespace-nowrap rounded-lg border border-black bg-white px-3 py-2 text-xs font-semibold text-black hover:bg-gray-100 sm:flex-none">
+              Reject
             </button>
-            <button type="button" onClick={() => saveChoice("granted")} className="rounded-xl bg-black px-4 py-3 text-sm font-semibold text-white hover:bg-gray-800">
-              Accept optional cookies
+            <button type="button" onClick={() => saveChoice("granted")} className="flex-1 whitespace-nowrap rounded-lg bg-black px-3 py-2 text-xs font-semibold text-white hover:bg-gray-800 sm:flex-none">
+              Accept
             </button>
           </div>
         </section>

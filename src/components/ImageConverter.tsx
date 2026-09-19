@@ -898,9 +898,13 @@ export default function ImageConverter() {
         }}
       />
       <div className="mb-10 text-center">
+        {/* Stable heading: the selected format pair belongs in the sentence below, not in the h1 */}
         <h1 className="text-5xl md:text-7xl font-extrabold text-black mb-2 drop-shadow-none">
-          Image Converter <span className="text-black">{addFormat.label} to {toFormat.label}</span>
+          Image Converter
         </h1>
+        <p className="text-base md:text-xl text-gray-700 font-semibold mb-2">
+          JPG, PNG and WebP in — WebP, JPG, PNG or PDF out.
+        </p>
         <p className="text-lg md:text-2xl text-black font-bold mb-1">
           {toFormat.label === "PDF" 
             ? `Convert multiple ${addFormat.label} images into a single PDF file.`

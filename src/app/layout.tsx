@@ -124,7 +124,13 @@ export default function RootLayout({
         <div className="w-full px-4 pt-8 pb-6">
           <footer className="max-w-6xl mx-auto text-center text-xs text-black py-8 bg-white/70 rounded-3xl shadow-lg shadow-gray-200/20 border border-gray-100/50 backdrop-blur-sm">
             <div className="mb-4">
-              
+              {/* 도구 링크 — 모든 페이지의 정적 HTML에 포함되어야 크롤러가 따라갈 수 있다 */}
+              <nav aria-label="Tools" className="mb-4 flex flex-wrap justify-center gap-x-2 gap-y-1 text-sm font-medium">
+                <Link href="/convert/img/" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">Image Converter</Link>
+                <Link href="/convert/pdf/" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">PDF to Image Converter</Link>
+                <Link href="/edit/image/" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">Image Editor</Link>
+              </nav>
+
               {/* 데스크톱 푸터 링크 */}
               <div className="hidden sm:block">
                 <Link href="/how-to-use/" className="hover:text-gray-700 mx-3 text-black transition-colors duration-300">How to Use</Link>
