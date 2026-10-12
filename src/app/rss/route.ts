@@ -24,24 +24,32 @@ export async function GET() {
     <item>
       <title>Image Editor - Resize, Rotate and Flip Images</title>
       <description>Edit JPG, PNG, and WebP images in your browser, then export the result without uploading the source file.</description>
-      <link>${baseUrl}/edit/image</link>
+      <link>${baseUrl}/edit/image/</link>
       <pubDate>${new Date().toUTCString()}</pubDate>
       <guid isPermaLink="false">${baseUrl}-edit-image</guid>
     </item>
 
+    <item>
+      <title>Merge and Split PDF Files</title>
+      <description>Combine PDFs into one or extract pages without uploading them. Pages are copied rather than re-rendered, so text stays selectable.</description>
+      <link>${baseUrl}/edit/pdf/</link>
+      <pubDate>${new Date().toUTCString()}</pubDate>
+      <guid isPermaLink="false">${baseUrl}-edit-pdf</guid>
+    </item>
+
     
     <item>
-      <title>Image Converter - PNG, JPG, WebP, GIF</title>
-      <description>Convert PNG, JPG, WebP, GIF images for free. Fast, secure, and works directly in your browser.</description>
-      <link>${baseUrl}/convert/img</link>
+      <title>Image Converter - JPG, PNG and WebP</title>
+      <description>Convert JPG, PNG, and WebP images, adjust quality, or combine images into one PDF directly in your browser.</description>
+      <link>${baseUrl}/convert/img/</link>
       <pubDate>${new Date().toUTCString()}</pubDate>
       <guid isPermaLink="false">${baseUrl}-convert-img</guid>
     </item>
     
     <item>
       <title>PDF to Image Converter</title>
-      <description>Convert PDF files to JPG and PNG images. High-quality conversion with page splitting support.</description>
-      <link>${baseUrl}/convert/pdf</link>
+      <description>Render each page of a PDF as a JPG or PNG image at 144 DPI, directly in your browser.</description>
+      <link>${baseUrl}/convert/pdf/</link>
       <pubDate>${new Date().toUTCString()}</pubDate>
       <guid isPermaLink="false">${baseUrl}-convert-pdf</guid>
     </item>
@@ -51,7 +59,7 @@ export async function GET() {
     <item>
       <title>How to Use BravoConvert</title>
       <description>Learn how to edit images and convert files with our step-by-step guide.</description>
-      <link>${baseUrl}/how-to-use</link>
+      <link>${baseUrl}/how-to-use/</link>
       <pubDate>${new Date().toUTCString()}</pubDate>
       <guid isPermaLink="false">${baseUrl}-how-to-use</guid>
     </item>
@@ -59,7 +67,7 @@ export async function GET() {
     <item>
       <title>FAQ - BravoConvert Image Editor and Converters</title>
       <description>Frequently asked questions about BravoConvert image editing and file conversion tools.</description>
-      <link>${baseUrl}/faq</link>
+      <link>${baseUrl}/faq/</link>
       <pubDate>${new Date().toUTCString()}</pubDate>
       <guid isPermaLink="false">${baseUrl}-faq</guid>
     </item>
@@ -67,7 +75,7 @@ export async function GET() {
     <item>
       <title>Privacy Policy - BravoConvert</title>
       <description>Read our privacy policy to understand how we protect your data.</description>
-      <link>${baseUrl}/privacy-policy</link>
+      <link>${baseUrl}/privacy-policy/</link>
       <pubDate>${new Date().toUTCString()}</pubDate>
       <guid isPermaLink="false">${baseUrl}-privacy</guid>
     </item>
@@ -75,7 +83,7 @@ export async function GET() {
     <item>
       <title>Terms of Service - BravoConvert</title>
       <description>Read our terms of service for using BravoConvert file conversion tools.</description>
-      <link>${baseUrl}/terms</link>
+      <link>${baseUrl}/terms/</link>
       <pubDate>${new Date().toUTCString()}</pubDate>
       <guid isPermaLink="false">${baseUrl}-terms</guid>
     </item>
@@ -83,7 +91,7 @@ export async function GET() {
     <item>
       <title>About BravoConvert</title>
       <description>Learn how BravoConvert edits images and processes image and PDF files locally in your browser.</description>
-      <link>${baseUrl}/about</link>
+      <link>${baseUrl}/about/</link>
       <pubDate>${new Date().toUTCString()}</pubDate>
       <guid isPermaLink="false">${baseUrl}-about</guid>
     </item>

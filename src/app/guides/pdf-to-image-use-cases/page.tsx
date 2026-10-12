@@ -290,7 +290,11 @@ export default function PdfUseCasesGuide() {
               PDFs cannot be opened and will fail to load — remove the password in whatever tool
               created the file first. Very long or graphically dense documents take longer and use more
               memory, because every page is rendered by your own device rather than a server; on a
-              phone, a large report may be worth splitting up. The{" "}
+              phone, a large report may be worth splitting up first with the{" "}
+              <Link className="underline font-medium" href="/edit/pdf/">
+                PDF merge and split tool
+              </Link>
+              , which extracts pages without re-rendering them. The{" "}
               <Link className="underline font-medium" href="/guides/troubleshooting/">
                 troubleshooting guide
               </Link>{" "}

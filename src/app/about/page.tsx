@@ -93,7 +93,7 @@ export default function AboutPage() {
               What it does
             </h2>
             <p className="mb-4 text-gray-700 leading-7">
-              Three tools, each doing one thing:{" "}
+              Four tools, each doing one thing:{" "}
               <Link className="underline font-medium" href="/convert/img/">
                 Image Converter
               </Link>{" "}
@@ -101,11 +101,15 @@ export default function AboutPage() {
               <Link className="underline font-medium" href="/convert/pdf/">
                 PDF Converter
               </Link>{" "}
-              for turning document pages into images, and{" "}
+              for turning document pages into images,{" "}
               <Link className="underline font-medium" href="/edit/image/">
                 Image Editor
               </Link>{" "}
-              for resizing, rotating and flipping a single picture.
+              for resizing, rotating and flipping a single picture, and{" "}
+              <Link className="underline font-medium" href="/edit/pdf/">
+                Merge &amp; Split PDF
+              </Link>{" "}
+              for combining PDFs or pulling pages out of one while keeping them as real PDF pages.
             </p>
             <ul className="list-disc space-y-2 pl-6 text-gray-700">
               {workflows.map((item) => (

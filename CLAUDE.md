@@ -43,6 +43,7 @@ Note: ESLint is configured (`eslint.config.mjs`) but has no npm script — run i
 - **image-worker.js** (`public/workers/image-worker.js`): Where image conversion actually happens, off the main thread. Reads the JPEG orientation flag, draws through `createOrientedCanvas`, and encodes with `OffscreenCanvas.convertToBlob`. Because output is re-encoded from decoded pixels, source EXIF never carries over. A target size is reached by binary-searching quality over 7 attempts, so it is approached rather than calculated.
 - **ImageEditor** (`src/components/ImageEditor.tsx`): Single-image resize/rotate/flip at `/edit/image/`, separate from the converter by design — do not merge editing controls into ImageConverter (see AGENTS.md).
 - **PDFConverter** (`src/components/PDFConverter.tsx`): PDF-to-image conversion using PDF.js, renders each page to canvas then converts to blob URLs
+- **PdfOrganizer** (`src/components/PdfOrganizer.tsx`) at `/edit/pdf/`: merge, page-range extraction, and split-every-page. The logic lives in `src/lib/pdf-tools.ts` (pdf-lib `copyPages`, so pages are copied, never rasterized). Measured trade-offs: bookmarks and accessibility tags (StructTreeRoot) do not carry over, and split-every-page totals ~2× the source because each file carries its own fonts. Encrypted PDFs are rejected.
 - **CustomDropdown** (`src/components/ui/CustomDropdown.tsx`): Custom select component with 2-column grid layout, animations, and keyboard navigation
 
 #### State Management Patterns
@@ -81,6 +82,7 @@ components themselves.
 | Image Converter (`/convert/img/`) | JPG / JPEG / JPE / JFIF, PNG, WebP | WebP, JPG, PNG, PDF | 10 MB per image |
 | Image Editor (`/edit/image/`) | JPG / JPEG, PNG, WebP | JPG, PNG, WebP | 10 MB, 16,384 px per side, 64 megapixels |
 | PDF Converter (`/convert/pdf/`) | PDF | PNG, JPG | 50 MB per document |
+| PDF Merge & Split (`/edit/pdf/`) | PDF | PDF, or ZIP of single-page PDFs | 50 MB per file; merge ≤ 30 files and 150 MB total |
 
 **HEIC, RAW (CR2/CR3/DNG), TIFF, GIF, BMP, SVG and AVIF are not supported as
 input.** Input is validated by MIME type, so renaming an extension does not get a
@@ -127,13 +129,15 @@ before they fail on desktops.
 ### Guide Data Generation
 
 The `/guides` articles are built on measured numbers rather than rules of thumb.
-Two scripts produce that evidence, and the pages import the JSON, so re-running a
+Three scripts produce that evidence, and the pages import the JSON, so re-running a
 script updates every figure on the site:
 
 - `node scripts/generate-guide-assets.mjs` → `src/data/format-benchmarks.json` plus imagery in `public/guides/`. Encodes test images through Canvas `toBlob` in Playwright's Chromium — deliberately the same encode path the site uses, so the numbers are the site's own output.
 - `node scripts/generate-exif-demo.mjs` → `src/data/exif-demo.json`. Builds a JPEG with a real EXIF block (make, model, timestamp, orientation, GPS), round-trips it through the worker's canvas path, and re-parses with `exifr` to prove metadata does not survive.
 
-Both need `npx playwright install chromium` once.
+- `node --experimental-strip-types scripts/generate-pdf-tool-data.mjs` → `src/data/pdf-tool-benchmarks.json`. Prints two tagged, bookmarked PDFs from Chromium and runs them through `src/lib/pdf-tools.ts` — the exact code `/edit/pdf/` uses — then checks size, bookmarks, tags, and that text is still extractable.
+
+All three need `npx playwright install chromium` once.
 
 ### Deployment
 

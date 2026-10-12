@@ -1,0 +1,51 @@
+{
+  "measuredOn": "2026-10-12",
+  "browser": "Chromium 151.0.7922.34",
+  "library": "pdf-lib 1.17.1",
+  "sources": {
+    "a": {
+      "pages": 6,
+      "bytes": 146126,
+      "resavedBytes": 72565,
+      "hasOutline": true,
+      "hasStructTree": true
+    },
+    "b": {
+      "pages": 4,
+      "bytes": 113863,
+      "resavedBytes": 64165,
+      "hasOutline": true,
+      "hasStructTree": true
+    }
+  },
+  "merge": {
+    "pages": 10,
+    "bytes": 112970,
+    "sumOfSources": 259989,
+    "ratioToSum": 0.435,
+    "hasOutline": false,
+    "hasStructTree": false,
+    "textSelectableFromA": true,
+    "textSelectableFromB": true
+  },
+  "split": {
+    "files": 6,
+    "bytesPerFile": [
+      50528,
+      50516,
+      50518,
+      50513,
+      50520,
+      50515
+    ],
+    "total": 303110,
+    "ratioToSource": 2.074
+  },
+  "extract": {
+    "range": "1-3",
+    "pages": 3,
+    "bytes": 53994,
+    "ratioToSource": 0.37,
+    "shareOfPages": 0.5
+  }
+}

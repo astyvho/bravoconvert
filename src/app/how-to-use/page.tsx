@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { Upload, Image, FileText, Download, Zap, Shield, BookOpen, Archive, SlidersHorizontal, PencilRuler, RotateCw } from "lucide-react";
+import { Upload, Image, FileText, Download, Zap, Shield, BookOpen, Archive, SlidersHorizontal, PencilRuler, RotateCw, Combine, Scissors } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "How to Use BravoConvert",
-  description: "Step-by-step instructions for editing images, converting JPG, PNG and WebP files, and rendering PDF pages as images.",
+  description: "Step-by-step instructions for editing images, converting JPG, PNG and WebP files, rendering PDF pages as images, and merging or splitting PDFs.",
   alternates: { canonical: "/how-to-use/" },
 };
 
@@ -218,6 +218,50 @@ export default function HowToUsePage() {
             <div className="flex items-start gap-3">
               <Shield className="w-5 h-5 text-gray-700 mt-1 flex-shrink-0" />
               <div><div className="font-semibold text-black">Local processing</div><div className="text-sm text-gray-700">The source image is not uploaded to BravoConvert</div></div>
+            </div>
+          </div>
+        </div>
+
+        {/* PDF Merge and Split Usage */}
+        <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 mb-8">
+          <h2 className="text-3xl font-bold text-black mb-3 flex items-center">
+            <span className="w-2 h-8 bg-black rounded mr-3"></span>
+            Merge &amp; Split PDF
+          </h2>
+          <p className="mb-8 text-gray-600 leading-7">Use this tool to join PDFs or pull pages out of one while keeping the pages as real PDF content. Use the PDF to Image converter instead when you need each page as a JPG or PNG picture.</p>
+
+          <div className="space-y-6">
+            <div className="bg-gray-50 rounded-lg p-6 border-l-4 border-black hover:bg-gray-100 transition-all duration-300">
+              <h3 className="text-xl font-bold text-black mb-4 flex items-center">
+                <span className="w-8 h-8 bg-gradient-to-br from-black to-gray-800 text-white rounded-full flex items-center justify-center text-sm font-bold mr-4 shadow-md">1</span>
+                Choose Merge or Split
+              </h3>
+              <p className="text-base text-gray-700 leading-relaxed pl-12 flex items-start">
+                <Combine className="w-6 h-6 text-gray-700 mr-3 mt-0.5 flex-shrink-0" />
+                Merge combines up to 30 PDFs, each up to 50MB and 150MB in total. Split works on one PDF up to 50MB. Password-protected PDFs cannot be opened.
+              </p>
+            </div>
+
+            <div className="bg-gray-50 rounded-lg p-6 border-l-4 border-black hover:bg-gray-100 transition-all duration-300">
+              <h3 className="text-xl font-bold text-black mb-4 flex items-center">
+                <span className="w-8 h-8 bg-gradient-to-br from-black to-gray-800 text-white rounded-full flex items-center justify-center text-sm font-bold mr-4 shadow-md">2</span>
+                Set the Order or the Pages
+              </h3>
+              <p className="text-base text-gray-700 leading-relaxed pl-12 flex items-start">
+                <Scissors className="w-6 h-6 text-gray-700 mr-3 mt-0.5 flex-shrink-0" />
+                When merging, use the arrows to put the files in reading order. When splitting, type pages and ranges such as 1-3, 5 — or choose to split every page into its own file.
+              </p>
+            </div>
+
+            <div className="bg-gray-50 rounded-lg p-6 border-l-4 border-black hover:bg-gray-100 transition-all duration-300">
+              <h3 className="text-xl font-bold text-black mb-4 flex items-center">
+                <span className="w-8 h-8 bg-gradient-to-br from-black to-gray-800 text-white rounded-full flex items-center justify-center text-sm font-bold mr-4 shadow-md">3</span>
+                Download the New PDF
+              </h3>
+              <p className="text-base text-gray-700 leading-relaxed pl-12 flex items-start">
+                <Download className="w-6 h-6 text-gray-700 mr-3 mt-0.5 flex-shrink-0" />
+                Download the merged or extracted PDF, or a ZIP of single-page PDFs. Bookmarks and accessibility tags from the originals are not carried over, so check the result if you rely on them.
+              </p>
             </div>
           </div>
         </div>

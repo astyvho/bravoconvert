@@ -2,7 +2,7 @@ import { expect, test, type Page } from "@playwright/test";
 import { readFile } from "node:fs/promises";
 
 async function rejectOptionalCookies(page: Page) {
-  const reject = page.getByRole("button", { name: "Reject optional cookies" });
+  const reject = page.getByRole("button", { name: "Reject", exact: true });
   if (await reject.isVisible()) await reject.click();
 }
 
@@ -100,17 +100,19 @@ test("editor supports resizing, rotation, flips, history, replacement, and all e
   expect(jpgInfo.corner[1]).toBeGreaterThan(jpgInfo.corner[2]);
 });
 
-test("three tools and consent layout render at desktop and iPhone widths", async ({ page }) => {
+test("all tools and consent layout render at desktop and iPhone widths", async ({ page }) => {
   for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 }]) {
     await page.setViewportSize(viewport);
     await page.goto("/edit/image/");
     await expect(page.getByRole("heading", { name: "Edit an image in your browser" })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Reject optional cookies" })).toBeVisible();
-    await page.getByRole("button", { name: "Reject optional cookies" }).click();
+    await expect(page.getByRole("button", { name: "Reject", exact: true })).toBeVisible();
+    await page.getByRole("button", { name: "Reject", exact: true }).click();
     await page.goto("/convert/img/");
-    await expect(page.getByRole("heading", { name: "Image Converter PNG to WEBP" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Image Converter", exact: true })).toBeVisible();
     await page.goto("/convert/pdf/");
-    await expect(page.getByText("PDF to Image Converter")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "PDF to Image Converter" })).toBeVisible();
+    await page.goto("/edit/pdf/");
+    await expect(page.getByRole("heading", { name: "Merge and split PDF files" })).toBeVisible();
     await page.evaluate(() => localStorage.removeItem("bravoconvert-consent-v1"));
   }
 });

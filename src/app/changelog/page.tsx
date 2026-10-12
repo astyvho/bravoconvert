@@ -3,11 +3,26 @@ import { History } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Changelog | BravoConvert",
-  description: "What's changed in BravoConvert's image editor, image converter, and PDF-to-image tools over time.",
+  description: "What's changed in BravoConvert's image editor, image converter, PDF-to-image, and PDF merge and split tools over time.",
   alternates: { canonical: "/changelog/" },
 };
 
 const entries = [
+  {
+    date: "October 13, 2026",
+    title: "New tool: merge and split PDF files",
+    body: "A fourth tool joins several PDFs into one, extracts chosen pages, or splits every page into its own file. Pages are copied as PDF content rather than redrawn, so text stays selectable. The tool page reports what we measured when testing it, including two trade-offs: bookmarks and accessibility tags from the originals do not carry over, and splitting every page makes the files larger in total because each one carries its own copy of the fonts.",
+  },
+  {
+    date: "October 13, 2026",
+    title: "Feed descriptions corrected",
+    body: "The RSS feed described the image converter as supporting GIF, which it has never accepted. The feed now lists the formats the converter actually handles — JPG, PNG, and WebP — and its links point straight to each page instead of through a redirect.",
+  },
+  {
+    date: "September 19, 2026",
+    title: "Tool links on every page, and a smaller cookie banner",
+    body: "Links to the tools now appear in the footer of every page, so they can be reached from anywhere on the site. The privacy choices banner was reduced from a large card to a slim bar that no longer covers the upload area on phones, and the Privacy Policy now explains how to opt out of personalised advertising from Google and other ad networks.",
+  },
   {
     date: "September 2, 2026",
     title: "Contact address no longer obscured",

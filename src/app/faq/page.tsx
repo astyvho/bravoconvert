@@ -101,6 +101,35 @@ export default function FAQ() {
       ]
     },
     {
+      category: "Merge & Split PDF",
+      questions: [
+        {
+          question: "What can the PDF merge and split tool do?",
+          answer: "It combines up to 30 PDF files into one document in the order you set, extracts chosen pages from a PDF into a new file, or splits every page of a PDF into its own file and downloads them together as a ZIP. Everything runs in your browser and nothing is uploaded."
+        },
+        {
+          question: "Does merging reduce the quality of my PDF?",
+          answer: "No. Pages are copied as PDF content rather than redrawn as pictures, so text stays selectable and searchable and images keep their original data. In our measurement, text from both source documents could still be extracted from the merged file."
+        },
+        {
+          question: "Why does the merged file lose its bookmarks?",
+          answer: "Bookmarks and accessibility tags belong to the document as a whole rather than to individual pages, and the new file is built from pages only. Both test documents we measured had bookmarks and tags; the merged result had neither. Add bookmarks again in a PDF editor if you need them, and use software that preserves tags when a document must meet accessibility requirements."
+        },
+        {
+          question: "Why are my split files bigger in total than the original?",
+          answer: "In the original PDF, all pages share one copy of each embedded font. When every page becomes a separate document, each file needs its own copy. In our measurement, splitting a 6-page document into single pages produced files that added up to about twice the original size."
+        },
+        {
+          question: "How do I choose which pages to extract?",
+          answer: "Type single pages and ranges separated by commas, such as 1-3, 5. Pages are numbered from 1. The new PDF follows the order you type, so 5, 1 puts page 5 first, and a repeated page is included twice."
+        },
+        {
+          question: "Can I merge password-protected PDFs?",
+          answer: "No. Encrypted or password-protected PDFs cannot be opened by the tool. Remove the protection in the application that created the file, save a copy, and add that copy instead."
+        }
+      ]
+    },
+    {
       category: "Conversion Features",
       questions: [
         {
