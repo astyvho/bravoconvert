@@ -297,8 +297,12 @@ export default function ExifPrivacyGuide() {
           <section>
             <h2 className="mb-3 text-2xl font-bold text-black">Practical habit</h2>
             <p className="text-gray-700 leading-7">
-              Before posting a photo publicly or sending it to someone you do not know, run it through
-              the{" "}
+              Before posting a photo publicly or sending it to someone you do not know, check what it
+              carries in the{" "}
+              <Link className="underline font-medium" href="/view/exif/">
+                EXIF Viewer
+              </Link>
+              , then run it through the{" "}
               <Link className="underline font-medium" href="/convert/img/">
                 Image Converter
               </Link>{" "}
@@ -319,7 +323,11 @@ export default function ExifPrivacyGuide() {
               <Link className="underline font-medium" href="/edit/image/">
                 Image Editor
               </Link>
-              . Both re-encode through the same path tested on this page.
+              . Both re-encode through the same path tested on this page. Then open the result in the{" "}
+              <Link className="underline font-medium" href="/view/exif/">
+                EXIF Viewer
+              </Link>{" "}
+              to confirm nothing is left.
             </p>
           </div>
         </article>

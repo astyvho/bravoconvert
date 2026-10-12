@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 const sections = [
   {
     title: "Files you convert",
-    body: "Images and PDF files selected for editing or conversion in BravoConvert are processed locally in your browser. BravoConvert does not upload, receive, or store the contents of those files on its servers. Closing or refreshing the page clears the working session, although downloaded files remain on your device.",
+    body: "Images and PDF files selected for viewing, editing, or conversion in BravoConvert are processed locally in your browser. BravoConvert does not upload, receive, or store the contents of those files on its servers. Closing or refreshing the page clears the working session, although downloaded files remain on your device. The one exception is a link you choose to click: when the EXIF viewer finds GPS coordinates in a photo, its optional \"Show on OpenStreetMap\" link opens openstreetmap.org with those coordinates in the address, under OpenStreetMap's own privacy policy. Nothing is sent unless you click it.",
   },
   {
     title: "Analytics and technical information",
@@ -62,7 +62,7 @@ export default function PrivacyPolicyPage() {
             Privacy Policy
           </h1>
           <p className="mb-8 text-xl text-black">How BravoConvert handles files, analytics, and advertising data</p>
-          <p className="text-base text-gray-600">Effective and last updated: September 19, 2026</p>
+          <p className="text-base text-gray-600">Effective and last updated: October 13, 2026</p>
         </header>
 
         <article className="rounded-xl border border-gray-200 bg-white p-6 shadow-lg transition-all duration-300 hover:shadow-xl md:p-10">

@@ -130,6 +130,27 @@ export default function FAQ() {
       ]
     },
     {
+      category: "EXIF Viewer",
+      questions: [
+        {
+          question: "What does the EXIF viewer check?",
+          answer: "It reads the metadata in a JPG, PNG, or WebP photo and checks for six kinds of identifying information: GPS location, the date and time taken, the camera or phone model, a device serial number, an owner or author name, and the editing software. It also lists camera settings and every other field it can decode."
+        },
+        {
+          question: "Is my photo uploaded when I check it?",
+          answer: "No. The photo is read and decoded inside your browser. The only thing that can leave your device is the optional map link: if you click Show on OpenStreetMap, the coordinates are sent to openstreetmap.org to draw the map."
+        },
+        {
+          question: "How do I remove the metadata it finds?",
+          answer: "Convert the photo with the Image Converter or export it from the Image Editor. Both rebuild the picture from its pixels, so the metadata is not copied into the new file. In our test, none of the sample photo's fields, GPS included, survived the conversion. Open the result in the EXIF viewer to confirm."
+        },
+        {
+          question: "The viewer found nothing. Is the photo safe to share?",
+          answer: "It has no metadata the viewer can read, but that is not the same as being anonymous. Faces, street signs, house numbers, and reflections are part of the picture itself, and no metadata tool can flag them."
+        }
+      ]
+    },
+    {
       category: "Conversion Features",
       questions: [
         {

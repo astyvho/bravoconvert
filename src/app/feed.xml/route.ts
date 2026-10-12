@@ -37,6 +37,14 @@ export async function GET() {
       <guid isPermaLink="false">${baseUrl}-edit-pdf</guid>
     </item>
 
+    <item>
+      <title>EXIF Viewer - See What a Photo Reveals</title>
+      <description>Check a JPG, PNG, or WebP photo for GPS location, capture time, device, and owner details before sharing it. Read in your browser, never uploaded.</description>
+      <link>${baseUrl}/view/exif/</link>
+      <pubDate>${new Date().toUTCString()}</pubDate>
+      <guid isPermaLink="false">${baseUrl}-view-exif</guid>
+    </item>
+
     
     <item>
       <title>Image Converter - JPG, PNG and WebP</title>

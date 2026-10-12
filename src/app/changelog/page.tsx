@@ -3,11 +3,16 @@ import { History } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Changelog | BravoConvert",
-  description: "What's changed in BravoConvert's image editor, image converter, PDF-to-image, and PDF merge and split tools over time.",
+  description: "What's changed in BravoConvert's image editor, image converter, PDF-to-image, PDF merge and split, and EXIF viewer tools over time.",
   alternates: { canonical: "/changelog/" },
 };
 
 const entries = [
+  {
+    date: "October 13, 2026",
+    title: "New tool: EXIF viewer",
+    body: "A fifth tool shows what a JPG, PNG, or WebP photo reveals before you share it — GPS location, capture time, device, serial number, owner name, and editing software — without uploading it. The parsing library it uses cannot read WebP, so the viewer extracts the EXIF chunk from WebP files itself; all three formats were tested with the same metadata block. A sample photo with made-up details lets you try it without using one of your own.",
+  },
   {
     date: "October 13, 2026",
     title: "New tool: merge and split PDF files",

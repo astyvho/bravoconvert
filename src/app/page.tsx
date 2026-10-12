@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { CircleAlert, Combine, FileImage, FileText, Gauge, Image, ImageIcon as ImageFormatIcon, ListChecks, PencilRuler, ShieldCheck } from "lucide-react";
+import { CircleAlert, Combine, FileImage, FileSearch, FileText, Gauge, Image, ImageIcon as ImageFormatIcon, ListChecks, PencilRuler, ShieldCheck } from "lucide-react";
 import benchmarks from "@/data/format-benchmarks.json";
 
 const kb = (bytes: number) => `${Math.round(bytes / 1024).toLocaleString()} KB`;
@@ -36,9 +36,9 @@ const commonTasks = [
   },
   {
     task: "A photo is about to be posted publicly",
-    how: "Convert it before sharing. The output is rebuilt from pixels, so camera metadata including GPS coordinates does not carry over.",
-    tool: "Image Converter",
-    href: "/convert/img/",
+    how: "Check it in the EXIF viewer to see whether it carries a location, time, or device details. If it does, convert it: the output is rebuilt from pixels, so none of that carries over.",
+    tool: "EXIF Viewer",
+    href: "/view/exif/",
   },
   {
     task: "Several images need to become one document",
@@ -65,7 +65,7 @@ export default function Home() {
             "@type": "WebSite",
             name: "BravoConvert",
             url: "https://bravoconvert.com",
-            description: "Free browser-based image editing, image conversion, PDF-to-image, and PDF merge and split tools.",
+            description: "Free browser-based image editing, image conversion, PDF-to-image, PDF merge and split, and photo metadata tools.",
             publisher: {
               "@type": "Organization",
               name: "BravoConvert",
@@ -77,6 +77,7 @@ export default function Home() {
               { "@type": "WebApplication", name: "PDF to Image Converter", applicationCategory: "MultimediaApplication", operatingSystem: "Any browser", url: "https://bravoconvert.com/convert/pdf/", offers: { "@type": "Offer", price: "0", priceCurrency: "USD" } },
               { "@type": "WebApplication", name: "Image Editor", applicationCategory: "MultimediaApplication", operatingSystem: "Any browser", url: "https://bravoconvert.com/edit/image/", offers: { "@type": "Offer", price: "0", priceCurrency: "USD" } },
               { "@type": "WebApplication", name: "PDF Merge and Split", applicationCategory: "UtilitiesApplication", operatingSystem: "Any browser", url: "https://bravoconvert.com/edit/pdf/", offers: { "@type": "Offer", price: "0", priceCurrency: "USD" } },
+              { "@type": "WebApplication", name: "EXIF Viewer", applicationCategory: "UtilitiesApplication", operatingSystem: "Any browser", url: "https://bravoconvert.com/view/exif/", offers: { "@type": "Offer", price: "0", priceCurrency: "USD" } },
             ],
           }),
         }}
@@ -91,13 +92,13 @@ export default function Home() {
             Private Image Editing and File Conversion
           </p>
           <p className="text-lg text-black max-w-2xl mx-auto">
-            Convert images and PDFs, merge and split PDF files, or resize, rotate, and flip a picture.
+            Convert images and PDFs, merge and split PDF files, resize or rotate a picture, or check what a photo reveals before you share it.
             Free browser-based tools with no installation required.
           </p>
         </div>
 
         {/* Conversion Tools Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {/* 이미지 변환 */}
           <div className="group bg-white rounded-xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 group-hover:-translate-y-1 border border-gray-200 hover:border-gray-400 relative">
             <Link href="/convert/img/" className="block">
@@ -163,6 +164,25 @@ export default function Home() {
                 <p>• Text stays selectable</p>
               </div>
               <p className="text-sm text-gray-500 text-center">Use this to send several PDFs as one file, or pull out just the pages someone needs</p>
+            </Link>
+            <div className="absolute -top-3 -right-3 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-3 py-1 text-sm font-bold text-white shadow-lg">
+              NEW
+            </div>
+          </div>
+
+          {/* EXIF viewer */}
+          <div className="group bg-white rounded-xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 group-hover:-translate-y-1 border border-gray-200 hover:border-gray-400 relative">
+            <Link href="/view/exif/" className="block">
+              <div className="text-gray-600 mb-6 flex justify-center">
+                <FileSearch size={64} />
+              </div>
+              <h3 className="text-2xl font-bold text-black mb-4 text-center">EXIF Viewer</h3>
+              <div className="space-y-2 text-black text-base mb-6">
+                <p>• GPS location, date and device</p>
+                <p>• Privacy check before sharing</p>
+                <p>• JPG, PNG and WebP</p>
+              </div>
+              <p className="text-sm text-gray-500 text-center">Use this to see what a photo reveals about where and when it was taken</p>
             </Link>
             <div className="absolute -top-3 -right-3 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-3 py-1 text-sm font-bold text-white shadow-lg">
               NEW

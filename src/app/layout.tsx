@@ -130,6 +130,7 @@ export default function RootLayout({
                 <Link href="/convert/pdf/" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">PDF to Image Converter</Link>
                 <Link href="/edit/image/" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">Image Editor</Link>
                 <Link href="/edit/pdf/" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">Merge & Split PDF</Link>
+                <Link href="/view/exif/" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">EXIF Viewer</Link>
               </nav>
 
               {/* 데스크톱 푸터 링크 */}
