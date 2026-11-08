@@ -46,7 +46,7 @@ Note: ESLint is configured (`eslint.config.mjs`) but has no npm script — run i
 - **ImageEditor** (`src/components/ImageEditor.tsx`): Single-image resize/rotate/flip at `/edit/image/`, separate from the converter by design — do not merge editing controls into ImageConverter (see AGENTS.md).
 - **PDFConverter** (`src/components/PDFConverter.tsx`): PDF-to-image conversion using PDF.js, renders each page to canvas then converts to blob URLs
 - **PdfOrganizer** (`src/components/PdfOrganizer.tsx`) at `/edit/pdf/`: merge, page-range extraction, and split-every-page. The logic lives in `src/lib/pdf-tools.ts` (pdf-lib `copyPages`, so pages are copied, never rasterized). Measured trade-offs: bookmarks and accessibility tags (StructTreeRoot) do not carry over, and split-every-page totals ~2× the source because each file carries its own fonts. Encrypted PDFs are rejected.
-- **ExifViewer** (`src/components/ExifViewer.tsx`) at `/view/exif/`: read-only metadata check with a six-item privacy checklist. Reading lives in `src/lib/photo-metadata.ts`. **exifr has no WebP parser** ("Unknown file format"), so WebP's RIFF `EXIF` chunk is extracted by hand and passed to exifr as TIFF bytes. `reviveValues: false` keeps EXIF dates as the original strings — they carry no timezone, and reviving them shifts the wall-clock time into the viewer's zone.
+- **ExifViewer** (`src/components/ExifViewer.tsx`) at `/view/exif/`: metadata check with a six-item privacy checklist. When anything is found, it offers a clean copy in place: the photo is drawn to a canvas through `createImageBitmap(..., { imageOrientation: "from-image" })`, re-encoded (quality 0.92; JPG gets a white background), and the result is re-parsed so the page reports what is left. This runs on the main thread, not through the converter worker. Reading lives in `src/lib/photo-metadata.ts`. **exifr has no WebP parser** ("Unknown file format"), so WebP's RIFF `EXIF` chunk is extracted by hand and passed to exifr as TIFF bytes. `reviveValues: false` keeps EXIF dates as the original strings — they carry no timezone, and reviving them shifts the wall-clock time into the viewer's zone.
 - **CustomDropdown** (`src/components/ui/CustomDropdown.tsx`): Custom select component with 2-column grid layout, animations, and keyboard navigation
 
 #### State Management Patterns
@@ -86,7 +86,7 @@ components themselves.
 | Image Editor (`/edit/image/`) | JPG / JPEG, PNG, WebP | JPG, PNG, WebP | 10 MB, 16,384 px per side, 64 megapixels |
 | PDF Converter (`/convert/pdf/`) | PDF | PNG, JPG | 50 MB per document |
 | PDF Merge & Split (`/edit/pdf/`) | PDF | PDF, or ZIP of single-page PDFs | 50 MB per file; merge ≤ 30 files and 150 MB total |
-| EXIF Viewer (`/view/exif/`) | JPG, PNG, WebP | nothing — read-only | 25 MB |
+| EXIF Viewer (`/view/exif/`) | JPG, PNG, WebP | an optional clean copy (same format, JPG, PNG or WebP) | 25 MB |
 
 **HEIC, RAW (CR2/CR3/DNG), TIFF, GIF, BMP, SVG and AVIF are not supported as
 input.** Input is validated by MIME type, so renaming an extension does not get a

@@ -10,6 +10,11 @@ export const metadata: Metadata = {
 const entries = [
   {
     date: "November 8, 2026",
+    title: "Remove metadata straight from the EXIF viewer",
+    body: "When the viewer finds a location, time or device in a photo, it now offers a clean copy on the spot instead of sending you to another tool to choose the file again. Pick the same format or JPG, PNG or WebP, and the copy is redrawn from its pixels, turned the right way up, downloaded, and checked again automatically so you can see that nothing identifying is left. A button next to the result jumps straight to it.",
+  },
+  {
+    date: "November 8, 2026",
     title: "Korean versions of the EXIF viewer and privacy guides",
     body: "The EXIF viewer, the home page and both privacy guides — what a photo reveals and what a PDF reveals — are now available in Korean under /ko/, written for Korean readers rather than machine-translated, and built on the same measurements as the English pages. A language switch in the menu moves between the two versions of each page. The converters, PDF tools and policy pages remain in English.",
   },

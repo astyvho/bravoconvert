@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Camera, CheckCircle2, ChevronDown, Clock, Fingerprint, ImageIcon, MapPin, PenLine, ShieldAlert, Upload, User, X } from "lucide-react";
+import { Camera, CheckCircle2, ChevronDown, Clock, Download, Eraser, Fingerprint, ImageIcon, MapPin, PenLine, ShieldAlert, Upload, User, X } from "lucide-react";
 import { ChangeEvent, DragEvent, type ReactNode, useEffect, useRef, useState } from "react";
 import { formatExifDate, readMetadata, type Metadata } from "@/lib/photo-metadata";
 import type { Locale } from "@/lib/locale";
@@ -53,12 +53,24 @@ const STRINGS = {
     none: "None",
     mapNote: "Opening the map sends these coordinates to openstreetmap.org. Nothing is sent unless you click it.",
     noCoordinates: "Present, but could not be converted to coordinates",
-    removeTitle: "Removing it before you share",
-    removeBody: (converter: ReactNode, editor: ReactNode) => (
-      <>The {converter} and the {editor} both rebuild the picture from its pixels, so none of the fields above are copied into the new file. The Image Converter reads the rotation flag and applies it to the pixels first, so a phone photo still faces the right way once the flag is gone. Run the result back through this viewer to confirm.</>
-    ),
     converter: "Image Converter",
     editor: "Image Editor",
+    cleanTitle: "Remove it before you share",
+    cleanBody: "Make a copy of this photo that keeps only the picture. It is redrawn from its pixels in your browser, turned the right way up first, and saved in the same format — so none of the fields above go with it.",
+    cleanButton: "Download a clean copy",
+    jumpToClean: "Remove it",
+    formatLabel: "Save as",
+    sameFormat: (ext: string) => `Same as original (${ext})`,
+    jpgNote: "JPG has no transparency; transparent areas become white.",
+    cleaning: "Cleaning…",
+    cleanFailed: "The clean copy could not be made in this browser. Try the Image Converter instead.",
+    cleanedOk: "The clean copy was checked again: no identifying information found.",
+    cleanedLeft: (n: number) => `The clean copy was checked again and still carries ${n} kind${n === 1 ? "" : "s"} of identifying information.`,
+    cleanedSaved: (name: string, size: string) => `Saved as ${name} (${size}).`,
+    downloadAgain: "Download again",
+    cleanMore: (converter: ReactNode, editor: ReactNode) => (
+      <>Several photos at once, a target file size, or a PDF? The {converter} handles batches, and the {editor} resizes and rotates. Both remove the same information.</>
+    ),
     settingsTitle: "Camera settings",
     allFields: (n: number) => `All ${n} fields`,
     binary: (n: number) => `binary data (${n} bytes)`,
@@ -90,12 +102,24 @@ const STRINGS = {
     none: "없음",
     mapNote: "지도를 열면 이 좌표가 openstreetmap.org로 전송됩니다. 누르지 않으면 아무것도 전송되지 않습니다.",
     noCoordinates: "값은 있지만 좌표로 변환할 수 없습니다",
-    removeTitle: "공유하기 전에 지우는 방법",
-    removeBody: (converter: ReactNode, editor: ReactNode) => (
-      <>{converter}와 {editor}는 모두 사진을 픽셀에서 새로 만들기 때문에 위 항목이 새 파일로 복사되지 않습니다. 이미지 변환기는 회전 정보를 먼저 읽어 픽셀에 적용하므로, 회전 정보가 사라져도 휴대폰 사진이 옆으로 눕지 않습니다. 변환한 파일을 이 뷰어로 다시 열어 확인하세요.</>
-    ),
     converter: "이미지 변환기(영문)",
     editor: "이미지 편집기(영문)",
+    cleanTitle: "공유하기 전에 지우기",
+    cleanBody: "그림만 남긴 사본을 만듭니다. 브라우저 안에서 픽셀을 새로 그려 같은 형식으로 저장하고, 회전도 미리 바로잡기 때문에 위 항목은 하나도 따라가지 않습니다.",
+    cleanButton: "정보를 지운 사본 받기",
+    jumpToClean: "바로 지우기",
+    formatLabel: "저장 형식",
+    sameFormat: (ext: string) => `원본과 같게 (${ext})`,
+    jpgNote: "JPG는 투명 배경을 지원하지 않아 투명한 부분이 흰색이 됩니다.",
+    cleaning: "지우는 중…",
+    cleanFailed: "이 브라우저에서는 사본을 만들지 못했습니다. 이미지 변환기를 이용해 주세요.",
+    cleanedOk: "받은 사본을 다시 검사했습니다. 신원을 드러낼 정보가 남아 있지 않습니다.",
+    cleanedLeft: (n: number) => `받은 사본을 다시 검사했더니 아직 ${n}종류의 정보가 남아 있습니다.`,
+    cleanedSaved: (name: string, size: string) => `${name} (${size})로 저장했습니다.`,
+    downloadAgain: "다시 받기",
+    cleanMore: (converter: ReactNode, editor: ReactNode) => (
+      <>여러 장을 한꺼번에 처리하거나, 목표 용량을 정하거나, PDF로 묶으려면 {converter}를, 크기 조절과 회전은 {editor}를 쓰세요. 둘 다 같은 정보를 지웁니다.</>
+    ),
     settingsTitle: "촬영 설정",
     allFields: (n: number) => `전체 필드 ${n}개`,
     binary: (n: number) => `바이너리 데이터 (${n}바이트)`,
@@ -187,6 +211,47 @@ const SETTINGS: Array<[keyof Strings["settingLabels"], (meta: Metadata, t: Strin
   ["orientation", meta => (hasValue(meta.Orientation) ? show(meta.Orientation) : null)],
 ];
 
+type Cleaned = { url: string; name: string; size: number; remaining: number };
+
+const findCount = (meta: Metadata) => CHECKS.filter(check => check.keys.some(key => hasValue(meta[key]))).length;
+
+// 이미지 변환기와 같은 원리: 픽셀만 다시 그려 인코딩하므로 원본 메타데이터가 복사되지 않는다.
+// imageOrientation "from-image" 로 EXIF 회전을 픽셀에 먼저 적용한다.
+const FORMATS = [
+  { type: "image/jpeg", label: "JPG", ext: ".jpg" },
+  { type: "image/png", label: "PNG", ext: ".png" },
+  { type: "image/webp", label: "WebP", ext: ".webp" },
+] as const;
+type OutputType = (typeof FORMATS)[number]["type"];
+
+async function makeCleanCopy(file: File, type: string): Promise<Blob> {
+  const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
+  const canvas = document.createElement("canvas");
+  canvas.width = bitmap.width;
+  canvas.height = bitmap.height;
+  const context = canvas.getContext("2d");
+  if (!context) throw new Error("Canvas unavailable");
+  if (type === "image/jpeg") {
+    // JPG 에는 투명도가 없으므로 흰 배경을 먼저 깐다.
+    context.fillStyle = "#ffffff";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+  }
+  context.drawImage(bitmap, 0, 0);
+  bitmap.close();
+  const blob = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, type, type === "image/png" ? undefined : 0.92));
+  if (!blob || blob.type !== type) throw new Error("Encoding failed");
+  return blob;
+}
+
+const cleanName = (name: string, type: string) => {
+  const dot = name.lastIndexOf(".");
+  const base = dot > 0 ? name.slice(0, dot) : name;
+  const sameType = FORMATS.find(format => format.type === type)?.ext ?? "";
+  // 형식이 그대로면 원래 확장자(.jpeg, .jfif 등)를 유지한다.
+  const original = dot > 0 ? name.slice(dot) : "";
+  return `${base}-clean${type === "keep" ? original : sameType}`;
+};
+
 export default function ExifViewer({ locale = "en" }: { locale?: Locale }) {
   const t = STRINGS[locale];
   const [loaded, setLoaded] = useState<Loaded | null>(null);
@@ -196,6 +261,53 @@ export default function ExifViewer({ locale = "en" }: { locale?: Locale }) {
   const [showAll, setShowAll] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const urlRef = useRef<string | null>(null);
+  const [cleaned, setCleaned] = useState<Cleaned | null>(null);
+  const [cleaning, setCleaning] = useState(false);
+  const [cleanError, setCleanError] = useState<string | null>(null);
+  const [outputType, setOutputType] = useState<OutputType | "keep">("keep");
+  const cleanUrlRef = useRef<string | null>(null);
+
+  const setCleanUrl = (url: string | null) => {
+    if (cleanUrlRef.current) URL.revokeObjectURL(cleanUrlRef.current);
+    cleanUrlRef.current = url;
+  };
+  useEffect(() => () => setCleanUrl(null), []);
+
+  const resetClean = () => {
+    setCleanUrl(null);
+    setCleaned(null);
+    setCleanError(null);
+  };
+
+  const download = (url: string, name: string) => {
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = name;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  };
+
+  const clean = async () => {
+    if (!loaded) return;
+    setCleaning(true);
+    setCleanError(null);
+    try {
+      const type = outputType === "keep" ? loaded.file.type : outputType;
+      const blob = await makeCleanCopy(loaded.file, type);
+      // 만든 사본을 같은 파서로 다시 읽어, 실제로 지워졌는지 화면에 보여 준다.
+      const remaining = findCount(await readMetadata(new Uint8Array(await blob.arrayBuffer())));
+      const url = URL.createObjectURL(blob);
+      setCleanUrl(url);
+      const name = cleanName(loaded.file.name, outputType === "keep" || outputType === loaded.file.type ? "keep" : type);
+      setCleaned({ url, name, size: blob.size, remaining });
+      download(url, name);
+    } catch {
+      setCleanError(t.cleanFailed);
+    } finally {
+      setCleaning(false);
+    }
+  };
 
   const setUrl = (url: string | null) => {
     if (urlRef.current) URL.revokeObjectURL(urlRef.current);
@@ -219,6 +331,8 @@ export default function ExifViewer({ locale = "en" }: { locale?: Locale }) {
       const url = URL.createObjectURL(file);
       setUrl(url);
       setShowAll(false);
+      resetClean();
+      setOutputType("keep");
       setLoaded({ file, url, meta, width: null, height: null });
     } catch {
       setError(t.unreadable);
@@ -242,6 +356,7 @@ export default function ExifViewer({ locale = "en" }: { locale?: Locale }) {
     setUrl(null);
     setLoaded(null);
     setError(null);
+    resetClean();
   };
 
   const onInput = (event: ChangeEvent<HTMLInputElement>) => {
@@ -327,7 +442,16 @@ export default function ExifViewer({ locale = "en" }: { locale?: Locale }) {
               </div>
               <p className={`mt-4 flex items-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold ${foundCount ? "bg-amber-50 text-amber-900" : "bg-green-50 text-green-800"}`}>
                 {foundCount ? <ShieldAlert className="h-5 w-5 flex-shrink-0" aria-hidden="true" /> : <CheckCircle2 className="h-5 w-5 flex-shrink-0" aria-hidden="true" />}
-                {foundCount ? t.foundSummary(foundCount) : t.noneSummary}
+                <span className="flex-1">{foundCount ? t.foundSummary(foundCount) : t.noneSummary}</span>
+                {foundCount > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => document.getElementById("clean-copy")?.scrollIntoView({ behavior: "smooth", block: "center" })}
+                    className="flex-shrink-0 whitespace-nowrap rounded-lg bg-black px-3 py-1.5 text-xs font-semibold text-white hover:bg-gray-800"
+                  >
+                    {t.jumpToClean}
+                  </button>
+                )}
               </p>
             </div>
           </div>
@@ -360,10 +484,63 @@ export default function ExifViewer({ locale = "en" }: { locale?: Locale }) {
           </div>
 
           {foundCount > 0 && (
-            <div className="rounded-3xl border border-gray-200 bg-gray-50 p-5">
-              <h2 className="text-lg font-bold text-black">{t.removeTitle}</h2>
-              <p className="mt-2 text-sm leading-6 text-gray-700">
-                {t.removeBody(
+            <div id="clean-copy" className="scroll-mt-32 rounded-3xl border-2 border-black bg-white p-5 shadow-sm" data-clean>
+              <h2 className="flex items-center gap-2 text-lg font-bold text-black">
+                <Eraser className="h-5 w-5 flex-shrink-0" aria-hidden="true" /> {t.cleanTitle}
+              </h2>
+              <p className="mt-2 text-sm leading-6 text-gray-700">{t.cleanBody}</p>
+              <fieldset className="mt-4">
+                <legend className="mb-2 text-sm font-semibold text-black">{t.formatLabel}</legend>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { value: "keep" as const, label: t.sameFormat(FORMATS.find(format => format.type === loaded.file.type)?.label ?? "") },
+                    ...FORMATS.filter(format => format.type !== loaded.file.type).map(format => ({ value: format.type, label: format.label })),
+                  ].map(option => (
+                    <label
+                      key={option.value}
+                      className={`cursor-pointer rounded-xl border px-4 py-2 text-sm font-medium transition ${outputType === option.value ? "border-black bg-black text-white" : "border-gray-300 bg-white text-black hover:border-gray-500"}`}
+                    >
+                      <input
+                        type="radio"
+                        name="clean-format"
+                        value={option.value}
+                        checked={outputType === option.value}
+                        onChange={() => { setOutputType(option.value); resetClean(); }}
+                        className="sr-only"
+                      />
+                      {option.label}
+                    </label>
+                  ))}
+                </div>
+                {outputType === "image/jpeg" && loaded.file.type !== "image/jpeg" && <p className="mt-2 text-xs text-gray-500">{t.jpgNote}</p>}
+              </fieldset>
+              <div className="mt-4 flex flex-wrap items-center gap-3">
+                <button
+                  type="button"
+                  onClick={clean}
+                  disabled={cleaning}
+                  className="inline-flex items-center gap-2 rounded-xl bg-black px-5 py-3 font-semibold text-white transition hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 disabled:opacity-50"
+                >
+                  <Download className="h-5 w-5" aria-hidden="true" />
+                  {cleaning ? t.cleaning : t.cleanButton}
+                </button>
+                {cleaned && (
+                  <button type="button" onClick={() => download(cleaned.url, cleaned.name)} className="text-sm font-medium text-black underline">
+                    {t.downloadAgain}
+                  </button>
+                )}
+              </div>
+              {cleaned && (
+                <p role="status" className={`mt-4 flex items-start gap-2 rounded-xl px-4 py-3 text-sm font-semibold ${cleaned.remaining ? "bg-amber-50 text-amber-900" : "bg-green-50 text-green-800"}`}>
+                  {cleaned.remaining ? <ShieldAlert className="h-5 w-5 flex-shrink-0" aria-hidden="true" /> : <CheckCircle2 className="h-5 w-5 flex-shrink-0" aria-hidden="true" />}
+                  <span>
+                    {cleaned.remaining ? t.cleanedLeft(cleaned.remaining) : t.cleanedOk} {t.cleanedSaved(cleaned.name, formatBytes(cleaned.size))}
+                  </span>
+                </p>
+              )}
+              {cleanError && <p role="alert" className="mt-4 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">{cleanError}</p>}
+              <p className="mt-4 text-sm leading-6 text-gray-600">
+                {t.cleanMore(
                   <Link href="/convert/img/" className="font-medium text-black underline">{t.converter}</Link>,
                   <Link href="/edit/image/" className="font-medium text-black underline">{t.editor}</Link>,
                 )}

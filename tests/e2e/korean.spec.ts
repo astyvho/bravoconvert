@@ -57,3 +57,14 @@ test("Korean guides render their measured findings", async ({ page }) => {
   await page.goto("/ko/guides/exif-metadata-privacy/");
   await expect(page.getByText("모든 필드가 사라졌습니다.")).toBeVisible();
 });
+
+test("Korean EXIF viewer offers a clean copy in place", async ({ page }) => {
+  await page.goto("/ko/view/exif/");
+  const reject = page.getByRole("button", { name: "거부", exact: true });
+  if (await reject.isVisible()) await reject.click();
+  await page.getByRole("button", { name: "샘플 사진으로 해보기" }).click();
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "정보를 지운 사본 받기" }).click();
+  await downloadPromise;
+  await expect(page.getByText(/받은 사본을 다시 검사했습니다/)).toBeVisible();
+});

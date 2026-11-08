@@ -113,3 +113,44 @@ test("unsupported formats are rejected", async ({ page }, testInfo) => {
   await page.getByLabel("Choose a JPG, PNG, or WebP photo").setInputFiles(gif);
   await expect(page.getByText("Choose a JPG, PNG, or WebP image.")).toBeVisible();
 });
+
+test("the clean copy button downloads a photo with no metadata, turned the right way up", async ({ page }, testInfo) => {
+  await page.goto("/view/exif/");
+  await rejectOptionalCookies(page);
+  await page.getByRole("button", { name: "Try a sample photo" }).click();
+  await expect(page.getByText("This photo carries 3 kinds of identifying information.")).toBeVisible();
+
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Download a clean copy" }).click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toBe("sample-photo-with-gps-clean.jpg");
+  await expect(page.getByText("The clean copy was checked again: no identifying information found.")).toBeVisible();
+
+  // 받은 파일을 뷰어로 다시 열어 독립적으로 확인한다. 샘플은 640×480 에 90° 회전 플래그가 있으므로 결과는 480×640 이어야 한다.
+  const saved = testInfo.outputPath(download.suggestedFilename());
+  await download.saveAs(saved);
+  await page.getByRole("button", { name: "Check another" }).click();
+  await page.getByLabel("Choose a JPG, PNG, or WebP photo").setInputFiles(saved);
+  await expect(page.getByText("No identifying metadata found in this file.")).toBeVisible();
+  await expect(page.getByText("480 × 640px")).toBeVisible();
+  await expect(page.getByText("Rotate 90 CW")).toHaveCount(0);
+});
+
+test("the clean copy can be saved in another format", async ({ page }, testInfo) => {
+  await page.goto("/view/exif/");
+  await rejectOptionalCookies(page);
+  await page.getByRole("button", { name: "Try a sample photo" }).click();
+  await page.getByText("WebP", { exact: true }).click();
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Download a clean copy" }).click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toBe("sample-photo-with-gps-clean.webp");
+  await expect(page.getByText("The clean copy was checked again: no identifying information found.")).toBeVisible();
+
+  const saved = testInfo.outputPath(download.suggestedFilename());
+  await download.saveAs(saved);
+  await page.getByRole("button", { name: "Check another" }).click();
+  await page.getByLabel("Choose a JPG, PNG, or WebP photo").setInputFiles(saved);
+  await expect(page.getByText("No identifying metadata found in this file.")).toBeVisible();
+  await expect(page.getByText("480 × 640px")).toBeVisible();
+});
