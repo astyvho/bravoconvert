@@ -15,7 +15,7 @@ export default function PageNotFound() {
       <p className="mt-4 text-lg text-gray-700">The page you were looking for does not exist or has moved.</p>
       <p className="mt-2 text-gray-600" lang="ko">찾으시는 페이지가 없거나 주소가 바뀌었습니다.</p>
       <div className="mt-8 flex flex-wrap justify-center gap-3">
-        <Link href="/" className="rounded-xl bg-black px-6 py-3 font-semibold text-white hover:bg-gray-800">Go to the home page</Link>
+        <Link href="/" className="rounded-xl bg-brand-600 px-6 py-3 font-semibold text-white hover:bg-brand-700">Go to the home page</Link>
         <Link href="/view/exif/" className="rounded-xl border border-gray-300 px-6 py-3 font-semibold text-black hover:bg-gray-200">EXIF Viewer</Link>
         <Link href="/ko/" lang="ko" className="rounded-xl border border-gray-300 px-6 py-3 font-semibold text-black hover:bg-gray-200">한국어 홈</Link>
       </div>

@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 };
 
 const SECTION = "flex items-center gap-3 text-2xl font-bold text-black";
-const ICON = "h-7 w-7 flex-shrink-0 text-gray-700";
+const ICON = "hidden h-7 w-7 flex-shrink-0 text-brand-600 sm:block";
 
 // 1초(위도) = 지구 둘레 / 360 / 3600 ≈ 30.9 m
 const METRES_PER_ARCSECOND = 30.9;
@@ -47,7 +47,7 @@ export default function ExifViewerPage() {
       />
       <ExifViewer />
 
-      <article className="mx-auto mt-8 max-w-4xl space-y-10 rounded-3xl border border-gray-200 bg-white p-6 text-gray-700 shadow-sm md:p-10">
+      <article className="mx-auto mt-12 max-w-4xl space-y-10 px-4 text-gray-700 md:rounded-3xl md:border md:border-gray-200 md:bg-white md:p-10 md:shadow-sm">
         <header>
           <h2 className={SECTION}>
             <FileSearch className={ICON} aria-hidden="true" />

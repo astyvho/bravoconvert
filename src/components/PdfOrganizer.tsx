@@ -33,7 +33,7 @@ type Result = {
 };
 
 const TOOL_BUTTON = "inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm font-semibold text-black transition hover:border-gray-400 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40";
-const PRIMARY_BUTTON = "inline-flex items-center justify-center gap-2 rounded-xl bg-black px-6 py-3 font-semibold text-white transition hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-40";
+const PRIMARY_BUTTON = "inline-flex items-center justify-center gap-2 rounded-xl bg-brand-600 px-6 py-3 font-semibold text-white transition hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-40";
 
 const formatBytes = (bytes: number) => {
   if (bytes < 1024) return `${bytes} B`;
@@ -201,7 +201,7 @@ export default function PdfOrganizer() {
       onDragLeave={event => { if (event.currentTarget === event.target) setDragging(false); }}
       onDrop={onDrop}
     >
-      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-black text-white">
+      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-600 text-white">
         <Upload className="h-6 w-6" aria-hidden="true" />
       </div>
       <h2 className="mt-5 text-xl font-bold text-black">

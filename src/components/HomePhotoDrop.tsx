@@ -63,7 +63,7 @@ export default function HomePhotoDrop({ locale = "en" }: { locale?: Locale }) {
           type="button"
           onClick={() => inputRef.current?.click()}
           disabled={busy}
-          className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-black px-6 font-bold text-white shadow-lg transition hover:bg-gray-800 disabled:opacity-50"
+          className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-brand-600 px-6 font-bold text-white shadow-lg transition hover:bg-brand-700 disabled:opacity-50"
         >
           <FileSearch className="h-5 w-5" aria-hidden="true" />
           {t.choose}

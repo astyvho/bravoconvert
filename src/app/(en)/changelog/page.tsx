@@ -9,6 +9,11 @@ export const metadata: Metadata = {
 
 const entries = [
   {
+    date: "November 9, 2026",
+    title: "Shorter pages and one accent colour",
+    body: "Sentences that repeated what the buttons already say were cut from the home page and the EXIF viewer. The viewer's checklist now lists only what it found, with everything it did not find on a single line, and the home page's measurement table marks each field that did not survive conversion instead of repeating \"not present\" in a second column. The measurements and guides are unchanged. Main buttons and selected options now share one blue accent so the next step is easier to spot.",
+  },
+  {
     date: "November 8, 2026",
     title: "From check to share without choosing the photo twice",
     body: "Photos can now be dropped straight onto the home page, and several at once: the viewer lists them, marks which ones carry a location, time or device, and Remove from all returns every clean copy in one ZIP, with an option to shrink the long side to 2048 px. After removing, the result turns into a finish card with Share on phones, Download again and Another format, and the checklist marks each item as removed in the copy. Going on to the converter or editor brings the photos along, so they are not chosen again; they are passed through the browser's own storage and never uploaded.",

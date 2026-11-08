@@ -598,7 +598,7 @@ export default function PDFConverter() {
               <Button
                 onClick={convertPdfToImages}
                 disabled={isConverting || !isReady}
-                className="px-8 py-3 rounded-xl bg-black text-white hover:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 disabled:opacity-50 disabled:transform-none"
+                className="px-8 py-3 rounded-xl bg-brand-600 text-white hover:bg-brand-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 disabled:opacity-50 disabled:transform-none"
               >
                 {isConverting ? (
                   <div className="flex items-center gap-2">
@@ -642,7 +642,7 @@ export default function PDFConverter() {
                 </Button>
                 <Button
                   onClick={downloadAllPages}
-                  className="rounded-xl bg-black text-white hover:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 px-6 py-2"
+                  className="rounded-xl bg-brand-600 text-white hover:bg-brand-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 px-6 py-2"
                 >
                   <Download size={16} className="mr-2" />
                   Download All
@@ -673,7 +673,7 @@ export default function PDFConverter() {
                     <Button
                       onClick={() => downloadPage(page)}
                       size="sm"
-                      className="rounded-xl bg-black text-white hover:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 px-3 py-1 text-xs"
+                      className="rounded-xl bg-brand-600 text-white hover:bg-brand-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 px-3 py-1 text-xs"
                     >
                       <Download size={12} className="mr-1" />
                       Download
@@ -691,7 +691,7 @@ export default function PDFConverter() {
         <div className="mt-4">
           <div className="w-full bg-gray-200 rounded-full h-2">
             <motion.div
-              className="bg-black h-2 rounded-full"
+              className="bg-brand-600 h-2 rounded-full"
               initial={{ width: 0 }}
               animate={{ width: `${progress}%` }}
               transition={{ duration: 0.3 }}

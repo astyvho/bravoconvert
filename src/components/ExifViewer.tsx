@@ -33,13 +33,13 @@ const STRINGS = {
   en: {
     badge: "Private photo metadata check",
     title: "EXIF viewer",
-    intro: "See what a photo reveals before you share it — location, time, device, and more. The photo is read on your device and never uploaded.",
+    intro: "See whether a photo carries the place, time and device it was taken with — and remove them in one click.",
     drop: "Drop one or more photos here",
     reading: "Reading…",
     choose: "Choose a photo",
     sample: "Try a sample photo",
     inputLabel: "Choose a JPG, PNG, or WebP photo",
-    limits: (max: string) => `JPG, PNG, or WebP · Up to ${max} · The sample contains made-up camera details and a public landmark's coordinates`,
+    limits: (max: string) => `JPG, PNG or WebP · up to ${max} each`,
     wrongType: "Choose a JPG, PNG, or WebP image.",
     tooLarge: (max: string) => `This image is larger than ${max}.`,
     unreadable: "The metadata in this image could not be read. The file may be damaged.",
@@ -53,15 +53,14 @@ const STRINGS = {
     map: "Show on OpenStreetMap",
     found: "Found",
     none: "None",
-    mapNote: "Opening the map sends these coordinates to openstreetmap.org. Nothing is sent unless you click it.",
+    mapNote: "The map opens on openstreetmap.org, which then receives these coordinates.",
     noCoordinates: "Present, but could not be converted to coordinates",
     converter: "Image Converter",
     toolQuery: "?from=exif",
     editor: "Image Editor",
-    cleanTitle: "Remove it before you share",
-    cleanBody: "Remove it now makes a copy of this photo that keeps only the picture. It is redrawn from its pixels in your browser, turned the right way up first, and saved in the format you pick — so none of the fields above go with it.",
+    cleanTitle: "Need more than a clean copy?",
     jumpToClean: "Remove it now",
-    jumpHint: "Pick a format and a copy without this information downloads. Your original file is not changed.",
+    jumpHint: "Your original file is not changed.",
     pickTitle: "Save the clean copy as",
     sameAsOriginal: "same as the original",
     formatNotes: { "image/jpeg": "Works everywhere; best for sharing photos", "image/png": "No quality loss; larger file", "image/webp": "Smallest file; a few apps cannot open it" } as Record<OutputType, string>,
@@ -107,13 +106,13 @@ const STRINGS = {
   ko: {
     badge: "업로드 없는 사진 메타데이터 확인",
     title: "EXIF 뷰어",
-    intro: "사진을 보내기 전에 촬영 위치, 시간, 기기 같은 숨은 정보가 들어 있는지 확인하세요. 사진은 내 기기 안에서만 읽히고 어디에도 업로드되지 않습니다.",
+    intro: "사진에 찍은 장소·시간·기기 정보가 들어 있는지 확인하고, 한 번에 지웁니다.",
     drop: "여기에 사진을 끌어다 놓으세요 (여러 장 가능)",
     reading: "읽는 중…",
     choose: "사진 선택",
     sample: "샘플 사진으로 해보기",
     inputLabel: "JPG, PNG, WebP 사진 선택",
-    limits: (max: string) => `JPG, PNG, WebP · 최대 ${max} · 샘플에는 가상의 카메라 정보와 공공장소 좌표가 들어 있습니다`,
+    limits: (max: string) => `JPG, PNG, WebP · 장당 최대 ${max}`,
     wrongType: "JPG, PNG, WebP 이미지만 확인할 수 있습니다.",
     tooLarge: (max: string) => `${max}보다 큰 이미지는 확인할 수 없습니다.`,
     unreadable: "이 이미지의 메타데이터를 읽지 못했습니다. 파일이 손상되었을 수 있습니다.",
@@ -127,15 +126,14 @@ const STRINGS = {
     map: "OpenStreetMap에서 보기",
     found: "발견",
     none: "없음",
-    mapNote: "지도를 열면 이 좌표가 openstreetmap.org로 전송됩니다. 누르지 않으면 아무것도 전송되지 않습니다.",
+    mapNote: "지도는 openstreetmap.org에서 열리며, 이때 이 좌표가 그쪽으로 전송됩니다.",
     noCoordinates: "값은 있지만 좌표로 변환할 수 없습니다",
     converter: "이미지 변환기(영문)",
     toolQuery: "?from=exif&lang=ko",
     editor: "이미지 편집기(영문)",
-    cleanTitle: "공유하기 전에 지우기",
-    cleanBody: "'바로 지우기'는 그림만 남긴 사본을 만듭니다. 브라우저 안에서 픽셀을 새로 그려 고른 형식으로 저장하고, 회전도 미리 바로잡기 때문에 위 항목은 하나도 따라가지 않습니다.",
+    cleanTitle: "사본 말고 더 필요하면",
     jumpToClean: "바로 지우기",
-    jumpHint: "형식을 고르면 이 정보를 지운 사본이 바로 내려받아집니다. 원본 파일은 바뀌지 않습니다.",
+    jumpHint: "원본 파일은 바뀌지 않습니다.",
     pickTitle: "어떤 형식으로 받을까요?",
     sameAsOriginal: "원본과 같은 형식",
     formatNotes: { "image/jpeg": "어디서나 열림, 사진 공유에 무난", "image/png": "화질 손실 없음, 용량 큼", "image/webp": "용량이 가장 작음, 일부 앱은 못 엶" } as Record<OutputType, string>,
@@ -382,7 +380,7 @@ function pickOptions(types: string[], t: Strings): PickOption[] {
   ];
 }
 
-const primaryButton = "inline-flex h-11 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl bg-black px-4 text-sm font-semibold text-white hover:bg-gray-800 disabled:opacity-50";
+const primaryButton = "inline-flex h-11 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl bg-brand-600 px-4 text-sm font-semibold text-white hover:bg-brand-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 disabled:opacity-50";
 const secondaryButton = "inline-flex h-11 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl border border-gray-300 bg-white px-4 text-sm font-semibold text-black hover:border-gray-500 disabled:opacity-50";
 
 function FormatPicker({ id, t, options, onPick, disabled, shrink, onShrink, jpgNote }: {
@@ -405,7 +403,7 @@ function FormatPicker({ id, t, options, onPick, disabled, shrink, onShrink, jpgN
             type="button"
             onClick={() => onPick(option.choice)}
             disabled={disabled}
-            className={`flex min-h-[44px] flex-col items-start rounded-xl border px-3 py-2 text-left disabled:opacity-50 ${option.primary ? "border-black" : "border-gray-300 hover:border-gray-500"}`}
+            className={`flex min-h-[44px] flex-col items-start rounded-xl border px-3 py-2 text-left disabled:opacity-50 ${option.primary ? "border-brand-600 bg-brand-50" : "border-gray-300 hover:border-gray-500"}`}
           >
             <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-black">
               <Download className="h-4 w-4" aria-hidden="true" /> {option.label}
@@ -415,7 +413,7 @@ function FormatPicker({ id, t, options, onPick, disabled, shrink, onShrink, jpgN
         ))}
       </div>
       <label className="mt-3 flex items-center gap-2 text-sm text-gray-800">
-        <input type="checkbox" checked={shrink} onChange={event => onShrink(event.target.checked)} className="h-4 w-4 accent-black" />
+        <input type="checkbox" checked={shrink} onChange={event => onShrink(event.target.checked)} className="h-4 w-4 accent-brand-600" />
         {t.shrink}
       </label>
       {jpgNote && <p className="mt-2 text-xs text-gray-600">{t.jpgNote}</p>}
@@ -772,12 +770,12 @@ export default function ExifViewer({ locale = "en" }: { locale?: Locale }) {
           onDragLeave={event => { if (event.currentTarget === event.target) setDragging(false); }}
           onDrop={onDrop}
         >
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-black text-white">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-brand-600 text-white">
             <Upload className="h-7 w-7" aria-hidden="true" />
           </div>
           <h2 className="mt-6 text-2xl font-bold text-black">{t.drop}</h2>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
-            <button type="button" onClick={() => inputRef.current?.click()} disabled={busy} className="rounded-xl bg-black px-6 py-3 font-semibold text-white transition hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 disabled:opacity-50">
+            <button type="button" onClick={() => inputRef.current?.click()} disabled={busy} className="rounded-xl bg-brand-600 px-6 py-3 font-semibold text-white transition hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-600 focus:ring-offset-2 disabled:opacity-50">
               {busy ? t.reading : t.choose}
             </button>
             <button type="button" onClick={openSample} disabled={busy} className="rounded-xl border border-gray-300 bg-white px-6 py-3 font-semibold text-black transition hover:border-gray-500 disabled:opacity-50">
@@ -847,7 +845,7 @@ export default function ExifViewer({ locale = "en" }: { locale?: Locale }) {
                         type="button"
                         onClick={() => { setActiveId(item.id); setPicking(open => (open === "single" ? null : open)); setShowAll(false); }}
                         aria-current={current ? "true" : undefined}
-                        className={`flex w-full items-center gap-3 rounded-xl border p-2 text-left ${current ? "border-black bg-gray-50" : "border-gray-200 hover:border-gray-400"}`}
+                        className={`flex w-full items-center gap-3 rounded-xl border p-2 text-left ${current ? "border-brand-600 bg-brand-50" : "border-gray-200 hover:border-gray-400"}`}
                       >
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src={item.url} alt="" className="h-12 w-12 flex-shrink-0 rounded-lg bg-gray-100 object-cover" />
@@ -959,12 +957,12 @@ export default function ExifViewer({ locale = "en" }: { locale?: Locale }) {
           <div className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm">
             <h2 className="text-lg font-bold text-black">{t.checkTitle}</h2>
             <ul className="mt-4 divide-y divide-gray-100">
-              {results.map(result => (
+              {results.filter(result => result.found).map(result => (
                 <li key={result.id} className="flex items-start gap-3 py-3" data-check={result.id}>
-                  <result.icon className={`mt-0.5 h-5 w-5 flex-shrink-0 ${result.found ? "text-amber-600" : "text-gray-400"}`} aria-hidden="true" />
+                  <result.icon className={`mt-0.5 h-5 w-5 flex-shrink-0 ${removedInCopy ? "text-green-600" : "text-amber-600"}`} aria-hidden="true" />
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-semibold text-black">{result.label}</p>
-                    <p className={`break-words text-sm ${result.found ? "text-gray-800" : "text-gray-500"}`}>{result.found ? result.detail : t.notFound}</p>
+                    <p className="break-words text-sm text-gray-800">{result.detail}</p>
                     {result.id === "location" && point && (
                       <a
                         href={`https://www.openstreetmap.org/?mlat=${point.lat.toFixed(5)}&mlon=${point.lon.toFixed(5)}#map=16/${point.lat.toFixed(5)}/${point.lon.toFixed(5)}`}
@@ -976,22 +974,30 @@ export default function ExifViewer({ locale = "en" }: { locale?: Locale }) {
                       </a>
                     )}
                   </div>
-                  <span className={`whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold ${result.found ? (removedInCopy ? "bg-green-100 text-green-800" : "bg-amber-100 text-amber-900") : "bg-gray-100 text-gray-600"}`}>
-                    {result.found ? (removedInCopy ? t.removedInCopy : t.found) : t.none}
+                  <span className={`whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold ${removedInCopy ? "bg-green-100 text-green-800" : "bg-amber-100 text-amber-900"}`}>
+                    {removedInCopy ? t.removedInCopy : t.found}
                   </span>
                 </li>
               ))}
+              {results.some(result => !result.found) && (
+                <li data-none className="flex items-start gap-3 py-3 text-sm">
+                  <CheckCircle2 className="mt-0.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
+                  <p className="min-w-0 flex-1 text-gray-600">
+                    <span className="font-semibold text-gray-800">{t.notFound}: </span>
+                    {results.filter(result => !result.found).map((result, index, missing) => (
+                      <span key={result.id} data-check={result.id}>{result.label}{index < missing.length - 1 ? " · " : ""}</span>
+                    ))}
+                  </p>
+                </li>
+              )}
             </ul>
             {point && <p className="mt-2 text-xs text-gray-500">{t.mapNote}</p>}
           </div>
 
           {(photosWithInfo > 0 || multi) && (
             <div className="rounded-3xl border border-gray-200 bg-gray-50 p-5" data-clean>
-              <h2 className="flex items-center gap-2 text-lg font-bold text-black">
-                <Eraser className="h-5 w-5 flex-shrink-0" aria-hidden="true" /> {t.cleanTitle}
-              </h2>
-              <p className="mt-2 text-sm leading-6 text-gray-700">{t.cleanBody}</p>
-              <p className="mt-4 text-sm leading-6 text-gray-600">
+              <h2 className="text-base font-bold text-black">{t.cleanTitle}</h2>
+              <p className="mt-1 text-sm leading-6 text-gray-600">
                 {t.cleanMore(
                   <Link href={converterHref} onClick={event => { event.preventDefault(); handTo(converterHref, items.map(item => item.file)); }} className="font-medium text-black underline">{t.converter}</Link>,
                   <Link href={editorHref} onClick={event => { event.preventDefault(); handTo(editorHref, [active.file]); }} className="font-medium text-black underline">{t.editor}</Link>,

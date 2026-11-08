@@ -362,12 +362,12 @@ export default function ImageEditor() {
           onDragLeave={event => { if (event.currentTarget === event.target) setDragging(false); }}
           onDrop={onDrop}
         >
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-black text-white">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-brand-600 text-white">
             <Upload className="h-7 w-7" aria-hidden="true" />
           </div>
           <h2 className="mt-6 text-2xl font-bold text-black">Drop an image here</h2>
           <p className="mt-2 text-gray-600">or paste from your clipboard with Ctrl+V / ⌘V</p>
-          <button type="button" onClick={() => fileInputRef.current?.click()} className="mt-7 rounded-xl bg-black px-6 py-3 font-semibold text-white transition hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2">
+          <button type="button" onClick={() => fileInputRef.current?.click()} className="mt-7 rounded-xl bg-brand-600 px-6 py-3 font-semibold text-white transition hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2">
             Choose image
           </button>
           <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp" onChange={onFileChange} className="sr-only" aria-label="Choose a JPG, PNG, or WebP image" />
@@ -455,7 +455,7 @@ export default function ImageEditor() {
             {format !== "png" && <label className={`${LABEL} mt-4`}>Quality <span className="float-right font-semibold text-black">{quality}%</span><input type="range" min="1" max="100" value={quality} onChange={event => { setQuality(Number(event.target.value)); setSaved(false); }} className="mt-3 w-full accent-black" /></label>}
             {format === "jpeg" && <label className={`${LABEL} mt-4`}>Transparency background<div className="mt-2 flex items-center gap-3"><input type="color" value={background} onChange={event => { setBackground(event.target.value); setSaved(false); }} className="h-11 w-14 cursor-pointer rounded-lg border border-gray-200 bg-white p-1" aria-label="JPEG background color" /><input value={background} onChange={event => setBackground(event.target.value)} className={`${INPUT} mt-0 uppercase`} aria-label="JPEG background color value" /></div></label>}
             <label className={`${LABEL} mt-4`}>File name<div className="mt-2 flex items-center rounded-xl border border-gray-300 bg-white focus-within:border-black focus-within:ring-1 focus-within:ring-black"><input value={filename} onChange={event => { setFilename(event.target.value); setSaved(false); }} className="min-w-0 flex-1 rounded-xl px-3 py-2.5 text-sm outline-none" aria-label="Output file name" /><span className="pr-3 text-sm text-gray-500">.{format === "jpeg" ? "jpg" : format}</span></div></label>
-            <button type="button" onClick={exportImage} disabled={isExporting} className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-black px-5 py-3.5 font-bold text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:bg-gray-400">
+            <button type="button" onClick={exportImage} disabled={isExporting} className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-brand-600 px-5 py-3.5 font-bold text-white transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:bg-gray-400">
               {saved ? <Check className="h-5 w-5" /> : <Download className="h-5 w-5" />} {isExporting ? "Exporting…" : saved ? "Downloaded" : "Export image"}
             </button>
           </div>

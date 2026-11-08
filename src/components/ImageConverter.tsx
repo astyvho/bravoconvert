@@ -1051,7 +1051,7 @@ export default function ImageConverter() {
               )}
               {toFormat.label !== "PDF" && resultArr.some(r => !r) && (
                 <Button 
-                  className="rounded-xl bg-black text-white hover:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5" 
+                  className="rounded-xl bg-brand-600 text-white hover:bg-brand-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5" 
                   onClick={handleConvertAll} 
                   disabled={isLoading}
                 >
@@ -1060,7 +1060,7 @@ export default function ImageConverter() {
               )}
               {toFormat.label !== "PDF" && fileArr.length > 0 && resultArr.every(r => r) && (
                 <Button 
-                  className="rounded-xl bg-black text-white hover:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5" 
+                  className="rounded-xl bg-brand-600 text-white hover:bg-brand-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5" 
                   onClick={handleSaveAll} 
                   disabled={isLoading}
                 >
@@ -1140,7 +1140,7 @@ export default function ImageConverter() {
           <Button 
             onClick={handleConvertAll} 
             disabled={isLoading || isReorderMode} 
-            className="px-8 py-3 rounded-xl bg-black text-white hover:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
+            className="px-8 py-3 rounded-xl bg-brand-600 text-white hover:bg-brand-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
           >
             {isLoading ? `Converting... ${Math.round(progress)}%` : `Convert to PDF (${fileArr.length} images)`}
           </Button>
@@ -1151,7 +1151,7 @@ export default function ImageConverter() {
         <div className="mt-4">
           <div className="w-full bg-gray-200 rounded-full h-2">
             <motion.div
-              className="bg-black h-2 rounded-full"
+              className="bg-brand-600 h-2 rounded-full"
               initial={{ width: 0 }}
               animate={{ width: `${progress}%` }}
               transition={{ duration: 0.3 }}

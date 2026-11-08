@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Camera, CircleAlert, Clock, Eraser, FileSearch, FileText, Fingerprint, ListChecks, MapPin, PenLine, Share2, ShieldCheck, User } from "lucide-react";
+import { ArrowRight, Camera, CircleAlert, Clock, Eraser, FileSearch, FileText, Fingerprint, ListChecks, MapPin, PenLine, Share2, ShieldCheck, User } from "lucide-react";
 import exifDemo from "@/data/exif-demo.json";
 import pdfMetaDemo from "@/data/pdf-metadata-demo.json";
 import { alternatesFor } from "@/lib/locale";
@@ -39,21 +39,21 @@ const steps = [
   {
     icon: FileSearch,
     title: "1. 확인",
-    body: "EXIF 뷰어로 사진을 엽니다. 신원을 드러낼 수 있는 여섯 가지 정보 중 무엇이 들어 있는지 알려 주고, GPS가 있으면 좌표를 보여 줍니다.",
+    body: "여섯 가지 숨은 정보 중 무엇이 들어 있는지 보여 줍니다. 위치가 있으면 좌표까지.",
     href: "/ko/view/exif/",
     cta: "사진 확인하기",
   },
   {
     icon: Eraser,
     title: "2. 지우기",
-    body: "결과 화면에서 '바로 지우기'를 누르고 형식을 고르면 끝입니다. 사진을 픽셀에서 새로 그리기 때문에 원본의 메타데이터가 사본에 복사되지 않습니다. 여러 장이면 '모두 지우기'로 한 번에 받습니다.",
+    body: "'바로 지우기'를 누르면 정보를 뺀 사본을 받습니다. 여러 장도 한 번에.",
     href: "/ko/view/exif/?sample=1",
     cta: "샘플로 해보기",
   },
   {
     icon: Share2,
     title: "3. 확인하고 공유",
-    body: "지운 사본은 자동으로 다시 검사해 남은 정보가 없는지 보여 주고, 휴대폰에서는 바로 공유할 수 있습니다. 사진에 찍힌 표지판이나 얼굴만은 직접 보세요.",
+    body: "사본은 자동으로 다시 검사됩니다. 사진에 찍힌 간판·얼굴만 직접 확인하세요.",
     href: "/ko/guides/exif-metadata-privacy/",
     cta: "실험 결과 보기",
   },
@@ -107,27 +107,30 @@ export default function KoreanHome() {
       />
       <div className="w-full max-w-5xl">
         <div className="text-center mb-12">
-          <p className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-500">BravoConvert</p>
+          <p className="mb-3 text-sm font-semibold uppercase tracking-wide text-brand-600">BravoConvert</p>
           <h1 className="text-4xl md:text-6xl font-bold text-black mb-6 leading-tight">
             사진을 보내기 전에, 무엇이 함께 가는지 확인하세요
           </h1>
           <p className="text-lg md:text-xl text-black max-w-3xl mx-auto mb-8 leading-8">
-            사진 파일에는 그림만 있는 게 아닙니다. 찍은 장소, 시간, 휴대폰 기종이 함께 들어 있는 경우가 많습니다. 내 사진에 무엇이 있는지
-            보고, 지우고, 그림만 보내세요. 파일은 어디에도 업로드되지 않습니다.
+            사진에는 찍은 장소, 시간, 휴대폰 기종이 함께 저장되는 경우가 많습니다. 보내기 전에 확인하고, 그림만 남겨 보내세요.
           </p>
           <HomePhotoDrop locale="ko" />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl mx-auto">
           {steps.map((step) => {
             const Icon = step.icon;
             return (
-              <div key={step.title} className="flex flex-col rounded-xl border border-gray-200 bg-white p-6 shadow-lg">
-                <Icon className="mb-4 h-10 w-10 text-gray-700" aria-hidden="true" />
-                <h2 className="mb-2 text-2xl font-bold text-black">{step.title}</h2>
-                <p className="mb-4 leading-7 text-gray-700">{step.body}</p>
-                <Link href={step.href} className="mt-auto font-medium underline">
-                  {step.cta}
+              <div key={step.title} className="flex flex-col rounded-2xl border border-gray-200 bg-white p-5">
+                <div className="flex items-center gap-3">
+                  <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
+                    <Icon className="h-5 w-5" aria-hidden="true" />
+                  </span>
+                  <h2 className="text-lg font-bold text-black">{step.title}</h2>
+                </div>
+                <p className="mt-3 text-sm leading-6 text-gray-700">{step.body}</p>
+                <Link href={step.href} className="mt-auto inline-flex items-center gap-1 pt-3 text-sm font-semibold text-brand-700 hover:text-brand-800">
+                  {step.cta} <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </Link>
               </div>
             );
@@ -137,7 +140,7 @@ export default function KoreanHome() {
         <section className="max-w-5xl mx-auto mt-16 space-y-12 text-gray-800">
           <div>
             <h2 className="mb-4 flex items-center gap-3 text-3xl font-bold text-black">
-              <ShieldCheck className="h-8 w-8 flex-shrink-0 text-gray-700" aria-hidden="true" />
+              <ShieldCheck className="hidden h-8 w-8 flex-shrink-0 text-brand-600 sm:block" aria-hidden="true" />
               짐작이 아니라 측정: 변환 후 무엇이 남는가
             </h2>
             <p className="leading-7 mb-5">
@@ -146,19 +149,30 @@ export default function KoreanHome() {
             </p>
             <div className="overflow-x-auto rounded-xl border border-gray-200">
               <table className="w-full text-left text-sm">
+                <caption className="caption-top border-b border-gray-200 p-3 text-left">
+                  <span className={`rounded-full px-3 py-1 text-xs font-semibold ${survivedCount === 0 ? "bg-green-100 text-green-800" : "bg-amber-100 text-amber-900"}`}>
+                    {survivedCount === 0 ? `변환 후 ${exifDemo.before.length}개 모두 사라짐` : `변환 후 ${survivedCount}개 남음`}
+                  </span>
+                </caption>
                 <thead className="bg-gray-100 text-black">
                   <tr>
                     <th className="p-3 font-bold">항목</th>
-                    <th className="p-3 font-bold">원본</th>
-                    <th className="p-3 font-bold">변환 후</th>
+                    <th className="p-3 font-bold">원본 값</th>
                   </tr>
                 </thead>
                 <tbody className="text-gray-700">
                   {exifDemo.before.map((row, index) => (
                     <tr key={row.field} className="border-t border-gray-200">
                       <td className="p-3 font-medium text-black">{demoLabels[row.field] ?? row.field}</td>
-                      <td className="p-3 font-mono">{String(row.value)}</td>
-                      <td className="p-3">{exifDemo.after[index].value === null ? "없음" : String(exifDemo.after[index].value)}</td>
+                      <td className="p-3 font-mono">
+                        {exifDemo.after[index].value === null ? (
+                          <s className="text-gray-400">{String(row.value)}</s>
+                        ) : (
+                          <>
+                            {String(row.value)} <span className="ml-1 rounded-full bg-amber-100 px-2 py-0.5 font-sans text-xs font-semibold text-amber-900">남음</span>
+                          </>
+                        )}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -196,7 +210,7 @@ export default function KoreanHome() {
 
           <div>
             <h2 className="mb-4 flex items-center gap-3 text-3xl font-bold text-black">
-              <FileText className="h-8 w-8 flex-shrink-0 text-gray-700" aria-hidden="true" />
+              <FileText className="hidden h-8 w-8 flex-shrink-0 text-brand-600 sm:block" aria-hidden="true" />
               PDF도 작성자를 기억합니다
             </h2>
             <p className="leading-7">
@@ -211,7 +225,7 @@ export default function KoreanHome() {
 
           <div>
             <h2 className="mb-4 flex items-center gap-3 text-3xl font-bold text-black">
-              <ListChecks className="h-8 w-8 flex-shrink-0 text-gray-700" aria-hidden="true" />
+              <ListChecks className="hidden h-8 w-8 flex-shrink-0 text-brand-600 sm:block" aria-hidden="true" />
               이럴 때 쓰세요
             </h2>
             <div className="grid gap-4 md:grid-cols-2">
@@ -231,7 +245,7 @@ export default function KoreanHome() {
 
           <div>
             <h2 className="mb-3 flex items-center gap-3 text-2xl font-bold text-black">
-              <CircleAlert className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+              <CircleAlert className="hidden h-7 w-7 flex-shrink-0 text-brand-600 sm:block" aria-hidden="true" />
               메타데이터를 지워도 해결되지 않는 것
             </h2>
             <p className="leading-7 mb-3">

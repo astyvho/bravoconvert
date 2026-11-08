@@ -45,7 +45,8 @@ test("Korean EXIF viewer reads the sample photo with Korean labels", async ({ pa
   await expect(location).toContainText("위치 (GPS)");
   await expect(location).toContainText("발견");
   await expect(location.getByRole("link", { name: "OpenStreetMap에서 보기" })).toBeVisible();
-  await expect(page.locator('[data-check="serial"]')).toContainText("없음");
+  await expect(page.locator('[data-none] [data-check="serial"]')).toBeVisible();
+  await expect(page.locator("[data-none]")).toContainText("없음");
 });
 
 test("Korean guides render their measured findings", async ({ page }) => {

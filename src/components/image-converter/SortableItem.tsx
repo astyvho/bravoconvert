@@ -165,7 +165,7 @@ export function SortableItem({
                   <Button
                     size="sm"
                     onClick={() => onDownload(idx)}
-                    className="w-full mt-2 rounded-xl bg-black text-white hover:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
+                    className="w-full mt-2 rounded-xl bg-brand-600 text-white hover:bg-brand-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
                   >
                     <Download size={14} className="mr-1" />
                     Download
@@ -260,7 +260,7 @@ export function SortableItem({
             <Button
               size="sm"
               onClick={() => onDownload(idx)}
-              className="flex items-center gap-1 rounded-xl bg-black text-white hover:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
+              className="flex items-center gap-1 rounded-xl bg-brand-600 text-white hover:bg-brand-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
             >
               <Download size={14} />
               Download

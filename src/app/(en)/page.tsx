@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { alternatesFor } from "@/lib/locale";
 import HomePhotoDrop from "@/components/HomePhotoDrop";
-import { Camera, CircleAlert, Clock, Combine, Eraser, FileSearch, FileText, Fingerprint, Gauge, Image, ListChecks, MapPin, PencilRuler, PenLine, Share2, ShieldCheck, User } from "lucide-react";
+import { ArrowRight, Camera, CircleAlert, Clock, Combine, Eraser, FileSearch, FileText, Fingerprint, Gauge, Image, ListChecks, MapPin, PencilRuler, PenLine, Share2, ShieldCheck, User } from "lucide-react";
 import benchmarks from "@/data/format-benchmarks.json";
 import exifDemo from "@/data/exif-demo.json";
 
@@ -37,21 +37,21 @@ const steps = [
   {
     icon: FileSearch,
     title: "1. Check",
-    body: "Open the photo in the EXIF Viewer. It reports which of six kinds of identifying information the file carries, and shows the GPS point if there is one.",
+    body: "See which of six kinds of hidden information the photo carries, down to the GPS point.",
     href: "/view/exif/",
     cta: "Check a photo",
   },
   {
     icon: Eraser,
     title: "2. Clean",
-    body: "Press Remove it now on the result and pick a format. The copy is redrawn from its pixels, so the metadata block from the original is not copied into it. Several photos? Remove from all gives you every copy at once.",
+    body: "Remove it now gives you a copy without it. Several photos? Remove from all.",
     href: "/view/exif/?sample=1",
     cta: "Try it on a sample",
   },
   {
     icon: Share2,
     title: "3. Confirm and share",
-    body: "The clean copy is checked again automatically, and on a phone you can share it straight from the result. Then look at the picture itself — metadata tools cannot see a street sign or a face.",
+    body: "The copy is checked again automatically. Street signs and faces are yours to check.",
     href: "/guides/exif-metadata-privacy/",
     cta: "Read what we tested",
   },
@@ -162,28 +162,31 @@ export default function Home() {
       <div className="w-full max-w-5xl">
         {/* Hero Section */}
         <div className="text-center mb-12">
-          <p className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-500">BravoConvert</p>
+          <p className="mb-3 text-sm font-semibold uppercase tracking-wide text-brand-600">BravoConvert</p>
           <h1 className="text-4xl md:text-6xl font-bold text-black mb-6">
             Check what a photo reveals before you share it
           </h1>
           <p className="text-lg md:text-xl text-black max-w-3xl mx-auto mb-8">
-            Photos carry more than the picture: often the exact place they were taken, the time, and the phone that took them.
-            See what is in yours, remove it, and share only the image — without uploading the file anywhere.
+            Photos often carry the place they were taken, the time, and the phone that took them. Check yours and share only the picture.
           </p>
           <HomePhotoDrop locale="en" />
         </div>
 
         {/* Check, clean, share */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl mx-auto">
           {steps.map((step) => {
             const Icon = step.icon;
             return (
-              <div key={step.title} className="flex flex-col rounded-xl border border-gray-200 bg-white p-6 shadow-lg">
-                <Icon className="mb-4 h-10 w-10 text-gray-700" aria-hidden="true" />
-                <h2 className="mb-2 text-2xl font-bold text-black">{step.title}</h2>
-                <p className="mb-4 leading-7 text-gray-700">{step.body}</p>
-                <Link href={step.href} className="mt-auto font-medium underline">
-                  {step.cta}
+              <div key={step.title} className="flex flex-col rounded-2xl border border-gray-200 bg-white p-5">
+                <div className="flex items-center gap-3">
+                  <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
+                    <Icon className="h-5 w-5" aria-hidden="true" />
+                  </span>
+                  <h2 className="text-lg font-bold text-black">{step.title}</h2>
+                </div>
+                <p className="mt-3 text-sm leading-6 text-gray-700">{step.body}</p>
+                <Link href={step.href} className="mt-auto inline-flex items-center gap-1 pt-3 text-sm font-semibold text-brand-700 hover:text-brand-800">
+                  {step.cta} <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </Link>
               </div>
             );
@@ -193,7 +196,7 @@ export default function Home() {
         <section className="max-w-5xl mx-auto mt-16 space-y-12 text-gray-800">
           <div>
             <h2 className="mb-4 flex items-center gap-3 text-3xl font-bold text-black">
-              <ShieldCheck className="h-8 w-8 flex-shrink-0 text-gray-700" aria-hidden="true" />
+              <ShieldCheck className="hidden h-8 w-8 flex-shrink-0 text-brand-600 sm:block" aria-hidden="true" />
               Tested, not assumed: what survives a conversion
             </h2>
             <p className="leading-7 mb-5">
@@ -203,19 +206,32 @@ export default function Home() {
             </p>
             <div className="overflow-x-auto rounded-xl border border-gray-200">
               <table className="w-full text-left text-sm">
+                <caption className="caption-top border-b border-gray-200 p-3 text-left">
+                  <span className={`rounded-full px-3 py-1 text-xs font-semibold ${exifDemo.anyFieldSurvived ? "bg-amber-100 text-amber-900" : "bg-green-100 text-green-800"}`}>
+                    {exifDemo.anyFieldSurvived
+                      ? `After conversion: ${exifDemo.after.filter((f) => f.value !== null).length} left`
+                      : `After conversion: all ${exifDemo.before.length} gone`}
+                  </span>
+                </caption>
                 <thead className="bg-gray-100 text-black">
                   <tr>
                     <th className="p-3 font-bold">Field</th>
-                    <th className="p-3 font-bold">In the original</th>
-                    <th className="p-3 font-bold">After conversion</th>
+                    <th className="p-3 font-bold">Value in the original</th>
                   </tr>
                 </thead>
                 <tbody className="text-gray-700">
                   {exifDemo.before.map((row, index) => (
                     <tr key={row.field} className="border-t border-gray-200">
                       <td className="p-3 font-medium text-black">{demoLabels[row.field] ?? row.field}</td>
-                      <td className="p-3 font-mono">{String(row.value)}</td>
-                      <td className="p-3">{exifDemo.after[index].value === null ? "Not present" : String(exifDemo.after[index].value)}</td>
+                      <td className="p-3 font-mono">
+                        {exifDemo.after[index].value === null ? (
+                          <s className="text-gray-400">{String(row.value)}</s>
+                        ) : (
+                          <>
+                            {String(row.value)} <span className="ml-1 rounded-full bg-amber-100 px-2 py-0.5 font-sans text-xs font-semibold text-amber-900">kept</span>
+                          </>
+                        )}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -281,7 +297,7 @@ export default function Home() {
 
           <div>
             <h2 className="mb-4 flex items-center gap-3 text-3xl font-bold text-black">
-              <ListChecks className="h-8 w-8 flex-shrink-0 text-gray-700" aria-hidden="true" />
+              <ListChecks className="hidden h-8 w-8 flex-shrink-0 text-brand-600 sm:block" aria-hidden="true" />
               Common tasks, and where to start
             </h2>
             <div className="grid gap-4 md:grid-cols-2">
@@ -301,7 +317,7 @@ export default function Home() {
 
           <div>
             <h2 className="mb-3 flex items-center gap-3 text-2xl font-bold text-black">
-              <CircleAlert className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+              <CircleAlert className="hidden h-7 w-7 flex-shrink-0 text-brand-600 sm:block" aria-hidden="true" />
               What removing metadata does not do
             </h2>
             <p className="leading-7 mb-3">
@@ -319,7 +335,7 @@ export default function Home() {
 
           <div>
             <h2 className="mb-4 flex items-center gap-3 text-2xl font-bold text-black">
-              <Gauge className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+              <Gauge className="hidden h-7 w-7 flex-shrink-0 text-brand-600 sm:block" aria-hidden="true" />
               Also measured: what conversion does to file size
             </h2>
             <div className="overflow-x-auto rounded-xl border border-gray-200">

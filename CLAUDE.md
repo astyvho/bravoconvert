@@ -64,6 +64,7 @@ Note: ESLint is configured (`eslint.config.mjs`) but has no npm script — run i
 - **Round design**: All components use rounded corners (`rounded-xl`, `rounded-2xl`)
 - **Glassmorphism**: Semi-transparent backgrounds with backdrop blur
 - **Consistent hover states**: `hover:bg-gray-200` throughout
+- **One accent colour**: `brand` in `tailwind.config.js` (blue, `brand-600` = #2563eb, hover `brand-700`). Use it only for the primary action and selected states (main buttons, chosen format, active list row, progress bars, step icons). Status colours stay separate: amber = found, green = removed/clean. The consent banner's Accept button stays neutral on purpose so it does not nudge.
 - **lucide-react icons**: Consistent icon system
 - **Framer Motion**: Smooth animations and transitions
 

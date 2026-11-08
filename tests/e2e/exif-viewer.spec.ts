@@ -42,7 +42,9 @@ test("sample photo shows location, time, and device, and nothing else", async ({
   await expect(check(page, "location")).toContainText("51.50806, -0.12806");
   await expect(check(page, "time")).toContainText("2026-05-17 14:32:08");
   await expect(check(page, "device")).toContainText("BravoCam BC-900 Demo");
-  for (const id of ["serial", "person", "software"]) await expect(check(page, id)).toContainText("Not found");
+  // Items that are not in the photo are grouped on one "Not found" line instead of a row each.
+  for (const id of ["serial", "person", "software"]) await expect(page.locator(`[data-none] [data-check="${id}"]`)).toBeVisible();
+  await expect(page.locator("[data-none]")).toContainText("Not found");
 
   const map = page.getByRole("link", { name: "Show on OpenStreetMap" });
   await expect(map).toHaveAttribute("href", /mlat=51\.50806&mlon=-0\.12806/);

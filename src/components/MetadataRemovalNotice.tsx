@@ -49,9 +49,9 @@ export default function MetadataRemovalNotice({ tool }: { tool: Tool }) {
     <aside
       lang={state.locale}
       data-metadata-notice
-      className="mx-auto mb-6 mt-2 flex max-w-4xl items-start gap-3 rounded-2xl border border-sky-200 bg-sky-50 px-5 py-4 text-sky-950 break-keep"
+      className="mx-auto mb-6 mt-2 flex max-w-4xl items-start gap-3 rounded-2xl border border-brand-200 bg-brand-50 px-5 py-4 text-brand-900 break-keep"
     >
-      <ShieldCheck className="mt-0.5 h-6 w-6 flex-shrink-0 text-sky-700" aria-hidden="true" />
+      <ShieldCheck className="mt-0.5 h-6 w-6 flex-shrink-0 text-brand-600" aria-hidden="true" />
       <div className="min-w-0">
         <p className="font-bold">{t.title}</p>
         <p className="mt-1 text-sm leading-6">{t.body} {t.next(tool, state.handed)}</p>
