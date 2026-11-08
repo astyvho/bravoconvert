@@ -63,9 +63,11 @@ test("Korean EXIF viewer offers a clean copy in place", async ({ page }) => {
   const reject = page.getByRole("button", { name: "거부", exact: true });
   if (await reject.isVisible()) await reject.click();
   await page.getByRole("button", { name: "샘플 사진으로 해보기" }).click();
-  const downloadPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: "바로 지우기" }).click();
-  await downloadPromise;
+  await expect(page.getByText("어떤 형식으로 받을까요?")).toBeVisible();
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: /PNG로 받기/ }).click();
+  expect((await downloadPromise).suggestedFilename()).toBe("sample-photo-with-gps-clean.png");
   await expect(page.getByText(/받은 사본을 다시 검사했습니다/)).toBeVisible();
 });
 

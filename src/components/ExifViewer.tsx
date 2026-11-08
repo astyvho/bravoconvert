@@ -57,10 +57,12 @@ const STRINGS = {
     toolQuery: "?from=exif",
     editor: "Image Editor",
     cleanTitle: "Remove it before you share",
-    cleanBody: "Make a copy of this photo that keeps only the picture. It is redrawn from its pixels in your browser, turned the right way up first, and saved in the same format — so none of the fields above go with it.",
+    cleanBody: "Remove it now makes a copy of this photo that keeps only the picture. It is redrawn from its pixels in your browser, turned the right way up first, and saved in the format you pick — so none of the fields above go with it.",
     jumpToClean: "Remove it now",
-    jumpHint: "Downloads a copy without this information. Your original file is not changed.",
-    otherFormats: "Need a different format?",
+    jumpHint: "Pick a format and a copy without this information downloads. Your original file is not changed.",
+    pickTitle: "Save the clean copy as",
+    sameAsOriginal: "same as the original",
+    formatNotes: { "image/jpeg": "Works everywhere; best for sharing photos", "image/png": "No quality loss; larger file", "image/webp": "Smallest file; a few apps cannot open it" } as Record<OutputType, string>,
     saveAs: (label: string) => `Clean copy as ${label}`,
     verifyFailed: "The clean copy was saved, but it could not be checked again here. Open it in this viewer to confirm.",
     jpgNote: "JPG has no transparency; transparent areas become white.",
@@ -108,10 +110,12 @@ const STRINGS = {
     toolQuery: "?from=exif&lang=ko",
     editor: "이미지 편집기(영문)",
     cleanTitle: "공유하기 전에 지우기",
-    cleanBody: "그림만 남긴 사본을 만듭니다. 브라우저 안에서 픽셀을 새로 그려 같은 형식으로 저장하고, 회전도 미리 바로잡기 때문에 위 항목은 하나도 따라가지 않습니다.",
+    cleanBody: "'바로 지우기'는 그림만 남긴 사본을 만듭니다. 브라우저 안에서 픽셀을 새로 그려 고른 형식으로 저장하고, 회전도 미리 바로잡기 때문에 위 항목은 하나도 따라가지 않습니다.",
     jumpToClean: "바로 지우기",
-    jumpHint: "누르면 이 정보를 지운 사본이 바로 내려받아집니다. 원본 파일은 바뀌지 않습니다.",
-    otherFormats: "다른 형식이 필요하면",
+    jumpHint: "형식을 고르면 이 정보를 지운 사본이 바로 내려받아집니다. 원본 파일은 바뀌지 않습니다.",
+    pickTitle: "어떤 형식으로 받을까요?",
+    sameAsOriginal: "원본과 같은 형식",
+    formatNotes: { "image/jpeg": "어디서나 열림, 사진 공유에 무난", "image/png": "화질 손실 없음, 용량 큼", "image/webp": "용량이 가장 작음, 일부 앱은 못 엶" } as Record<OutputType, string>,
     saveAs: (label: string) => `${label}로 받기`,
     verifyFailed: "사본은 저장했지만 여기서 다시 검사하지 못했습니다. 뷰어로 열어 확인해 주세요.",
     jpgNote: "JPG는 투명 배경을 지원하지 않아 투명한 부분이 흰색이 됩니다.",
@@ -304,6 +308,7 @@ export default function ExifViewer({ locale = "en" }: { locale?: Locale }) {
   const [cleaned, setCleaned] = useState<Cleaned | null>(null);
   const [cleaning, setCleaning] = useState(false);
   const [cleanError, setCleanError] = useState<string | null>(null);
+  const [picking, setPicking] = useState(false);
   const cleanUrlRef = useRef<string | null>(null);
 
   const setCleanUrl = (url: string | null) => {
@@ -313,6 +318,7 @@ export default function ExifViewer({ locale = "en" }: { locale?: Locale }) {
   useEffect(() => () => setCleanUrl(null), []);
 
   const resetClean = () => {
+    setPicking(false);
     setCleanUrl(null);
     setCleaned(null);
     setCleanError(null);
@@ -329,6 +335,7 @@ export default function ExifViewer({ locale = "en" }: { locale?: Locale }) {
 
   const clean = async (choice: OutputType | "keep") => {
     if (!loaded) return;
+    setPicking(false);
     resetClean();
     setCleaning(true);
     setCleanError(null);
@@ -486,22 +493,51 @@ export default function ExifViewer({ locale = "en" }: { locale?: Locale }) {
                 </button>
               </div>
               <div className={`mt-4 rounded-xl px-4 py-3 ${foundCount ? "bg-amber-50 text-amber-900" : "bg-green-50 text-green-800"}`}>
-                <div className="flex flex-wrap items-center gap-3 text-sm font-semibold">
-                  {foundCount ? <ShieldAlert className="h-5 w-5 flex-shrink-0" aria-hidden="true" /> : <CheckCircle2 className="h-5 w-5 flex-shrink-0" aria-hidden="true" />}
-                  <span className="min-w-0 flex-1">{foundCount ? t.foundSummary(foundCount) : t.noneSummary}</span>
+                <div className="flex flex-col gap-3 text-sm font-semibold sm:flex-row sm:items-center">
+                  <span className="flex min-w-0 flex-1 items-start gap-2">
+                    {foundCount ? <ShieldAlert className="h-5 w-5 flex-shrink-0" aria-hidden="true" /> : <CheckCircle2 className="h-5 w-5 flex-shrink-0" aria-hidden="true" />}
+                    <span>{foundCount ? t.foundSummary(foundCount) : t.noneSummary}</span>
+                  </span>
                   {foundCount > 0 && (
                     <button
                       type="button"
-                      onClick={() => clean("keep")}
+                      onClick={() => { setCleanError(null); setPicking(open => !open); }}
                       disabled={cleaning}
-                      className="inline-flex flex-shrink-0 items-center gap-1.5 whitespace-nowrap rounded-xl bg-black px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800 disabled:opacity-50"
+                      aria-expanded={picking}
+                      aria-controls="clean-format-picker"
+                      className="inline-flex h-11 w-full flex-shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl bg-black px-4 text-sm font-semibold text-white hover:bg-gray-800 disabled:opacity-50 sm:w-auto"
                     >
                       <Eraser className="h-4 w-4" aria-hidden="true" />
                       {cleaning ? t.cleaning : t.jumpToClean}
                     </button>
                   )}
                 </div>
-                {foundCount > 0 && !cleaned && !cleanError && <p className="mt-2 text-xs font-normal text-amber-800">{t.jumpHint}</p>}
+                {foundCount > 0 && !picking && !cleaned && !cleanError && <p className="mt-2 text-xs font-normal text-amber-800">{t.jumpHint}</p>}
+                {picking && (
+                  <div id="clean-format-picker" role="group" aria-label={t.pickTitle} className="mt-3 border-t border-amber-200 pt-3">
+                    <p className="text-sm font-semibold text-black">{t.pickTitle}</p>
+                    <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-3">
+                      {[...FORMATS].sort((a, b) => Number(b.type === loaded.file.type) - Number(a.type === loaded.file.type)).map(format => {
+                        const same = format.type === loaded.file.type;
+                        return (
+                          <button
+                            key={format.type}
+                            type="button"
+                            onClick={() => clean(same ? "keep" : format.type)}
+                            disabled={cleaning}
+                            className={`flex min-h-[44px] flex-col items-start rounded-xl border px-3 py-2 text-left disabled:opacity-50 ${same ? "border-black bg-white" : "border-gray-300 bg-white hover:border-gray-500"}`}
+                          >
+                            <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-black">
+                              <Download className="h-4 w-4" aria-hidden="true" /> {t.saveAs(format.label)}
+                            </span>
+                            <span className="mt-0.5 text-xs font-normal text-gray-600">{same ? `${t.sameAsOriginal} · ` : ""}{t.formatNotes[format.type]}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                    {loaded.file.type !== "image/jpeg" && <p className="mt-2 text-xs font-normal text-gray-600">{t.jpgNote}</p>}
+                  </div>
+                )}
               </div>
               {cleaned && <CleanResult cleaned={cleaned} t={t} onAgain={() => download(cleaned.url, cleaned.name)} />}
               {cleanError && <p role="alert" className="mt-3 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">{cleanError}</p>}
@@ -541,21 +577,6 @@ export default function ExifViewer({ locale = "en" }: { locale?: Locale }) {
                 <Eraser className="h-5 w-5 flex-shrink-0" aria-hidden="true" /> {t.cleanTitle}
               </h2>
               <p className="mt-2 text-sm leading-6 text-gray-700">{t.cleanBody}</p>
-              <p className="mt-4 text-sm font-semibold text-black">{t.otherFormats}</p>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {FORMATS.filter(format => format.type !== loaded.file.type).map(format => (
-                  <button
-                    key={format.type}
-                    type="button"
-                    onClick={() => clean(format.type)}
-                    disabled={cleaning}
-                    className="inline-flex items-center gap-1.5 rounded-xl border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-black hover:border-gray-500 disabled:opacity-50"
-                  >
-                    <Download className="h-4 w-4" aria-hidden="true" /> {t.saveAs(format.label)}
-                  </button>
-                ))}
-              </div>
-              {loaded.file.type !== "image/jpeg" && <p className="mt-2 text-xs text-gray-500">{t.jpgNote}</p>}
               <p className="mt-4 text-sm leading-6 text-gray-600">
                 {t.cleanMore(
                   <Link href={`/convert/img/${t.toolQuery}`} className="font-medium text-black underline">{t.converter}</Link>,
