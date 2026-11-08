@@ -23,12 +23,12 @@ const TEXT = {
     href: "/view/exif/",
   },
   ko: {
-    title: "여기서 저장하면 사진에 숨은 정보가 빠집니다",
-    body: "픽셀에서 새로 만들기 때문에 위치(GPS), 촬영 시간, 기기 모델 같은 EXIF 정보가 들어가지 않습니다. 이 화면은 영어입니다.",
+    title: "여기서 저장한 사진에는 위치·시간 정보가 안 들어가요",
+    body: "사진을 새로 그려서 저장하기 때문에 GPS 위치, 찍은 시간, 기기 이름 같은 정보는 따라오지 않아요. (이 화면은 영어예요)",
     next: (tool: Tool, handed: boolean) =>
       handed
-        ? tool === "converter" ? "보고 있던 사진을 아래에 그대로 넣어 두었습니다. 형식을 고르고 'Convert All'을 누르세요." : "보고 있던 사진을 아래에 그대로 열어 두었습니다. 고친 뒤 내보내기 버튼으로 받으세요."
-        : tool === "converter" ? "'Select Images'로 사진을 고르고 'Convert All'을 누르세요. 받은 파일은 EXIF 뷰어로 다시 확인할 수 있습니다." : "아래에서 사진을 열고 내보내세요. 받은 파일은 EXIF 뷰어로 다시 확인할 수 있습니다.",
+        ? tool === "converter" ? "보던 사진은 아래에 이미 넣어 뒀어요. 형식을 고르고 'Convert All'을 누르세요." : "보던 사진을 아래에 열어 뒀어요. 손본 다음 내보내기 버튼으로 받으세요."
+        : tool === "converter" ? "'Select Images'로 사진을 고르고 'Convert All'을 누르세요. 받은 파일은 EXIF 뷰어에서 다시 확인할 수 있어요." : "아래에서 사진을 열고 내보내세요. 받은 파일은 EXIF 뷰어에서 다시 확인할 수 있어요.",
     back: "EXIF 뷰어로 돌아가기",
     href: "/ko/view/exif/",
   },

@@ -40,10 +40,10 @@ test("Korean EXIF viewer reads the sample photo with Korean labels", async ({ pa
   if (await reject.isVisible()) await reject.click();
 
   await page.getByRole("button", { name: "샘플 사진으로 해보기" }).click();
-  await expect(page.getByText(/신원을 드러낼 수 있는 정보가 \d+종류/)).toBeVisible();
+  await expect(page.getByText(/지울 만한 정보 \d+개를 찾았어요/)).toBeVisible();
   const location = page.locator('[data-check="location"]');
   await expect(location).toContainText("위치 (GPS)");
-  await expect(location).toContainText("발견");
+  await expect(location).toContainText("있음");
   await expect(location.getByRole("link", { name: "OpenStreetMap에서 보기" })).toBeVisible();
   await expect(page.locator('[data-none] [data-check="serial"]')).toBeVisible();
   await expect(page.locator("[data-none]")).toContainText("없음");
@@ -51,8 +51,8 @@ test("Korean EXIF viewer reads the sample photo with Korean labels", async ({ pa
 
 test("Korean guides render their measured findings", async ({ page }) => {
   await page.goto("/ko/");
-  await expect(page.getByRole("heading", { level: 1, name: "사진을 보내기 전에, 무엇이 함께 가는지 확인하세요" })).toBeVisible();
-  await expect(page.getByText("남은 필드는 하나도 없었습니다.")).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "보내기 전에, 사진에 뭐가 남아 있는지 보세요" })).toBeVisible();
+  await expect(page.getByText("남은 건 하나도 없었어요.")).toBeVisible();
 
   await page.goto("/ko/guides/pdf-metadata-privacy/");
   await expect(page.getByRole("heading", { name: "메모는 매번 살아남았습니다" })).toBeVisible();
@@ -72,7 +72,7 @@ test("Korean EXIF viewer offers a clean copy in place", async ({ page }) => {
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: /PNG로 받기/ }).click();
   expect((await downloadPromise).suggestedFilename()).toBe("sample-photo-with-gps-clean.png");
-  await expect(page.getByText(/받은 사본을 다시 검사했습니다/)).toBeVisible();
+  await expect(page.getByText(/받은 사본을 다시 열어 봤어요/)).toBeVisible();
 });
 
 test("tools reached from the EXIF context say that converting removes the metadata", async ({ page }) => {
@@ -81,7 +81,7 @@ test("tools reached from the EXIF context say that converting removes the metada
 
   await page.goto("/convert/img/?from=exif&lang=ko");
   const ko = page.locator("[data-metadata-notice]");
-  await expect(ko).toContainText("여기서 저장하면 사진에 숨은 정보가 빠집니다");
+  await expect(ko).toContainText("여기서 저장한 사진에는 위치·시간 정보가 안 들어가요");
   await expect(ko.getByRole("link", { name: "EXIF 뷰어로 돌아가기" })).toHaveAttribute("href", "/ko/view/exif/");
 
   await page.goto("/edit/image/?from=exif");
@@ -99,8 +99,8 @@ test("the Korean home sends chosen photos straight into the viewer", async ({ pa
   await page.goto("/ko/");
   await page.getByLabel("확인할 사진 선택").setInputFiles(SAMPLE);
   await expect(page).toHaveURL(/\/ko\/view\/exif\/$/);
-  await expect(page.getByText("이 사진에는 신원을 드러낼 수 있는 정보가 3종류 들어 있습니다.")).toBeVisible();
+  await expect(page.getByText("이 사진에서 지울 만한 정보 3개를 찾았어요.")).toBeVisible();
 
   await page.goto("/ko/view/exif/?sample=1");
-  await expect(page.getByText("이 사진에는 신원을 드러낼 수 있는 정보가 3종류 들어 있습니다.")).toBeVisible();
+  await expect(page.getByText("이 사진에서 지울 만한 정보 3개를 찾았어요.")).toBeVisible();
 });

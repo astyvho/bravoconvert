@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description: "JPG, PNG, WebP 사진에 숨은 촬영 위치(GPS), 촬영 시간, 카메라·휴대폰 모델, 일련번호를 공유 전에 확인하세요. 사진은 브라우저 안에서만 읽히고 업로드되지 않습니다.",
   keywords: ["EXIF 뷰어", "사진 위치정보 확인", "사진 메타데이터 확인", "사진 GPS 확인", "EXIF 확인", "사진 위치정보 삭제"],
   openGraph: {
-    title: "EXIF 뷰어 — 사진이 무엇을 드러내는지 확인하세요",
+    title: "EXIF 뷰어 - 사진에 남은 위치·기기 정보 확인",
     description: "사진의 GPS 위치, 촬영 시간, 기기 정보를 업로드 없이 확인합니다.",
     type: "website",
     locale: "ko_KR",
@@ -146,7 +146,7 @@ export default function KoreanExifViewerPage() {
             문제 해결
           </h2>
           <ul className="mt-3 list-disc space-y-2 pl-6 leading-7">
-            <li><strong className="text-black">휴대폰 사진인데 &ldquo;메타데이터를 찾지 못했습니다&rdquo;가 나올 때.</strong> 파일을 마지막으로 저장한 앱(메신저, 캡처 도구, 편집 앱)이 이미 지웠을 수 있습니다. 원래 무엇이 들어 있었는지 알고 싶다면 갤러리에 있는 원본을 확인하세요.</li>
+            <li><strong className="text-black">휴대폰 사진인데 &ldquo;지울 만한 정보가 없어요&rdquo;가 나올 때.</strong> 파일을 마지막으로 저장한 앱(메신저, 캡처 도구, 편집 앱)이 이미 지웠을 수 있습니다. 원래 무엇이 들어 있었는지 알고 싶다면 갤러리에 있는 원본을 확인하세요.</li>
             <li><strong className="text-black">위치가 있을 줄 알았는데 없을 때.</strong> 카메라 설정에서 위치 기록이 꺼져 있었거나, 실내라서 GPS를 잡지 못했을 수 있습니다.</li>
             <li><strong className="text-black">파일이 거부될 때.</strong> 25MB 이하의 JPG, PNG, WebP만 받습니다.</li>
           </ul>

@@ -18,10 +18,10 @@ const TEXT = {
     viewer: "/view/exif/",
   },
   ko: {
-    drop: "사진을 여기에 놓으면 바로 확인합니다",
+    drop: "사진을 여기로 끌어오면 바로 확인해요",
     choose: "사진 확인하기",
     sample: "샘플로 먼저 해보기",
-    note: "JPG, PNG, WebP · 여러 장 가능 · 내 브라우저가 읽고, 업로드는 없습니다",
+    note: "JPG, PNG, WebP · 여러 장 가능 · 서버로 올라가지 않아요",
     inputLabel: "확인할 사진 선택",
     viewer: "/ko/view/exif/",
   },
