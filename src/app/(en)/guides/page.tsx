@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { alternatesFor } from "@/lib/locale";
 import Link from "next/link";
 import {
   BarChart3,
@@ -22,7 +23,7 @@ export const metadata: Metadata = {
   title: "Guides: Measured Answers About Image and PDF Conversion | BravoConvert",
   description:
     "Seven guides built on measurements we took ourselves, in the same browser engine the tools use — what photos and PDFs reveal and what survives conversion, format comparisons, file size, PDF output resolution, troubleshooting and terminology.",
-  alternates: { canonical: "/guides/" },
+  alternates: alternatesFor("/guides/", "en"),
   openGraph: {
     title: "Guides: Measured Answers About Image and PDF Conversion",
     description:

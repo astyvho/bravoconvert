@@ -10,6 +10,11 @@ export const metadata: Metadata = {
 const entries = [
   {
     date: "November 8, 2026",
+    title: "Korean versions of the EXIF viewer and privacy guides",
+    body: "The EXIF viewer, the home page and both privacy guides — what a photo reveals and what a PDF reveals — are now available in Korean under /ko/, written for Korean readers rather than machine-translated, and built on the same measurements as the English pages. A language switch in the menu moves between the two versions of each page. The converters, PDF tools and policy pages remain in English.",
+  },
+  {
+    date: "November 8, 2026",
     title: "New guide: what a PDF reveals about who made it",
     body: "We tagged a PDF with an author, a draft title, keywords, an XMP packet and a reviewer's comment, then ran it through the merge, extract, split and PDF-to-image paths and read every output back. The document properties were dropped every time, but the comment survived all three page tools, and text hidden under a drawn black box stayed extractable. The tagged sample is published so the test can be repeated.",
   },

@@ -4,6 +4,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "postbuild": "node scripts/copy-404.mjs",
     "start": "npm run preview",
     "preview": "npm run build && npx wrangler dev",
     "deploy": "npm run build && npx wrangler deploy",

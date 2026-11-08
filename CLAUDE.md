@@ -68,7 +68,7 @@ Note: ESLint is configured (`eslint.config.mjs`) but has no npm script — run i
 - **Framer Motion**: Smooth animations and transitions
 
 ### File Structure Patterns
-- Page components in `src/app/*/page.tsx` — tools at `convert/img`, `convert/pdf`, `edit/image`; content at `guides/*`, `faq`, `how-to-use`, `about`, `contact`, `changelog`, `privacy-policy`, `terms`
+- Page components in `src/app/(en)/*/page.tsx` (Korean: `src/app/(ko)/ko/*`) — tools at `convert/img`, `convert/pdf`, `edit/image`; content at `guides/*`, `faq`, `how-to-use`, `about`, `contact`, `changelog`, `privacy-policy`, `terms`
 - Reusable UI components in `src/components/ui/`
 - Feature-specific components in `src/components/`
 - Type definitions co-located with components (e.g., `image-converter/types.ts`)
@@ -158,9 +158,13 @@ returns 404 publicly, so it is useless for verification.
 to the custom domain. It does not update production; do not use it to ship.
 
 ### Internationalization Structure
-- `src/i18n` holds locale JSON files (en, ko, de, es, fr, ja, zh), but nothing imports them
-- `next-international` and `next-intl` are installed and unused — no locale routing exists
-- **The site ships in English.** User-facing strings must be English; Korean belongs only in code comments. A batch of Korean error messages shipped in `PDFConverter.tsx` until 2026-09-02 and had to be translated.
+- `src/app` is split into two route groups with **separate root layouts**: `(en)` holds every English page (`<html lang="en">`), `(ko)` holds the Korean pages under `/ko/` (`<html lang="ko">`). Two root layouts are the only way to put the right `lang` in static HTML. Both layouts share `src/components/site/SiteHead.tsx` (Consent Mode, GA, AdSense, verification tags) and `SiteFooter.tsx` — change tags there, not in a layout.
+- Korean exists only for the privacy core: `/ko/`, `/ko/view/exif/`, `/ko/guides/`, and the EXIF and PDF metadata guides. `KO_PATHS` in `src/lib/locale.ts` is the single list that drives the language switch in `Navigation`, the hreflang `alternates` (`alternatesFor(path, locale)`) and the Korean sitemap entries. Adding a Korean page means adding it there and giving its English twin `alternatesFor` too.
+- Korean pages are written for Korean readers (Galaxy/iPhone settings, 중고거래 examples), not translated line by line, and pull every number from the same `src/data/*.json`. Links to tools without a Korean version are marked `(영문)`.
+- `ExifViewer`, `Navigation` and `ConsentManager` take a `locale` prop; English is the default and its strings must stay unchanged (E2E tests match them).
+- With no top-level layout there can be no `app/not-found.tsx`, so Next's own 404 would be unstyled. `(en)/page-not-found/` is rendered with the site layout and `scripts/copy-404.mjs` (the `postbuild` script) copies it over `out/404.html`. Cloudflare Pages runs `npm run build`, so postbuild runs there too.
+- `src/i18n` locale JSON files and `next-international` / `next-intl` are unused leftovers.
+- Outside `/ko/`, user-facing strings must be English. A batch of Korean error messages shipped in `PDFConverter.tsx` until 2026-09-02 and had to be translated.
 
 ## Development Guidelines
 

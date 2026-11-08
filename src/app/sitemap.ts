@@ -1,10 +1,11 @@
 import { MetadataRoute } from 'next'
+import { KO_PATHS, koPath } from '@/lib/locale'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://bravoconvert.com'
   const currentDate = new Date()
 
-  return [
+  const entries: MetadataRoute.Sitemap = [
     {
       url: baseUrl,
       lastModified: currentDate,
@@ -134,4 +135,22 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.5,
     },
   ]
+
+  // 한국어판이 있는 페이지는 양쪽 항목에 hreflang 대응을 적고, 한국어 URL도 따로 올린다.
+  const languagesFor = (path: string) => ({
+    languages: { en: `${baseUrl}${path}`, ko: `${baseUrl}${koPath(path)}` },
+  })
+  const withAlternates = entries.map((entry) => {
+    const path = entry.url === baseUrl ? '/' : entry.url.slice(baseUrl.length)
+    return (KO_PATHS as readonly string[]).includes(path) ? { ...entry, alternates: languagesFor(path) } : entry
+  })
+  const korean: MetadataRoute.Sitemap = KO_PATHS.map((path) => ({
+    url: `${baseUrl}${koPath(path)}`,
+    lastModified: currentDate,
+    changeFrequency: 'monthly',
+    priority: path === '/' ? 0.9 : 0.8,
+    alternates: languagesFor(path),
+  }))
+
+  return [...withAlternates, ...korean]
 }

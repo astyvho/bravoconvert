@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
+import { alternatesFor } from "@/lib/locale";
 import Link from "next/link";
 import { CircleAlert, EyeOff, FileSearch, FlaskConical, MapPin, ShieldCheck } from "lucide-react";
 import ExifViewer from "@/components/ExifViewer";
 import demo from "@/data/exif-demo.json";
 
 export const metadata: Metadata = {
-  alternates: { canonical: "/view/exif/" },
+  alternates: alternatesFor("/view/exif/", "en"),
   title: "EXIF Viewer - Check Photo Metadata and GPS Location Without Uploading | BravoConvert",
   description: "See the hidden metadata in a JPG, PNG, or WebP photo — GPS location, date taken, camera, serial number — before you share it. The photo is read in your browser and never uploaded.",
   keywords: ["exif viewer", "photo metadata viewer", "check photo location", "hidden exif data", "remove gps from photo", "image metadata"],

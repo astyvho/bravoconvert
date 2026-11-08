@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { alternatesFor } from "@/lib/locale";
 import Link from "next/link";
 import { Check, Download, FileImage, FileText, FlaskConical, MessageSquare, ShieldAlert, SquareStack, X } from "lucide-react";
 import demo from "@/data/pdf-metadata-demo.json";
@@ -10,7 +11,7 @@ export const metadata: Metadata = {
   title: "What a PDF Reveals About Who Made It: Tested Before and After | BravoConvert",
   description:
     "We gave a PDF an author, a title, keywords, an XMP packet and a reviewer's comment, then merged, split and rendered it. Document properties were dropped — the comment, and text hidden under a black box, were not.",
-  alternates: { canonical: "/guides/pdf-metadata-privacy/" },
+  alternates: alternatesFor("/guides/pdf-metadata-privacy/", "en"),
   openGraph: {
     title: "What a PDF Reveals About Who Made It",
     description:

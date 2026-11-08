@@ -1,5 +1,6 @@
-"use client";
+import type { Metadata } from "next";
 import Link from "next/link";
+import { alternatesFor } from "@/lib/locale";
 import { Camera, CircleAlert, Clock, Combine, Eraser, FileSearch, FileText, Fingerprint, Gauge, Image, ListChecks, MapPin, PencilRuler, PenLine, Share2, ShieldCheck, User } from "lucide-react";
 import benchmarks from "@/data/format-benchmarks.json";
 import exifDemo from "@/data/exif-demo.json";
@@ -124,6 +125,10 @@ const otherTools = [
     use: "Use this to send only the pages someone needs, without uploading the document to a service",
   },
 ];
+
+export const metadata: Metadata = {
+  alternates: alternatesFor("/", "en"),
+};
 
 export default function Home() {
   return (

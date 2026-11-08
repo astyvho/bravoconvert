@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { alternatesFor } from "@/lib/locale";
 import Link from "next/link";
 import {
   Camera,
@@ -20,7 +21,7 @@ export const metadata: Metadata = {
   title: "EXIF Data and Privacy: Tested Before and After Conversion | BravoConvert",
   description:
     "We built a JPG carrying GPS coordinates, camera model and a timestamp, ran it through the converter, and read the metadata back. Here is exactly what survived — and what removing EXIF does not protect you from.",
-  alternates: { canonical: "/guides/exif-metadata-privacy/" },
+  alternates: alternatesFor("/guides/exif-metadata-privacy/", "en"),
   openGraph: {
     title: "EXIF Data and Privacy: Tested Before and After Conversion",
     description:
