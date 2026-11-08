@@ -1,0 +1,195 @@
+{
+  "measuredOn": "2026-11-08",
+  "ranAt": "2026-11-08T11:07:23.313Z",
+  "browser": "Chromium 151.0.7922.34",
+  "library": "pdf-lib 1.17.1, PDF.js 3.11.174",
+  "sampleFile": "/guides/pdf-metadata-sample.pdf",
+  "planted": {
+    "title": "Riverside Station - Q3 maintenance (DRAFT v4)",
+    "author": "Jordan Example",
+    "subject": "Internal - pump replacement costs",
+    "keywords": [
+      "budget",
+      "confidential",
+      "pump 2 failure"
+    ],
+    "creator": "ExampleWriter 7.2 (Windows)",
+    "xmpCreator": "Jordan Example",
+    "xmpCreatorTool": "ExampleWriter 7.2 (Windows)",
+    "commentAuthor": "Sam Reviewer",
+    "commentText": "Remove the supplier quote before this goes outside the company."
+  },
+  "chromiumDefault": {
+    "bytes": 31417,
+    "pages": 4,
+    "properties": {
+      "Title": "Riverside Station Report",
+      "Author": null,
+      "Subject": null,
+      "Keywords": null,
+      "Creator": "Chromium",
+      "Producer": "Skia/PDF m151",
+      "CreationDate": "2026-11-08T11:07:23.000Z",
+      "ModDate": "2026-11-08T11:07:23.000Z"
+    },
+    "rawCreationDate": "D:20261108110723+00'00'",
+    "xmp": {
+      "present": false,
+      "hasCreatorName": false,
+      "hasCreatorTool": false
+    },
+    "comments": []
+  },
+  "source": {
+    "bytes": 30233,
+    "pages": 4,
+    "properties": {
+      "Title": "Riverside Station - Q3 maintenance (DRAFT v4)",
+      "Author": "Jordan Example",
+      "Subject": "Internal - pump replacement costs",
+      "Keywords": "budget confidential pump 2 failure",
+      "Creator": "ExampleWriter 7.2 (Windows)",
+      "Producer": "Skia/PDF m151",
+      "CreationDate": "2026-05-11T08:42:00.000Z",
+      "ModDate": "2026-06-02T17:15:30.000Z"
+    },
+    "rawCreationDate": "D:20260511084200Z",
+    "xmp": {
+      "present": true,
+      "hasCreatorName": true,
+      "hasCreatorTool": true
+    },
+    "comments": [
+      {
+        "author": "Sam Reviewer",
+        "text": "Remove the supplier quote before this goes outside the company."
+      }
+    ]
+  },
+  "merged": {
+    "bytes": 56177,
+    "pages": 6,
+    "properties": {
+      "Title": null,
+      "Author": null,
+      "Subject": null,
+      "Keywords": null,
+      "Creator": "pdf-lib (https://github.com/Hopding/pdf-lib)",
+      "Producer": "pdf-lib (https://github.com/Hopding/pdf-lib)",
+      "CreationDate": "2026-11-08T11:07:23.000Z",
+      "ModDate": "2026-11-08T11:07:23.000Z"
+    },
+    "rawCreationDate": "D:20261108110723Z",
+    "xmp": {
+      "present": false,
+      "hasCreatorName": false,
+      "hasCreatorTool": false
+    },
+    "comments": [
+      {
+        "author": "Sam Reviewer",
+        "text": "Remove the supplier quote before this goes outside the company."
+      }
+    ]
+  },
+  "extracted": {
+    "range": "1-2",
+    "bytes": 28387,
+    "pages": 2,
+    "properties": {
+      "Title": null,
+      "Author": null,
+      "Subject": null,
+      "Keywords": null,
+      "Creator": "pdf-lib (https://github.com/Hopding/pdf-lib)",
+      "Producer": "pdf-lib (https://github.com/Hopding/pdf-lib)",
+      "CreationDate": "2026-11-08T11:07:23.000Z",
+      "ModDate": "2026-11-08T11:07:23.000Z"
+    },
+    "rawCreationDate": "D:20261108110723Z",
+    "xmp": {
+      "present": false,
+      "hasCreatorName": false,
+      "hasCreatorTool": false
+    },
+    "comments": [
+      {
+        "author": "Sam Reviewer",
+        "text": "Remove the supplier quote before this goes outside the company."
+      }
+    ]
+  },
+  "splitFirstPage": {
+    "bytes": 27859,
+    "pages": 1,
+    "properties": {
+      "Title": null,
+      "Author": null,
+      "Subject": null,
+      "Keywords": null,
+      "Creator": "pdf-lib (https://github.com/Hopding/pdf-lib)",
+      "Producer": "pdf-lib (https://github.com/Hopding/pdf-lib)",
+      "CreationDate": "2026-11-08T11:07:23.000Z",
+      "ModDate": "2026-11-08T11:07:23.000Z"
+    },
+    "rawCreationDate": "D:20261108110723Z",
+    "xmp": {
+      "present": false,
+      "hasCreatorName": false,
+      "hasCreatorTool": false
+    },
+    "comments": [
+      {
+        "author": "Sam Reviewer",
+        "text": "Remove the supplier quote before this goes outside the company."
+      }
+    ]
+  },
+  "coveredText": {
+    "method": "A filled black rectangle drawn over the heading on page 1",
+    "text": "Riverside Station Report",
+    "extractableInSource": true,
+    "extractableAfterExtract": true
+  },
+  "pageAsImage": {
+    "pixelSize": {
+      "width": 1191,
+      "height": 1685
+    },
+    "png": {
+      "bytes": 116209,
+      "structure": [
+        "IHDR",
+        "IDAT",
+        "IEND"
+      ],
+      "exif": {
+        "ImageWidth": 1191,
+        "ImageHeight": 1685,
+        "BitDepth": 8,
+        "ColorType": "RGB with Alpha",
+        "Compression": "Deflate/Inflate",
+        "Filter": "Adaptive",
+        "Interlace": "Noninterlaced"
+      },
+      "containsAnyDocumentText": false
+    },
+    "jpeg": {
+      "bytes": 108498,
+      "structure": [
+        "0xFFE0 JFIF",
+        "0xFFE2 ICC_PROFILE",
+        "0xFFDB",
+        "0xFFDB",
+        "0xFFC0",
+        "0xFFC4",
+        "0xFFC4",
+        "0xFFC4",
+        "0xFFC4",
+        "0xFFDA"
+      ],
+      "exif": null,
+      "containsAnyDocumentText": false
+    }
+  }
+}

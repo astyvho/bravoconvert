@@ -45,6 +45,14 @@ export async function GET() {
       <guid isPermaLink="false">${baseUrl}-view-exif</guid>
     </item>
 
+    <item>
+      <title>What a PDF Reveals About Who Made It</title>
+      <description>A tagged PDF run through merge, extract, split and PDF-to-image, then read back: document properties were dropped, but a reviewer comment and text hidden under a black box survived page tools.</description>
+      <link>${baseUrl}/guides/pdf-metadata-privacy/</link>
+      <pubDate>${new Date().toUTCString()}</pubDate>
+      <guid isPermaLink="false">${baseUrl}-guides-pdf-metadata-privacy</guid>
+    </item>
+
     
     <item>
       <title>Image Converter - JPG, PNG and WebP</title>

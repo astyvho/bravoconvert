@@ -133,7 +133,7 @@ before they fail on desktops.
 ### Guide Data Generation
 
 The `/guides` articles are built on measured numbers rather than rules of thumb.
-Three scripts produce that evidence, and the pages import the JSON, so re-running a
+Four scripts produce that evidence, and the pages import the JSON, so re-running a
 script updates every figure on the site:
 
 - `node scripts/generate-guide-assets.mjs` → `src/data/format-benchmarks.json` plus imagery in `public/guides/`. Encodes test images through Canvas `toBlob` in Playwright's Chromium — deliberately the same encode path the site uses, so the numbers are the site's own output.
@@ -141,7 +141,9 @@ script updates every figure on the site:
 
 - `node --experimental-strip-types scripts/generate-pdf-tool-data.mjs` → `src/data/pdf-tool-benchmarks.json`. Prints two tagged, bookmarked PDFs from Chromium and runs them through `src/lib/pdf-tools.ts` — the exact code `/edit/pdf/` uses — then checks size, bookmarks, tags, and that text is still extractable.
 
-All three need `npx playwright install chromium` once.
+- `node --experimental-strip-types scripts/generate-pdf-metadata-data.mjs` → `src/data/pdf-metadata-demo.json` plus `public/guides/pdf-metadata-sample.pdf`. Tags a Chromium-printed PDF with properties, XMP and a comment annotation, runs it through `pdf-tools.ts` and the PDF.js → `toBlob` path, and reads each output back. Finding the guide depends on: properties and XMP are dropped, **comments survive** page copying, text under a drawn box stays extractable.
+
+All four need `npx playwright install chromium` once.
 
 ### Deployment
 

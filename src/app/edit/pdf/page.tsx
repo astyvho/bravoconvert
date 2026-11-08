@@ -124,7 +124,7 @@ export default function PdfOrganizerPage() {
             <li><strong className="text-black">Digital signatures.</strong> A merged or extracted file is a new document, so it cannot carry a valid signature from the original. Keep the signed original for anything that has to be verified.</li>
           </ul>
           <p className="mt-3 leading-7">
-            Document title and author fields are also not copied from the sources. For fillable forms, open the result and check the fields still behave as expected before relying on it.
+            Document title and author fields are also not copied from the sources. Comments and sticky notes are different: they are attached to pages, so they do travel with them — our <Link href="/guides/pdf-metadata-privacy/" className="font-medium text-black underline">PDF metadata test</Link> shows a reviewer&apos;s name and remark surviving a merge, an extraction and a split. For fillable forms, open the result and check the fields still behave as expected before relying on it.
           </p>
         </section>
 

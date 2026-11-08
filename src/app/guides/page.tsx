@@ -9,9 +9,11 @@ import {
   Library,
   Minimize2,
   Files,
+  FileText,
 } from "lucide-react";
 import benchmarks from "@/data/format-benchmarks.json";
 import exifDemo from "@/data/exif-demo.json";
+import pdfMetaDemo from "@/data/pdf-metadata-demo.json";
 
 const PUBLISHED = "2026-07-28";
 const UPDATED = benchmarks.generatedAt;
@@ -19,7 +21,7 @@ const UPDATED = benchmarks.generatedAt;
 export const metadata: Metadata = {
   title: "Guides: Measured Answers About Image and PDF Conversion | BravoConvert",
   description:
-    "Six guides built on measurements we took ourselves, in the same browser engine the tools use — what EXIF metadata reveals and whether it survives conversion, format comparisons, file size, PDF output resolution, troubleshooting and terminology.",
+    "Seven guides built on measurements we took ourselves, in the same browser engine the tools use — what photos and PDFs reveal and what survives conversion, format comparisons, file size, PDF output resolution, troubleshooting and terminology.",
   alternates: { canonical: "/guides/" },
   openGraph: {
     title: "Guides: Measured Answers About Image and PDF Conversion",
@@ -41,7 +43,7 @@ const pdfJpg95 = benchmarks.pdfPage.jpeg.find((e) => e.quality === 0.95)!.bytes;
 const groups = [
   {
     heading: "What your files reveal",
-    blurb: "The information that travels inside a photo, and what it takes to remove it — tested rather than assumed.",
+    blurb: "The information that travels inside photos and PDFs, and what it takes to remove it — tested rather than assumed.",
     items: [
       {
         href: "/guides/exif-metadata-privacy/",
@@ -50,6 +52,14 @@ const groups = [
         description:
           "We built a photo carrying GPS coordinates, camera model and a timestamp, converted it, and read the metadata back field by field. Includes what stripping EXIF does not protect you from.",
         finding: `Every field was gone after conversion — ${exifDemo.exifBlockBytes} bytes of metadata that a viewer never sees but any EXIF reader can pull out.`,
+      },
+      {
+        href: "/guides/pdf-metadata-privacy/",
+        icon: FileText,
+        title: "What a PDF reveals about who made it",
+        description:
+          "A PDF tagged with an author, a draft title, keywords, an XMP packet and a reviewer's comment, run through merge, extract, split and PDF-to-image, then read back.",
+        finding: `The author, title and XMP were dropped every time — but the reviewer's comment survived all three page tools, and text under a drawn black box ${pdfMetaDemo.coveredText.extractableAfterExtract ? "was still extractable" : "was not extractable"}.`,
       },
     ],
   },

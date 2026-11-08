@@ -118,6 +118,9 @@ test("all tools and consent layout render at desktop and iPhone widths", async (
     await page.goto("/");
     await expect(page.getByRole("heading", { level: 1, name: "Check what a photo reveals before you share it" })).toBeVisible();
     await expect(page.getByText("None of the fields survived.")).toBeVisible();
+    await page.goto("/guides/pdf-metadata-privacy/");
+    await expect(page.getByRole("heading", { name: "The comment survived every time" })).toBeVisible();
+    await expect(page.getByRole("link", { name: /pdf-metadata-sample\.pdf/ })).toHaveAttribute("href", "/guides/pdf-metadata-sample.pdf");
     await page.evaluate(() => localStorage.removeItem("bravoconvert-consent-v1"));
   }
 });

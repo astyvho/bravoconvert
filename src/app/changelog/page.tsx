@@ -10,6 +10,11 @@ export const metadata: Metadata = {
 const entries = [
   {
     date: "November 8, 2026",
+    title: "New guide: what a PDF reveals about who made it",
+    body: "We tagged a PDF with an author, a draft title, keywords, an XMP packet and a reviewer's comment, then ran it through the merge, extract, split and PDF-to-image paths and read every output back. The document properties were dropped every time, but the comment survived all three page tools, and text hidden under a drawn black box stayed extractable. The tagged sample is published so the test can be repeated.",
+  },
+  {
+    date: "November 8, 2026",
     title: "A clearer focus: check files before you share them",
     body: "The home page now leads with the job the site does best — finding out what a photo reveals about where, when and on what it was taken, removing it, and confirming the result. It shows the before-and-after measurement from our metadata test directly, along with what removing metadata does not protect you from. The format and PDF tools are unchanged and still listed; the EXIF viewer now comes first in the menus.",
   },

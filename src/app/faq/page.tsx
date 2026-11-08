@@ -124,6 +124,10 @@ export default function FAQ() {
           answer: "Type single pages and ranges separated by commas, such as 1-3, 5. Pages are numbered from 1. The new PDF follows the order you type, so 5, 1 puts page 5 first, and a repeated page is included twice."
         },
         {
+          question: "Does the new PDF keep the original's author and comments?",
+          answer: "The author, title, subject, keywords and XMP metadata are not copied — in our test all of them were gone from the merged, extracted and split files. Comments and sticky notes are attached to pages, so they are copied along with them, reviewer names included. Delete comments in the app that made the PDF before sharing, or render pages as images, which keeps only what is visible."
+        },
+        {
           question: "Can I merge password-protected PDFs?",
           answer: "No. Encrypted or password-protected PDFs cannot be opened by the tool. Remove the protection in the application that created the file, save a copy, and add that copy instead."
         }

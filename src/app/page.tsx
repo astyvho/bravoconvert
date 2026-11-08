@@ -369,7 +369,7 @@ export default function Home() {
             <h2 className="mb-2 text-xl font-bold text-black">More in the guides</h2>
             <p className="leading-7">
               The <Link href="/guides/" className="underline font-medium">guides section</Link> starts with what EXIF metadata
-              reveals and how we tested its removal, and also covers choosing between JPG, PNG and WebP, reducing file size,
+              reveals and how we tested its removal, what a PDF says about who made it, and also covers choosing between JPG, PNG and WebP, reducing file size,
               PDF output resolution, and fixes for common problems.
             </p>
           </div>
