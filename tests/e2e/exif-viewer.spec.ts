@@ -121,7 +121,7 @@ test("the clean copy button downloads a photo with no metadata, turned the right
   await expect(page.getByText("This photo carries 3 kinds of identifying information.")).toBeVisible();
 
   const downloadPromise = page.waitForEvent("download");
-  await page.getByRole("button", { name: "Download a clean copy" }).click();
+  await page.getByRole("button", { name: "Remove it now" }).click();
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toBe("sample-photo-with-gps-clean.jpg");
   await expect(page.getByText("The clean copy was checked again: no identifying information found.")).toBeVisible();
@@ -140,9 +140,8 @@ test("the clean copy can be saved in another format", async ({ page }, testInfo)
   await page.goto("/view/exif/");
   await rejectOptionalCookies(page);
   await page.getByRole("button", { name: "Try a sample photo" }).click();
-  await page.getByText("WebP", { exact: true }).click();
   const downloadPromise = page.waitForEvent("download");
-  await page.getByRole("button", { name: "Download a clean copy" }).click();
+  await page.getByRole("button", { name: "Clean copy as WebP" }).click();
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toBe("sample-photo-with-gps-clean.webp");
   await expect(page.getByText("The clean copy was checked again: no identifying information found.")).toBeVisible();

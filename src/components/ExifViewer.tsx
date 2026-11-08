@@ -54,13 +54,15 @@ const STRINGS = {
     mapNote: "Opening the map sends these coordinates to openstreetmap.org. Nothing is sent unless you click it.",
     noCoordinates: "Present, but could not be converted to coordinates",
     converter: "Image Converter",
+    toolQuery: "?from=exif",
     editor: "Image Editor",
     cleanTitle: "Remove it before you share",
     cleanBody: "Make a copy of this photo that keeps only the picture. It is redrawn from its pixels in your browser, turned the right way up first, and saved in the same format — so none of the fields above go with it.",
-    cleanButton: "Download a clean copy",
-    jumpToClean: "Remove it",
-    formatLabel: "Save as",
-    sameFormat: (ext: string) => `Same as original (${ext})`,
+    jumpToClean: "Remove it now",
+    jumpHint: "Downloads a copy without this information. Your original file is not changed.",
+    otherFormats: "Need a different format?",
+    saveAs: (label: string) => `Clean copy as ${label}`,
+    verifyFailed: "The clean copy was saved, but it could not be checked again here. Open it in this viewer to confirm.",
     jpgNote: "JPG has no transparency; transparent areas become white.",
     cleaning: "Cleaning…",
     cleanFailed: "The clean copy could not be made in this browser. Try the Image Converter instead.",
@@ -103,13 +105,15 @@ const STRINGS = {
     mapNote: "지도를 열면 이 좌표가 openstreetmap.org로 전송됩니다. 누르지 않으면 아무것도 전송되지 않습니다.",
     noCoordinates: "값은 있지만 좌표로 변환할 수 없습니다",
     converter: "이미지 변환기(영문)",
+    toolQuery: "?from=exif&lang=ko",
     editor: "이미지 편집기(영문)",
     cleanTitle: "공유하기 전에 지우기",
     cleanBody: "그림만 남긴 사본을 만듭니다. 브라우저 안에서 픽셀을 새로 그려 같은 형식으로 저장하고, 회전도 미리 바로잡기 때문에 위 항목은 하나도 따라가지 않습니다.",
-    cleanButton: "정보를 지운 사본 받기",
     jumpToClean: "바로 지우기",
-    formatLabel: "저장 형식",
-    sameFormat: (ext: string) => `원본과 같게 (${ext})`,
+    jumpHint: "누르면 이 정보를 지운 사본이 바로 내려받아집니다. 원본 파일은 바뀌지 않습니다.",
+    otherFormats: "다른 형식이 필요하면",
+    saveAs: (label: string) => `${label}로 받기`,
+    verifyFailed: "사본은 저장했지만 여기서 다시 검사하지 못했습니다. 뷰어로 열어 확인해 주세요.",
     jpgNote: "JPG는 투명 배경을 지원하지 않아 투명한 부분이 흰색이 됩니다.",
     cleaning: "지우는 중…",
     cleanFailed: "이 브라우저에서는 사본을 만들지 못했습니다. 이미지 변환기를 이용해 주세요.",
@@ -211,7 +215,7 @@ const SETTINGS: Array<[keyof Strings["settingLabels"], (meta: Metadata, t: Strin
   ["orientation", meta => (hasValue(meta.Orientation) ? show(meta.Orientation) : null)],
 ];
 
-type Cleaned = { url: string; name: string; size: number; remaining: number };
+type Cleaned = { url: string; name: string; size: number; remaining: number | null };
 
 const findCount = (meta: Metadata) => CHECKS.filter(check => check.keys.some(key => hasValue(meta[key]))).length;
 
@@ -224,11 +228,33 @@ const FORMATS = [
 ] as const;
 type OutputType = (typeof FORMATS)[number]["type"];
 
+// 회전 정보를 반영해 디코딩한다. 일부 파일은 createImageBitmap 이 거부하므로 <img> 로 한 번 더 시도한다.
+// <img> 도 기본값(image-orientation: from-image)으로 EXIF 회전을 적용한다.
+async function decodeOriented(file: File): Promise<{ source: CanvasImageSource; width: number; height: number; release: () => void }> {
+  try {
+    const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
+    return { source: bitmap, width: bitmap.width, height: bitmap.height, release: () => bitmap.close() };
+  } catch (error) {
+    console.warn("createImageBitmap failed, falling back to <img>", error);
+  }
+  const url = URL.createObjectURL(file);
+  const image = new Image();
+  image.decoding = "async";
+  image.src = url;
+  try {
+    await image.decode();
+  } catch (error) {
+    URL.revokeObjectURL(url);
+    throw error;
+  }
+  return { source: image, width: image.naturalWidth, height: image.naturalHeight, release: () => URL.revokeObjectURL(url) };
+}
+
 async function makeCleanCopy(file: File, type: string): Promise<Blob> {
-  const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
+  const decoded = await decodeOriented(file);
   const canvas = document.createElement("canvas");
-  canvas.width = bitmap.width;
-  canvas.height = bitmap.height;
+  canvas.width = decoded.width;
+  canvas.height = decoded.height;
   const context = canvas.getContext("2d");
   if (!context) throw new Error("Canvas unavailable");
   if (type === "image/jpeg") {
@@ -236,10 +262,10 @@ async function makeCleanCopy(file: File, type: string): Promise<Blob> {
     context.fillStyle = "#ffffff";
     context.fillRect(0, 0, canvas.width, canvas.height);
   }
-  context.drawImage(bitmap, 0, 0);
-  bitmap.close();
+  context.drawImage(decoded.source, 0, 0);
+  decoded.release();
   const blob = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, type, type === "image/png" ? undefined : 0.92));
-  if (!blob || blob.type !== type) throw new Error("Encoding failed");
+  if (!blob || blob.type !== type) throw new Error(`Encoding to ${type} failed at ${canvas.width}×${canvas.height}`);
   return blob;
 }
 
@@ -251,6 +277,20 @@ const cleanName = (name: string, type: string) => {
   const original = dot > 0 ? name.slice(dot) : "";
   return `${base}-clean${type === "keep" ? original : sameType}`;
 };
+
+function CleanResult({ cleaned, t, onAgain }: { cleaned: Cleaned; t: Strings; onAgain: () => void }) {
+  const ok = cleaned.remaining === 0;
+  const text = cleaned.remaining === null ? t.verifyFailed : ok ? t.cleanedOk : t.cleanedLeft(cleaned.remaining);
+  return (
+    <p role="status" className={`mt-3 flex items-start gap-2 rounded-xl px-4 py-3 text-sm font-semibold ${ok ? "bg-green-50 text-green-800" : "bg-amber-50 text-amber-900"}`}>
+      {ok ? <CheckCircle2 className="h-5 w-5 flex-shrink-0" aria-hidden="true" /> : <ShieldAlert className="h-5 w-5 flex-shrink-0" aria-hidden="true" />}
+      <span className="flex-1">
+        {text} {t.cleanedSaved(cleaned.name, formatBytes(cleaned.size))}{" "}
+        <button type="button" onClick={onAgain} className="font-semibold underline">{t.downloadAgain}</button>
+      </span>
+    </p>
+  );
+}
 
 export default function ExifViewer({ locale = "en" }: { locale?: Locale }) {
   const t = STRINGS[locale];
@@ -264,7 +304,6 @@ export default function ExifViewer({ locale = "en" }: { locale?: Locale }) {
   const [cleaned, setCleaned] = useState<Cleaned | null>(null);
   const [cleaning, setCleaning] = useState(false);
   const [cleanError, setCleanError] = useState<string | null>(null);
-  const [outputType, setOutputType] = useState<OutputType | "keep">("keep");
   const cleanUrlRef = useRef<string | null>(null);
 
   const setCleanUrl = (url: string | null) => {
@@ -288,21 +327,28 @@ export default function ExifViewer({ locale = "en" }: { locale?: Locale }) {
     link.remove();
   };
 
-  const clean = async () => {
+  const clean = async (choice: OutputType | "keep") => {
     if (!loaded) return;
+    resetClean();
     setCleaning(true);
     setCleanError(null);
     try {
-      const type = outputType === "keep" ? loaded.file.type : outputType;
+      const type = choice === "keep" ? loaded.file.type : choice;
       const blob = await makeCleanCopy(loaded.file, type);
-      // 만든 사본을 같은 파서로 다시 읽어, 실제로 지워졌는지 화면에 보여 준다.
-      const remaining = findCount(await readMetadata(new Uint8Array(await blob.arrayBuffer())));
+      // 만든 사본을 같은 파서로 다시 읽어, 실제로 지워졌는지 화면에 보여 준다. 재검사가 실패해도 사본은 준다.
+      let remaining: number | null = null;
+      try {
+        remaining = findCount(await readMetadata(new Uint8Array(await blob.arrayBuffer())));
+      } catch (error) {
+        console.warn("Re-checking the clean copy failed", error);
+      }
       const url = URL.createObjectURL(blob);
       setCleanUrl(url);
-      const name = cleanName(loaded.file.name, outputType === "keep" || outputType === loaded.file.type ? "keep" : type);
+      const name = cleanName(loaded.file.name, choice === "keep" || choice === loaded.file.type ? "keep" : type);
       setCleaned({ url, name, size: blob.size, remaining });
       download(url, name);
-    } catch {
+    } catch (error) {
+      console.error("Making the clean copy failed", error);
       setCleanError(t.cleanFailed);
     } finally {
       setCleaning(false);
@@ -332,7 +378,6 @@ export default function ExifViewer({ locale = "en" }: { locale?: Locale }) {
       setUrl(url);
       setShowAll(false);
       resetClean();
-      setOutputType("keep");
       setLoaded({ file, url, meta, width: null, height: null });
     } catch {
       setError(t.unreadable);
@@ -440,19 +485,26 @@ export default function ExifViewer({ locale = "en" }: { locale?: Locale }) {
                   <X className="h-4 w-4" aria-hidden="true" /> {t.another}
                 </button>
               </div>
-              <p className={`mt-4 flex items-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold ${foundCount ? "bg-amber-50 text-amber-900" : "bg-green-50 text-green-800"}`}>
-                {foundCount ? <ShieldAlert className="h-5 w-5 flex-shrink-0" aria-hidden="true" /> : <CheckCircle2 className="h-5 w-5 flex-shrink-0" aria-hidden="true" />}
-                <span className="flex-1">{foundCount ? t.foundSummary(foundCount) : t.noneSummary}</span>
-                {foundCount > 0 && (
-                  <button
-                    type="button"
-                    onClick={() => document.getElementById("clean-copy")?.scrollIntoView({ behavior: "smooth", block: "center" })}
-                    className="flex-shrink-0 whitespace-nowrap rounded-lg bg-black px-3 py-1.5 text-xs font-semibold text-white hover:bg-gray-800"
-                  >
-                    {t.jumpToClean}
-                  </button>
-                )}
-              </p>
+              <div className={`mt-4 rounded-xl px-4 py-3 ${foundCount ? "bg-amber-50 text-amber-900" : "bg-green-50 text-green-800"}`}>
+                <div className="flex flex-wrap items-center gap-3 text-sm font-semibold">
+                  {foundCount ? <ShieldAlert className="h-5 w-5 flex-shrink-0" aria-hidden="true" /> : <CheckCircle2 className="h-5 w-5 flex-shrink-0" aria-hidden="true" />}
+                  <span className="min-w-0 flex-1">{foundCount ? t.foundSummary(foundCount) : t.noneSummary}</span>
+                  {foundCount > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => clean("keep")}
+                      disabled={cleaning}
+                      className="inline-flex flex-shrink-0 items-center gap-1.5 whitespace-nowrap rounded-xl bg-black px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800 disabled:opacity-50"
+                    >
+                      <Eraser className="h-4 w-4" aria-hidden="true" />
+                      {cleaning ? t.cleaning : t.jumpToClean}
+                    </button>
+                  )}
+                </div>
+                {foundCount > 0 && !cleaned && !cleanError && <p className="mt-2 text-xs font-normal text-amber-800">{t.jumpHint}</p>}
+              </div>
+              {cleaned && <CleanResult cleaned={cleaned} t={t} onAgain={() => download(cleaned.url, cleaned.name)} />}
+              {cleanError && <p role="alert" className="mt-3 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">{cleanError}</p>}
             </div>
           </div>
 
@@ -484,65 +536,30 @@ export default function ExifViewer({ locale = "en" }: { locale?: Locale }) {
           </div>
 
           {foundCount > 0 && (
-            <div id="clean-copy" className="scroll-mt-32 rounded-3xl border-2 border-black bg-white p-5 shadow-sm" data-clean>
+            <div className="rounded-3xl border border-gray-200 bg-gray-50 p-5" data-clean>
               <h2 className="flex items-center gap-2 text-lg font-bold text-black">
                 <Eraser className="h-5 w-5 flex-shrink-0" aria-hidden="true" /> {t.cleanTitle}
               </h2>
               <p className="mt-2 text-sm leading-6 text-gray-700">{t.cleanBody}</p>
-              <fieldset className="mt-4">
-                <legend className="mb-2 text-sm font-semibold text-black">{t.formatLabel}</legend>
-                <div className="flex flex-wrap gap-2">
-                  {[
-                    { value: "keep" as const, label: t.sameFormat(FORMATS.find(format => format.type === loaded.file.type)?.label ?? "") },
-                    ...FORMATS.filter(format => format.type !== loaded.file.type).map(format => ({ value: format.type, label: format.label })),
-                  ].map(option => (
-                    <label
-                      key={option.value}
-                      className={`cursor-pointer rounded-xl border px-4 py-2 text-sm font-medium transition ${outputType === option.value ? "border-black bg-black text-white" : "border-gray-300 bg-white text-black hover:border-gray-500"}`}
-                    >
-                      <input
-                        type="radio"
-                        name="clean-format"
-                        value={option.value}
-                        checked={outputType === option.value}
-                        onChange={() => { setOutputType(option.value); resetClean(); }}
-                        className="sr-only"
-                      />
-                      {option.label}
-                    </label>
-                  ))}
-                </div>
-                {outputType === "image/jpeg" && loaded.file.type !== "image/jpeg" && <p className="mt-2 text-xs text-gray-500">{t.jpgNote}</p>}
-              </fieldset>
-              <div className="mt-4 flex flex-wrap items-center gap-3">
-                <button
-                  type="button"
-                  onClick={clean}
-                  disabled={cleaning}
-                  className="inline-flex items-center gap-2 rounded-xl bg-black px-5 py-3 font-semibold text-white transition hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 disabled:opacity-50"
-                >
-                  <Download className="h-5 w-5" aria-hidden="true" />
-                  {cleaning ? t.cleaning : t.cleanButton}
-                </button>
-                {cleaned && (
-                  <button type="button" onClick={() => download(cleaned.url, cleaned.name)} className="text-sm font-medium text-black underline">
-                    {t.downloadAgain}
+              <p className="mt-4 text-sm font-semibold text-black">{t.otherFormats}</p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {FORMATS.filter(format => format.type !== loaded.file.type).map(format => (
+                  <button
+                    key={format.type}
+                    type="button"
+                    onClick={() => clean(format.type)}
+                    disabled={cleaning}
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-black hover:border-gray-500 disabled:opacity-50"
+                  >
+                    <Download className="h-4 w-4" aria-hidden="true" /> {t.saveAs(format.label)}
                   </button>
-                )}
+                ))}
               </div>
-              {cleaned && (
-                <p role="status" className={`mt-4 flex items-start gap-2 rounded-xl px-4 py-3 text-sm font-semibold ${cleaned.remaining ? "bg-amber-50 text-amber-900" : "bg-green-50 text-green-800"}`}>
-                  {cleaned.remaining ? <ShieldAlert className="h-5 w-5 flex-shrink-0" aria-hidden="true" /> : <CheckCircle2 className="h-5 w-5 flex-shrink-0" aria-hidden="true" />}
-                  <span>
-                    {cleaned.remaining ? t.cleanedLeft(cleaned.remaining) : t.cleanedOk} {t.cleanedSaved(cleaned.name, formatBytes(cleaned.size))}
-                  </span>
-                </p>
-              )}
-              {cleanError && <p role="alert" className="mt-4 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">{cleanError}</p>}
+              {loaded.file.type !== "image/jpeg" && <p className="mt-2 text-xs text-gray-500">{t.jpgNote}</p>}
               <p className="mt-4 text-sm leading-6 text-gray-600">
                 {t.cleanMore(
-                  <Link href="/convert/img/" className="font-medium text-black underline">{t.converter}</Link>,
-                  <Link href="/edit/image/" className="font-medium text-black underline">{t.editor}</Link>,
+                  <Link href={`/convert/img/${t.toolQuery}`} className="font-medium text-black underline">{t.converter}</Link>,
+                  <Link href={`/edit/image/${t.toolQuery}`} className="font-medium text-black underline">{t.editor}</Link>,
                 )}
               </p>
             </div>

@@ -115,7 +115,7 @@ export default function ExifPrivacyGuide() {
               carries a full EXIF block — camera make and model, a capture timestamp, an orientation
               flag, and GPS coordinates pointing at Trafalgar Square — then put it through the same
               decode-to-canvas-and-re-encode path the{" "}
-              <Link className="underline font-medium" href="/convert/img/">
+              <Link className="underline font-medium" href="/convert/img/?from=exif">
                 Image Converter
               </Link>{" "}
               uses, and parsed the metadata again on the other side.
@@ -304,7 +304,7 @@ export default function ExifPrivacyGuide() {
                 EXIF Viewer
               </Link>
               , then run it through the{" "}
-              <Link className="underline font-medium" href="/convert/img/">
+              <Link className="underline font-medium" href="/convert/img/?from=exif">
                 Image Converter
               </Link>{" "}
               and share the output rather than the original. The conversion happens inside your
@@ -317,11 +317,11 @@ export default function ExifPrivacyGuide() {
           <div className="rounded-xl border border-gray-200 bg-gray-50 p-6">
             <p className="text-gray-700">
               Convert a photo in the{" "}
-              <Link className="underline font-medium" href="/convert/img/">
+              <Link className="underline font-medium" href="/convert/img/?from=exif">
                 Image Converter
               </Link>
               , or resize one first in the{" "}
-              <Link className="underline font-medium" href="/edit/image/">
+              <Link className="underline font-medium" href="/edit/image/?from=exif">
                 Image Editor
               </Link>
               . Both re-encode through the same path tested on this page. Then open the result in the{" "}

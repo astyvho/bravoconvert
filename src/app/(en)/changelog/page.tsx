@@ -11,7 +11,7 @@ const entries = [
   {
     date: "November 8, 2026",
     title: "Remove metadata straight from the EXIF viewer",
-    body: "When the viewer finds a location, time or device in a photo, it now offers a clean copy on the spot instead of sending you to another tool to choose the file again. Pick the same format or JPG, PNG or WebP, and the copy is redrawn from its pixels, turned the right way up, downloaded, and checked again automatically so you can see that nothing identifying is left. A button next to the result jumps straight to it.",
+    body: "When the viewer finds a location, time or device in a photo, a Remove it now button next to the result downloads a clean copy straight away, instead of sending you to another tool to choose the file again. The copy is redrawn from its pixels, turned the right way up, and checked again automatically so you can see that nothing identifying is left; buttons below offer it as JPG, PNG or WebP instead. When you go on to the converter or editor from the viewer or the Korean pages, those tools now say at the top that their output leaves the EXIF information behind.",
   },
   {
     date: "November 8, 2026",

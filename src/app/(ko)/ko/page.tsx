@@ -46,7 +46,7 @@ const steps = [
     icon: Eraser,
     title: "2. 지우기",
     body: "이미지 변환기로 변환하거나 이미지 편집기에서 내보냅니다. 둘 다 사진을 픽셀에서 새로 만들기 때문에 원본의 메타데이터가 복사되지 않습니다.",
-    href: "/convert/img/",
+    href: "/convert/img/?from=exif&lang=ko",
     cta: "변환기 열기 (영문)",
   },
   {
@@ -119,7 +119,7 @@ export default function KoreanHome() {
               <FileSearch className="h-5 w-5" aria-hidden="true" />
               사진 확인하기
             </Link>
-            <Link href="/convert/img/" className="inline-flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-6 py-3 font-bold text-black transition-all duration-300 hover:bg-gray-200">
+            <Link href="/convert/img/?from=exif&lang=ko" className="inline-flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-6 py-3 font-bold text-black transition-all duration-300 hover:bg-gray-200">
               <Eraser className="h-5 w-5" aria-hidden="true" />
               변환해서 메타데이터 지우기
             </Link>

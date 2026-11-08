@@ -13,9 +13,9 @@ const TOOLS: Record<Locale, { href: string; label: string }[]> = {
   ],
   ko: [
     { href: "/ko/view/exif/", label: "EXIF 뷰어" },
-    { href: "/convert/img/", label: "이미지 변환기" },
+    { href: "/convert/img/?lang=ko", label: "이미지 변환기" },
     { href: "/convert/pdf/", label: "PDF → 이미지" },
-    { href: "/edit/image/", label: "이미지 편집기" },
+    { href: "/edit/image/?lang=ko", label: "이미지 편집기" },
     { href: "/edit/pdf/", label: "PDF 병합·분할" },
   ],
 };

@@ -64,7 +64,23 @@ test("Korean EXIF viewer offers a clean copy in place", async ({ page }) => {
   if (await reject.isVisible()) await reject.click();
   await page.getByRole("button", { name: "샘플 사진으로 해보기" }).click();
   const downloadPromise = page.waitForEvent("download");
-  await page.getByRole("button", { name: "정보를 지운 사본 받기" }).click();
+  await page.getByRole("button", { name: "바로 지우기" }).click();
   await downloadPromise;
   await expect(page.getByText(/받은 사본을 다시 검사했습니다/)).toBeVisible();
+});
+
+test("tools reached from the EXIF context say that converting removes the metadata", async ({ page }) => {
+  await page.goto("/convert/img/");
+  await expect(page.locator("[data-metadata-notice]")).toHaveCount(0);
+
+  await page.goto("/convert/img/?from=exif&lang=ko");
+  const ko = page.locator("[data-metadata-notice]");
+  await expect(ko).toContainText("변환하면 사진에 숨은 정보가 지워집니다");
+  await expect(ko.getByRole("link", { name: "EXIF 뷰어로 돌아가기" })).toHaveAttribute("href", "/ko/view/exif/");
+
+  await page.goto("/edit/image/?from=exif");
+  await expect(page.locator("[data-metadata-notice]")).toContainText("Converting removes the photo's hidden information");
+
+  await page.goto("/ko/view/exif/");
+  await expect(page.locator('main a[href="/convert/img/?from=exif&lang=ko"]').first()).toBeVisible();
 });

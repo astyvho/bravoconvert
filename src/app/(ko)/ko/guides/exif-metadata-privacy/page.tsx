@@ -96,7 +96,7 @@ export default function KoreanExifPrivacyGuide() {
             <p className="text-gray-700 leading-7 mb-4">
               &ldquo;변환하면 메타데이터가 지워진다&rdquo;고 말하기는 쉽습니다. 그래서 카메라 제조사와 모델, 촬영 시각, 회전 정보, 런던
               트라팔가 광장을 가리키는 GPS 좌표까지 EXIF를 빠짐없이 넣은 JPG를 만들었습니다. 그리고{" "}
-              <Link className="underline font-medium" href="/convert/img/">이미지 변환기</Link>가 쓰는 것과 같은 &ldquo;캔버스로
+              <Link className="underline font-medium" href="/convert/img/?from=exif&lang=ko">이미지 변환기</Link>가 쓰는 것과 같은 &ldquo;캔버스로
               디코딩한 뒤 다시 인코딩&rdquo; 과정에 통과시키고, 나온 파일의 메타데이터를 다시 읽었습니다.
             </p>
 
@@ -253,7 +253,7 @@ export default function KoreanExifPrivacyGuide() {
             <p className="text-gray-700 leading-7">
               사진을 공개적으로 올리거나 모르는 사람에게 보내기 전에,{" "}
               <Link className="underline font-medium" href="/ko/view/exif/">EXIF 뷰어</Link>로 무엇이 들어 있는지 확인하고,{" "}
-              <Link className="underline font-medium" href="/convert/img/">이미지 변환기</Link>로 변환한 결과물을 원본 대신 보내세요.
+              <Link className="underline font-medium" href="/convert/img/?from=exif&lang=ko">이미지 변환기</Link>로 변환한 결과물을 원본 대신 보내세요.
               변환은 브라우저 안에서 이루어지므로, 좌표가 들어 있는 원본 파일은 어디에도(저희에게도) 업로드되지 않습니다. 장기적으로는
               카메라 앱에서 위치 기록을 끄는 것이 더 나은 해결책입니다. 처음부터 기록되지 않으니까요. 갤럭시와 아이폰에서 끄는 방법은{" "}
               <Link className="underline font-medium" href="/ko/view/exif/">EXIF 뷰어 페이지</Link>에 정리해 두었습니다.

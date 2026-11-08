@@ -35,9 +35,9 @@ const TEXT: Record<Locale, { tools: string; toggle: string; switchLabel: string;
     switchLabel: "English",
     toolItems: [
       { href: "/ko/view/exif/", label: "EXIF 뷰어", note: "사진에 숨은 위치·시간·기기 정보 확인" },
-      { href: "/convert/img/", label: "이미지 변환기", note: "JPG·PNG·WebP 변환, 메타데이터 제거 (영문)" },
+      { href: "/convert/img/?lang=ko", label: "이미지 변환기", note: "JPG·PNG·WebP 변환, 메타데이터 제거 (영문)" },
       { href: "/convert/pdf/", label: "PDF → 이미지", note: "PDF 페이지를 JPG·PNG로 (영문)" },
-      { href: "/edit/image/", label: "이미지 편집기", note: "크기 조절, 회전, 반전 (영문)" },
+      { href: "/edit/image/?lang=ko", label: "이미지 편집기", note: "크기 조절, 회전, 반전 (영문)" },
       { href: "/edit/pdf/", label: "PDF 병합·분할", note: "PDF 합치기, 페이지 추출 (영문)" },
     ],
     links: [

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import ImageEditor from "@/components/ImageEditor";
+import MetadataRemovalNotice from "@/components/MetadataRemovalNotice";
 import Link from "next/link";
 import {
   CircleAlert,
@@ -41,6 +42,7 @@ export default function ImageEditorPage() {
           }),
         }}
       />
+      <MetadataRemovalNotice tool="editor" />
       <ImageEditor />
 
       <article className="mx-auto mt-8 max-w-4xl space-y-10 rounded-3xl border border-gray-200 bg-white p-6 text-gray-700 shadow-sm md:p-10">

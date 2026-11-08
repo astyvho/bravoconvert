@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import ImageConverter from "@/components/ImageConverter";
+import MetadataRemovalNotice from "@/components/MetadataRemovalNotice";
 import Link from "next/link";
 import {
   CircleAlert,
@@ -76,6 +77,7 @@ export default function ImageConverterPage() {
           })
         }}
       />
+      <MetadataRemovalNotice tool="converter" />
       <ImageConverter />
 
       <article className="mx-auto mt-8 max-w-4xl space-y-10 rounded-3xl border border-gray-200 bg-white p-6 text-gray-700 shadow-sm md:p-10">
