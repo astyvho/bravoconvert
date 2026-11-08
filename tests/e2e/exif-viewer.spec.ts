@@ -240,3 +240,21 @@ test("the home page and the converter take the photo without choosing it again",
   await expect(page.locator("[data-metadata-notice]")).toContainText("The photos you were checking are already added below.");
   await expect(page.getByText("exif-sample-with-metadata.jpg").first()).toBeVisible();
 });
+
+test("if the ZIP library cannot load, the clean copies still download one by one", async ({ page }) => {
+  const jpg = await readFile(SAMPLE);
+  await page.route(/jszip/i, route => route.abort());
+  await page.goto("/view/exif/");
+  await rejectOptionalCookies(page);
+  await page.getByLabel("Choose a JPG, PNG, or WebP photo").setInputFiles([
+    { name: "kitchen.jpg", mimeType: "image/jpeg", buffer: jpg },
+    { name: "garden.jpg", mimeType: "image/jpeg", buffer: jpg },
+  ]);
+  await page.getByRole("button", { name: "Remove from all" }).click();
+  const names: string[] = [];
+  page.on("download", download => names.push(download.suggestedFilename()));
+  await page.getByRole("group", { name: "Save the clean copy as" }).getByRole("button", { name: /Clean copy as JPG/ }).click();
+  await expect(page.getByText("so the 2 files were downloaded one by one")).toBeVisible();
+  await expect(page.locator("main [role=alert]")).toHaveCount(0);
+  await expect.poll(() => names.sort()).toEqual(["garden-clean.jpg", "kitchen-clean.jpg"]);
+});

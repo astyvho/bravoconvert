@@ -91,6 +91,7 @@ const STRINGS = {
     skipped: (n: number, max: string) => `${n} file${n === 1 ? " was" : "s were"} skipped: only JPG, PNG or WebP up to ${max}.`,
     tooMany: (max: number) => `Up to ${max} photos at a time; the rest were skipped.`,
     unreadableN: (n: number) => `${n} file${n === 1 ? "" : "s"} could not be read and ${n === 1 ? "was" : "were"} skipped.`,
+    savedSeparately: (n: number) => `They could not be bundled into a ZIP here, so the ${n} files were downloaded one by one.`,
     rowFound: (n: number) => `${n} found`,
     rowCleaned: "Cleaned",
     listLabel: "Photos you added",
@@ -164,6 +165,7 @@ const STRINGS = {
     skipped: (n: number, max: string) => `${n}개 파일은 건너뛰었습니다. ${max} 이하의 JPG, PNG, WebP만 확인할 수 있습니다.`,
     tooMany: (max: number) => `한 번에 ${max}장까지 확인할 수 있어 나머지는 건너뛰었습니다.`,
     unreadableN: (n: number) => `${n}개 파일은 읽지 못해 건너뛰었습니다.`,
+    savedSeparately: (n: number) => `ZIP으로 묶지 못해 ${n}개 파일을 한 장씩 내려받았습니다.`,
     rowFound: (n: number) => `${n}종류 발견`,
     rowCleaned: "지움",
     listLabel: "추가한 사진",
@@ -263,7 +265,8 @@ const SETTINGS: Array<[keyof Strings["settingLabels"], (meta: Metadata, t: Strin
 
 type Cleaned = { blob: Blob; url: string; name: string; size: number; remaining: number | null };
 type Item = { id: string; file: File; url: string; meta: Metadata; found: number; width: number | null; height: number | null };
-type Batch = { url: string; name: string; size: number; files: Cleaned[]; left: number };
+// zip 이 null 이면 묶지 못해 사본을 한 장씩 내려받은 경우다.
+type Batch = { zip: { url: string; name: string; size: number } | null; files: Cleaned[]; left: number };
 type Working = { scope: "single" | "batch"; label: string };
 
 const findCount = (meta: Metadata) => CHECKS.filter(check => check.keys.some(key => hasValue(meta[key]))).length;
@@ -487,6 +490,11 @@ export default function ExifViewer({ locale = "en" }: { locale?: Locale }) {
 
   const active = items.find(item => item.id === activeId) ?? items[0] ?? null;
   const multi = items.length > 1;
+
+  // 여러 장이면 ZIP 모듈을 미리 불러 둔다. 누를 때 불러오면 그사이 새 버전이 배포되거나 연결이 끊긴 경우 실패한다.
+  useEffect(() => {
+    if (multi) import("jszip").catch(() => undefined);
+  }, [multi]);
   const activeCleaned = active ? cleanedMap[active.id] ?? null : null;
 
   const resetCleaning = () => {
@@ -497,7 +505,7 @@ export default function ExifViewer({ locale = "en" }: { locale?: Locale }) {
       return {};
     });
     setBatch(current => {
-      dropUrl(current?.url);
+      dropUrl(current?.zip?.url);
       return null;
     });
   };
@@ -544,7 +552,7 @@ export default function ExifViewer({ locale = "en" }: { locale?: Locale }) {
     if (append) {
       setPicking(null);
       setBatch(current => {
-        dropUrl(current?.url);
+        dropUrl(current?.zip?.url);
         return null;
       });
       setItems(current => [...current, ...added]);
@@ -640,7 +648,7 @@ export default function ExifViewer({ locale = "en" }: { locale?: Locale }) {
     setPicking(null);
     setCleanError(null);
     setBatch(current => {
-      dropUrl(current?.url);
+      dropUrl(current?.zip?.url);
       return null;
     });
     const done: Cleaned[] = [];
@@ -658,21 +666,40 @@ export default function ExifViewer({ locale = "en" }: { locale?: Locale }) {
         }
       }
       if (done.length) {
-        const { default: JSZip } = await import("jszip");
-        const zip = new JSZip();
-        const used = new Set<string>();
-        done.forEach(cleaned => zip.file(uniqueName(cleaned.name, used), cleaned.blob));
-        const blob = await zip.generateAsync({ type: "blob" });
-        const url = makeUrl(blob);
-        setBatch({ url, name: ZIP_NAME, size: blob.size, files: done, left: done.filter(cleaned => (cleaned.remaining ?? 0) > 0).length });
-        download(url, ZIP_NAME);
+        const left = done.filter(cleaned => (cleaned.remaining ?? 0) > 0).length;
+        let zip: Batch["zip"] = null;
+        try {
+          const { default: JSZip } = await import("jszip");
+          const bundle = new JSZip();
+          const used = new Set<string>();
+          done.forEach(cleaned => bundle.file(uniqueName(cleaned.name, used), cleaned.blob));
+          const blob = await bundle.generateAsync({ type: "blob" });
+          zip = { url: makeUrl(blob), name: ZIP_NAME, size: blob.size };
+        } catch (error) {
+          // 사본은 이미 만들어졌으니 버리지 않고 한 장씩 내려받는다.
+          console.error("Bundling the clean copies failed; downloading them one by one", error);
+        }
+        setBatch({ zip, files: done, left });
+        await saveBatch(zip, done);
       }
       if (failed) setCleanError(done.length ? t.batchFailed(failed) : t.cleanFailed);
     } catch (error) {
-      console.error("Bundling the clean copies failed", error);
+      console.error("Cleaning the photos failed", error);
       setCleanError(t.cleanFailed);
     } finally {
       setWorking(null);
+    }
+  };
+
+  const saveBatch = async (zip: Batch["zip"], files: Cleaned[]) => {
+    if (zip) {
+      download(zip.url, zip.name);
+      return;
+    }
+    // 브라우저가 연속 내려받기를 막지 않도록 조금씩 간격을 둔다.
+    for (const cleaned of files) {
+      download(cleaned.url, cleaned.name);
+      await new Promise(resolve => setTimeout(resolve, 250));
     }
   };
 
@@ -798,7 +825,7 @@ export default function ExifViewer({ locale = "en" }: { locale?: Locale }) {
                           <Share2 className="h-4 w-4" aria-hidden="true" /> {t.share}
                         </button>
                       )}
-                      <button type="button" onClick={() => download(batch.url, batch.name)} className={secondaryButton}>
+                      <button type="button" onClick={() => saveBatch(batch.zip, batch.files)} className={secondaryButton}>
                         <Download className="h-4 w-4" aria-hidden="true" /> {t.downloadAgain}
                       </button>
                       <button type="button" onClick={() => setPicking(current => (current === "batch" ? null : "batch"))} aria-expanded={picking === "batch"} className={secondaryButton}>
@@ -807,7 +834,7 @@ export default function ExifViewer({ locale = "en" }: { locale?: Locale }) {
                     </>
                   }
                 >
-                  {t.batchDone(batch.files.length, batch.left)} {t.cleanedSaved(batch.name, formatBytes(batch.size))}
+                  {t.batchDone(batch.files.length, batch.left)} {batch.zip ? t.cleanedSaved(batch.zip.name, formatBytes(batch.zip.size)) : t.savedSeparately(batch.files.length)}
                 </DoneCard>
               )}
               <ul aria-label={t.listLabel} className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
