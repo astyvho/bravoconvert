@@ -11,6 +11,7 @@ import { arrayMove } from '@dnd-kit/sortable';
 import { FileList } from "./image-converter/FileList";
 import { FileItem, ResultItem, ConvertOptions } from "./image-converter/types";
 import { ADD_FORMATS, TO_FORMATS } from "./image-converter/formats";
+import { takeHandoffIfRequested } from "@/lib/file-handoff";
 // Worker handles EXIF processing, no longer need main thread imports
 // import { readOrientation, getCanvasWithOrientation } from "@/lib/image-exif";
 
@@ -342,6 +343,16 @@ export default function ImageConverter() {
     
     dispatch({ type: 'ADD_FILES', payload: validFiles });
   }, [addFormat, detectFileFormat, MAX_IMAGE_SIZE]);
+
+  // Photos handed over from the EXIF viewer (?handoff=1) are added straight away, so they need not be chosen again.
+  const handoffStarted = useRef(false);
+  useEffect(() => {
+    if (handoffStarted.current) return;
+    handoffStarted.current = true;
+    takeHandoffIfRequested().then(files => {
+      if (files.length) addFiles(files);
+    });
+  }, [addFiles]);
 
   useEffect(() => {
     const handlePaste = (event: ClipboardEvent) => {

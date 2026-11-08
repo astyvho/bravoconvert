@@ -55,7 +55,12 @@ export default function Navigation({ locale = "en" }: { locale?: Locale }) {
   const pathname = usePathname() ?? "/";
   const normalized = pathname.endsWith("/") ? pathname : `${pathname}/`;
   // 같은 페이지의 다른 언어판으로 보낸다. 한국어판이 없는 영어 페이지에서는 한국어 홈으로.
-  const switchHref = locale === "ko" ? stripKo(normalized) : koPath(normalized) ?? "/ko/";
+  const [cameFromKorean, setCameFromKorean] = useState(false);
+  useEffect(() => {
+    setCameFromKorean(new URLSearchParams(window.location.search).get("lang") === "ko");
+  }, [pathname]);
+  // 한국어 페이지에서 영문 도구로 넘어온 경우(?lang=ko)에는 한국어 홈이 아니라 하던 일(EXIF 뷰어)로 돌려보낸다.
+  const switchHref = locale === "ko" ? stripKo(normalized) : koPath(normalized) ?? (cameFromKorean ? "/ko/view/exif/" : "/ko/");
   const home = locale === "ko" ? "/ko/" : "/";
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);

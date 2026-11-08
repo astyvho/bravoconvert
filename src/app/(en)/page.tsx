@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { alternatesFor } from "@/lib/locale";
+import HomePhotoDrop from "@/components/HomePhotoDrop";
 import { Camera, CircleAlert, Clock, Combine, Eraser, FileSearch, FileText, Fingerprint, Gauge, Image, ListChecks, MapPin, PencilRuler, PenLine, Share2, ShieldCheck, User } from "lucide-react";
 import benchmarks from "@/data/format-benchmarks.json";
 import exifDemo from "@/data/exif-demo.json";
@@ -43,14 +44,14 @@ const steps = [
   {
     icon: Eraser,
     title: "2. Clean",
-    body: "Convert it, or export it from the Image Editor. Both rebuild the picture from its pixels, so the metadata block from the original is not copied into the new file.",
-    href: "/convert/img/",
-    cta: "Convert a photo",
+    body: "Press Remove it now on the result and pick a format. The copy is redrawn from its pixels, so the metadata block from the original is not copied into it. Several photos? Remove from all gives you every copy at once.",
+    href: "/view/exif/?sample=1",
+    cta: "Try it on a sample",
   },
   {
     icon: Share2,
     title: "3. Confirm and share",
-    body: "Open the new file in the viewer again. It should report nothing found. Then look at the picture itself — metadata tools cannot see a street sign or a face.",
+    body: "The clean copy is checked again automatically, and on a phone you can share it straight from the result. Then look at the picture itself — metadata tools cannot see a street sign or a face.",
     href: "/guides/exif-metadata-privacy/",
     cta: "Read what we tested",
   },
@@ -169,17 +170,7 @@ export default function Home() {
             Photos carry more than the picture: often the exact place they were taken, the time, and the phone that took them.
             See what is in yours, remove it, and share only the image — without uploading the file anywhere.
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-            <Link href="/view/exif/" className="inline-flex items-center gap-2 rounded-xl bg-black px-6 py-3 font-bold text-white shadow-lg transition-all duration-300 hover:bg-gray-800">
-              <FileSearch className="h-5 w-5" aria-hidden="true" />
-              Check a photo
-            </Link>
-            <Link href="/convert/img/" className="inline-flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-6 py-3 font-bold text-black transition-all duration-300 hover:bg-gray-200">
-              <Eraser className="h-5 w-5" aria-hidden="true" />
-              Remove metadata by converting
-            </Link>
-          </div>
-          <p className="mt-4 text-sm text-gray-500">Files are read and processed by your own browser. Nothing is uploaded.</p>
+          <HomePhotoDrop locale="en" />
         </div>
 
         {/* Check, clean, share */}

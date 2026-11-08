@@ -10,6 +10,11 @@ export const metadata: Metadata = {
 const entries = [
   {
     date: "November 8, 2026",
+    title: "From check to share without choosing the photo twice",
+    body: "Photos can now be dropped straight onto the home page, and several at once: the viewer lists them, marks which ones carry a location, time or device, and Remove from all returns every clean copy in one ZIP, with an option to shrink the long side to 2048 px. After removing, the result turns into a finish card with Share on phones, Download again and Another format, and the checklist marks each item as removed in the copy. Going on to the converter or editor brings the photos along, so they are not chosen again; they are passed through the browser's own storage and never uploaded.",
+  },
+  {
+    date: "November 8, 2026",
     title: "Remove metadata straight from the EXIF viewer",
     body: "When the viewer finds a location, time or device in a photo, a Remove it now button next to the result asks which format you want — the original's, JPG, PNG or WebP, each with a one-line note on when to use it — and the clean copy downloads as soon as you pick, instead of sending you to another tool to choose the file again. The copy is redrawn from its pixels, turned the right way up, and checked again automatically so you can see that nothing identifying is left. When you go on to the converter or editor from the viewer or the Korean pages, those tools now say at the top that their output leaves the EXIF information behind.",
   },

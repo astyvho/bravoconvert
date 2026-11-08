@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { Camera, CheckCircle2, ChevronDown, Clock, Download, Eraser, Fingerprint, ImageIcon, MapPin, PenLine, ShieldAlert, Upload, User, X } from "lucide-react";
+import { Camera, CheckCircle2, ChevronDown, Clock, Download, Eraser, Fingerprint, ImageIcon, MapPin, PenLine, Plus, RotateCcw, Share2, ShieldAlert, Upload, User } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { ChangeEvent, DragEvent, type ReactNode, useEffect, useRef, useState } from "react";
 import { formatExifDate, readMetadata, type Metadata } from "@/lib/photo-metadata";
 import type { Locale } from "@/lib/locale";
+import { HANDOFF_PARAM, putHandoff, takeHandoff, withHandoff } from "@/lib/file-handoff";
 
 const MAX_FILE_SIZE = 25 * 1024 * 1024;
 const SUPPORTED_TYPES = ["image/jpeg", "image/png", "image/webp"];
@@ -32,7 +34,7 @@ const STRINGS = {
     badge: "Private photo metadata check",
     title: "EXIF viewer",
     intro: "See what a photo reveals before you share it — location, time, device, and more. The photo is read on your device and never uploaded.",
-    drop: "Drop a photo here",
+    drop: "Drop one or more photos here",
     reading: "Reading…",
     choose: "Choose a photo",
     sample: "Try a sample photo",
@@ -72,8 +74,28 @@ const STRINGS = {
     cleanedLeft: (n: number) => `The clean copy was checked again and still carries ${n} kind${n === 1 ? "" : "s"} of identifying information.`,
     cleanedSaved: (name: string, size: string) => `Saved as ${name} (${size}).`,
     downloadAgain: "Download again",
+    share: "Share",
+    otherFormat: "Another format",
+    removedInCopy: "Removed in copy",
+    noneNext: "You can share it as it is. Still look at the picture itself: street signs, faces and screens are not metadata.",
+    inAppHint: "This app's built-in browser may not save downloads. Press and hold an image below to save it.",
+    shrink: "Shrink the long side to 2048 px (smaller file)",
+    keepAll: "Each in its own format",
+    keepAllNote: "JPG stays JPG, PNG stays PNG, WebP stays WebP",
+    batchSummary: (n: number, m: number) => `${n} photos · ${m} carry identifying information`,
+    cleanAll: "Remove from all",
+    cleaningN: (i: number, n: number) => `Cleaning ${i} of ${n}…`,
+    batchDone: (n: number, left: number) => (left === 0 ? `All ${n} clean copies were checked again: no identifying information found.` : `${left} of ${n} clean copies still carry identifying information.`),
+    batchFailed: (n: number) => `${n} photo${n === 1 ? "" : "s"} could not be cleaned in this browser and ${n === 1 ? "was" : "were"} left out.`,
+    addMore: "Add photos",
+    skipped: (n: number, max: string) => `${n} file${n === 1 ? " was" : "s were"} skipped: only JPG, PNG or WebP up to ${max}.`,
+    tooMany: (max: number) => `Up to ${max} photos at a time; the rest were skipped.`,
+    unreadableN: (n: number) => `${n} file${n === 1 ? "" : "s"} could not be read and ${n === 1 ? "was" : "were"} skipped.`,
+    rowFound: (n: number) => `${n} found`,
+    rowCleaned: "Cleaned",
+    listLabel: "Photos you added",
     cleanMore: (converter: ReactNode, editor: ReactNode) => (
-      <>Several photos at once, a target file size, or a PDF? The {converter} handles batches, and the {editor} resizes and rotates. Both remove the same information.</>
+      <>Need a target file size or one PDF of these photos? The {converter} takes them as they are, and the {editor} resizes and rotates this one. Both remove the same information.</>
     ),
     settingsTitle: "Camera settings",
     allFields: (n: number) => `All ${n} fields`,
@@ -85,7 +107,7 @@ const STRINGS = {
     badge: "업로드 없는 사진 메타데이터 확인",
     title: "EXIF 뷰어",
     intro: "사진을 보내기 전에 촬영 위치, 시간, 기기 같은 숨은 정보가 들어 있는지 확인하세요. 사진은 내 기기 안에서만 읽히고 어디에도 업로드되지 않습니다.",
-    drop: "여기에 사진을 끌어다 놓으세요",
+    drop: "여기에 사진을 끌어다 놓으세요 (여러 장 가능)",
     reading: "읽는 중…",
     choose: "사진 선택",
     sample: "샘플 사진으로 해보기",
@@ -125,8 +147,28 @@ const STRINGS = {
     cleanedLeft: (n: number) => `받은 사본을 다시 검사했더니 아직 ${n}종류의 정보가 남아 있습니다.`,
     cleanedSaved: (name: string, size: string) => `${name} (${size})로 저장했습니다.`,
     downloadAgain: "다시 받기",
+    share: "공유하기",
+    otherFormat: "다른 형식으로 받기",
+    removedInCopy: "사본에서 지움",
+    noneNext: "이대로 보내도 됩니다. 다만 사진에 찍힌 간판·얼굴·화면은 메타데이터가 아니니 직접 확인하세요.",
+    inAppHint: "이 앱 안의 브라우저에서는 내려받기가 안 될 수 있습니다. 아래 이미지를 길게 눌러 저장하세요.",
+    shrink: "긴 변을 2048px로 줄이기 (용량 줄이기)",
+    keepAll: "사진마다 원래 형식으로",
+    keepAllNote: "JPG는 JPG로, PNG는 PNG로, WebP는 WebP로",
+    batchSummary: (n: number, m: number) => `사진 ${n}장 · ${m}장에서 정보 발견`,
+    cleanAll: "모두 지우기",
+    cleaningN: (i: number, n: number) => `지우는 중 ${i}/${n}…`,
+    batchDone: (n: number, left: number) => (left === 0 ? `사본 ${n}장을 모두 다시 검사했습니다. 신원을 드러낼 정보가 남아 있지 않습니다.` : `사본 ${n}장 중 ${left}장에 아직 정보가 남아 있습니다.`),
+    batchFailed: (n: number) => `${n}장은 이 브라우저에서 지우지 못해 빠졌습니다.`,
+    addMore: "사진 추가",
+    skipped: (n: number, max: string) => `${n}개 파일은 건너뛰었습니다. ${max} 이하의 JPG, PNG, WebP만 확인할 수 있습니다.`,
+    tooMany: (max: number) => `한 번에 ${max}장까지 확인할 수 있어 나머지는 건너뛰었습니다.`,
+    unreadableN: (n: number) => `${n}개 파일은 읽지 못해 건너뛰었습니다.`,
+    rowFound: (n: number) => `${n}종류 발견`,
+    rowCleaned: "지움",
+    listLabel: "추가한 사진",
     cleanMore: (converter: ReactNode, editor: ReactNode) => (
-      <>여러 장을 한꺼번에 처리하거나, 목표 용량을 정하거나, PDF로 묶으려면 {converter}를, 크기 조절과 회전은 {editor}를 쓰세요. 둘 다 같은 정보를 지웁니다.</>
+      <>목표 용량을 정하거나 PDF 하나로 묶으려면 {converter}로, 이 사진의 크기 조절과 회전은 {editor}로 그대로 넘길 수 있습니다. 둘 다 같은 정보를 지웁니다.</>
     ),
     settingsTitle: "촬영 설정",
     allFields: (n: number) => `전체 필드 ${n}개`,
@@ -219,18 +261,27 @@ const SETTINGS: Array<[keyof Strings["settingLabels"], (meta: Metadata, t: Strin
   ["orientation", meta => (hasValue(meta.Orientation) ? show(meta.Orientation) : null)],
 ];
 
-type Cleaned = { url: string; name: string; size: number; remaining: number | null };
+type Cleaned = { blob: Blob; url: string; name: string; size: number; remaining: number | null };
+type Item = { id: string; file: File; url: string; meta: Metadata; found: number; width: number | null; height: number | null };
+type Batch = { url: string; name: string; size: number; files: Cleaned[]; left: number };
+type Working = { scope: "single" | "batch"; label: string };
 
 const findCount = (meta: Metadata) => CHECKS.filter(check => check.keys.some(key => hasValue(meta[key]))).length;
 
-// 이미지 변환기와 같은 원리: 픽셀만 다시 그려 인코딩하므로 원본 메타데이터가 복사되지 않는다.
-// imageOrientation "from-image" 로 EXIF 회전을 픽셀에 먼저 적용한다.
 const FORMATS = [
   { type: "image/jpeg", label: "JPG", ext: ".jpg" },
   { type: "image/png", label: "PNG", ext: ".png" },
   { type: "image/webp", label: "WebP", ext: ".webp" },
 ] as const;
 type OutputType = (typeof FORMATS)[number]["type"];
+type Choice = OutputType | "keep";
+type PickOption = { choice: Choice; label: string; note: string; primary: boolean };
+
+const MAX_FILES = 30;
+const SHRINK_SIDE = 2048;
+const ZIP_NAME = "clean-photos.zip";
+// 카카오톡·네이버·인스타그램 등 앱 안의 브라우저. 내려받기가 막히는 경우가 많아 길게 눌러 저장하도록 안내한다.
+const IN_APP_BROWSER = /KAKAOTALK|NAVER\(inapp|Instagram|FBAN|FBAV|Line\/|DaumApps|everytimeApp/i;
 
 // 회전 정보를 반영해 디코딩한다. 일부 파일은 createImageBitmap 이 거부하므로 <img> 로 한 번 더 시도한다.
 // <img> 도 기본값(image-orientation: from-image)으로 EXIF 회전을 적용한다.
@@ -254,11 +305,13 @@ async function decodeOriented(file: File): Promise<{ source: CanvasImageSource; 
   return { source: image, width: image.naturalWidth, height: image.naturalHeight, release: () => URL.revokeObjectURL(url) };
 }
 
-async function makeCleanCopy(file: File, type: string): Promise<Blob> {
+async function makeCleanCopy(file: File, type: string, maxSide: number | null): Promise<Blob> {
   const decoded = await decodeOriented(file);
+  const longest = Math.max(decoded.width, decoded.height);
+  const scale = maxSide && longest > maxSide ? maxSide / longest : 1;
   const canvas = document.createElement("canvas");
-  canvas.width = decoded.width;
-  canvas.height = decoded.height;
+  canvas.width = Math.max(1, Math.round(decoded.width * scale));
+  canvas.height = Math.max(1, Math.round(decoded.height * scale));
   const context = canvas.getContext("2d");
   if (!context) throw new Error("Canvas unavailable");
   if (type === "image/jpeg") {
@@ -266,7 +319,8 @@ async function makeCleanCopy(file: File, type: string): Promise<Blob> {
     context.fillStyle = "#ffffff";
     context.fillRect(0, 0, canvas.width, canvas.height);
   }
-  context.drawImage(decoded.source, 0, 0);
+  context.imageSmoothingQuality = "high";
+  context.drawImage(decoded.source, 0, 0, canvas.width, canvas.height);
   decoded.release();
   const blob = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, type, type === "image/png" ? undefined : 0.92));
   if (!blob || blob.type !== type) throw new Error(`Encoding to ${type} failed at ${canvas.width}×${canvas.height}`);
@@ -282,46 +336,170 @@ const cleanName = (name: string, type: string) => {
   return `${base}-clean${type === "keep" ? original : sameType}`;
 };
 
-function CleanResult({ cleaned, t, onAgain }: { cleaned: Cleaned; t: Strings; onAgain: () => void }) {
-  const ok = cleaned.remaining === 0;
-  const text = cleaned.remaining === null ? t.verifyFailed : ok ? t.cleanedOk : t.cleanedLeft(cleaned.remaining);
+const uniqueName = (name: string, used: Set<string>) => {
+  let candidate = name;
+  const dot = name.lastIndexOf(".");
+  for (let n = 2; used.has(candidate); n++) candidate = dot > 0 ? `${name.slice(0, dot)} (${n})${name.slice(dot)}` : `${name} (${n})`;
+  used.add(candidate);
+  return candidate;
+};
+
+const asFile = (cleaned: Cleaned) => new File([cleaned.blob], cleaned.name, { type: cleaned.blob.type });
+
+function canShareFiles(files: File[]) {
+  try {
+    return typeof navigator !== "undefined" && typeof navigator.canShare === "function" && navigator.canShare({ files });
+  } catch {
+    return false;
+  }
+}
+
+async function shareFiles(files: File[]) {
+  try {
+    await navigator.share({ files });
+  } catch (error) {
+    if ((error as DOMException | null)?.name !== "AbortError") console.warn("Sharing failed", error);
+  }
+}
+
+// 형식이 모두 같으면 원래 형식을 맨 앞에, 섞여 있으면 "사진마다 원래 형식"을 맨 앞에 둔다.
+function pickOptions(types: string[], t: Strings): PickOption[] {
+  const unique = Array.from(new Set(types));
+  if (unique.length === 1) {
+    return [...FORMATS]
+      .sort((a, b) => Number(b.type === unique[0]) - Number(a.type === unique[0]))
+      .map(format => {
+        const same = format.type === unique[0];
+        return { choice: same ? "keep" : format.type, label: t.saveAs(format.label), note: `${same ? `${t.sameAsOriginal} · ` : ""}${t.formatNotes[format.type]}`, primary: same };
+      });
+  }
+  return [
+    { choice: "keep", label: t.keepAll, note: t.keepAllNote, primary: true },
+    ...FORMATS.map(format => ({ choice: format.type, label: t.saveAs(format.label), note: t.formatNotes[format.type], primary: false })),
+  ];
+}
+
+const primaryButton = "inline-flex h-11 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl bg-black px-4 text-sm font-semibold text-white hover:bg-gray-800 disabled:opacity-50";
+const secondaryButton = "inline-flex h-11 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl border border-gray-300 bg-white px-4 text-sm font-semibold text-black hover:border-gray-500 disabled:opacity-50";
+
+function FormatPicker({ id, t, options, onPick, disabled, shrink, onShrink, jpgNote }: {
+  id: string;
+  t: Strings;
+  options: PickOption[];
+  onPick: (choice: Choice) => void;
+  disabled: boolean;
+  shrink: boolean;
+  onShrink: (value: boolean) => void;
+  jpgNote: boolean;
+}) {
   return (
-    <p role="status" className={`mt-3 flex items-start gap-2 rounded-xl px-4 py-3 text-sm font-semibold ${ok ? "bg-green-50 text-green-800" : "bg-amber-50 text-amber-900"}`}>
-      {ok ? <CheckCircle2 className="h-5 w-5 flex-shrink-0" aria-hidden="true" /> : <ShieldAlert className="h-5 w-5 flex-shrink-0" aria-hidden="true" />}
-      <span className="flex-1">
-        {text} {t.cleanedSaved(cleaned.name, formatBytes(cleaned.size))}{" "}
-        <button type="button" onClick={onAgain} className="font-semibold underline">{t.downloadAgain}</button>
-      </span>
-    </p>
+    <div id={id} role="group" aria-label={t.pickTitle} className="mt-3 rounded-xl border border-gray-200 bg-white p-3">
+      <p className="text-sm font-semibold text-black">{t.pickTitle}</p>
+      <div className={`mt-2 grid grid-cols-1 gap-2 ${options.length > 3 ? "sm:grid-cols-2" : "sm:grid-cols-3"}`}>
+        {options.map(option => (
+          <button
+            key={option.choice}
+            type="button"
+            onClick={() => onPick(option.choice)}
+            disabled={disabled}
+            className={`flex min-h-[44px] flex-col items-start rounded-xl border px-3 py-2 text-left disabled:opacity-50 ${option.primary ? "border-black" : "border-gray-300 hover:border-gray-500"}`}
+          >
+            <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-black">
+              <Download className="h-4 w-4" aria-hidden="true" /> {option.label}
+            </span>
+            <span className="mt-0.5 text-xs font-normal text-gray-600">{option.note}</span>
+          </button>
+        ))}
+      </div>
+      <label className="mt-3 flex items-center gap-2 text-sm text-gray-800">
+        <input type="checkbox" checked={shrink} onChange={event => onShrink(event.target.checked)} className="h-4 w-4 accent-black" />
+        {t.shrink}
+      </label>
+      {jpgNote && <p className="mt-2 text-xs text-gray-600">{t.jpgNote}</p>}
+    </div>
+  );
+}
+
+// 지운 뒤의 완료 카드. 결과 문장, 다음 행동 버튼, 앱 안 브라우저라면 길게 눌러 저장할 미리보기.
+function DoneCard({ ok, t, previews, actions, children }: { ok: boolean; t: Strings; previews: string[] | null; actions: ReactNode; children: ReactNode }) {
+  return (
+    <div data-done className={`mt-4 rounded-xl px-4 py-3 ${ok ? "bg-green-50 text-green-800" : "bg-amber-50 text-amber-900"}`}>
+      <p role="status" className="flex items-start gap-2 text-sm font-semibold">
+        {ok ? <CheckCircle2 className="h-5 w-5 flex-shrink-0" aria-hidden="true" /> : <ShieldAlert className="h-5 w-5 flex-shrink-0" aria-hidden="true" />}
+        <span>{children}</span>
+      </p>
+      <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:flex-wrap">{actions}</div>
+      {previews && (
+        <>
+          <p className="mt-3 text-xs">{t.inAppHint}</p>
+          <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
+            {previews.map(url => (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img key={url} src={url} alt="" className="w-full rounded-lg bg-white object-contain" />
+            ))}
+          </div>
+        </>
+      )}
+    </div>
   );
 }
 
 export default function ExifViewer({ locale = "en" }: { locale?: Locale }) {
   const t = STRINGS[locale];
-  const [loaded, setLoaded] = useState<Loaded | null>(null);
+  const router = useRouter();
+  const [items, setItems] = useState<Item[]>([]);
+  const [activeId, setActiveId] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [dragging, setDragging] = useState(false);
   const [showAll, setShowAll] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const urlRef = useRef<string | null>(null);
-  const [cleaned, setCleaned] = useState<Cleaned | null>(null);
-  const [cleaning, setCleaning] = useState(false);
+  const [cleanedMap, setCleanedMap] = useState<Record<string, Cleaned>>({});
+  const [batch, setBatch] = useState<Batch | null>(null);
+  const [working, setWorking] = useState<Working | null>(null);
   const [cleanError, setCleanError] = useState<string | null>(null);
-  const [picking, setPicking] = useState(false);
-  const cleanUrlRef = useRef<string | null>(null);
+  const [picking, setPicking] = useState<"single" | "batch" | null>(null);
+  const [shrink, setShrink] = useState(false);
+  const [inApp, setInApp] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const addRef = useRef<HTMLInputElement>(null);
+  const resultsRef = useRef<HTMLDivElement>(null);
+  const scrollPending = useRef(false);
+  const started = useRef(false);
+  const nextId = useRef(0);
+  const urls = useRef(new Set<string>());
 
-  const setCleanUrl = (url: string | null) => {
-    if (cleanUrlRef.current) URL.revokeObjectURL(cleanUrlRef.current);
-    cleanUrlRef.current = url;
+  const makeUrl = (blob: Blob) => {
+    const url = URL.createObjectURL(blob);
+    urls.current.add(url);
+    return url;
   };
-  useEffect(() => () => setCleanUrl(null), []);
+  const dropUrl = (url?: string | null) => {
+    if (url && urls.current.delete(url)) URL.revokeObjectURL(url);
+  };
+  useEffect(() => {
+    const owned = urls.current;
+    return () => {
+      owned.forEach(url => URL.revokeObjectURL(url));
+      owned.clear();
+    };
+  }, []);
+  useEffect(() => setInApp(IN_APP_BROWSER.test(navigator.userAgent)), []);
 
-  const resetClean = () => {
-    setPicking(false);
-    setCleanUrl(null);
-    setCleaned(null);
+  const active = items.find(item => item.id === activeId) ?? items[0] ?? null;
+  const multi = items.length > 1;
+  const activeCleaned = active ? cleanedMap[active.id] ?? null : null;
+
+  const resetCleaning = () => {
+    setPicking(null);
     setCleanError(null);
+    setCleanedMap(current => {
+      Object.values(current).forEach(cleaned => dropUrl(cleaned.url));
+      return {};
+    });
+    setBatch(current => {
+      dropUrl(current?.url);
+      return null;
+    });
   };
 
   const download = (url: string, name: string) => {
@@ -333,107 +511,221 @@ export default function ExifViewer({ locale = "en" }: { locale?: Locale }) {
     link.remove();
   };
 
-  const clean = async (choice: OutputType | "keep") => {
-    if (!loaded) return;
-    setPicking(false);
-    resetClean();
-    setCleaning(true);
-    setCleanError(null);
-    try {
-      const type = choice === "keep" ? loaded.file.type : choice;
-      const blob = await makeCleanCopy(loaded.file, type);
-      // 만든 사본을 같은 파서로 다시 읽어, 실제로 지워졌는지 화면에 보여 준다. 재검사가 실패해도 사본은 준다.
-      let remaining: number | null = null;
-      try {
-        remaining = findCount(await readMetadata(new Uint8Array(await blob.arrayBuffer())));
-      } catch (error) {
-        console.warn("Re-checking the clean copy failed", error);
-      }
-      const url = URL.createObjectURL(blob);
-      setCleanUrl(url);
-      const name = cleanName(loaded.file.name, choice === "keep" || choice === loaded.file.type ? "keep" : type);
-      setCleaned({ url, name, size: blob.size, remaining });
-      download(url, name);
-    } catch (error) {
-      console.error("Making the clean copy failed", error);
-      setCleanError(t.cleanFailed);
-    } finally {
-      setCleaning(false);
-    }
-  };
-
-  const setUrl = (url: string | null) => {
-    if (urlRef.current) URL.revokeObjectURL(urlRef.current);
-    urlRef.current = url;
-  };
-  useEffect(() => () => setUrl(null), []);
-
-  const open = async (file: File) => {
+  const open = async (list: File[], append = false) => {
     setError(null);
-    if (!SUPPORTED_TYPES.includes(file.type)) {
-      setError(t.wrongType);
+    if (list.length === 0) return;
+    const accepted = list.filter(file => SUPPORTED_TYPES.includes(file.type) && file.size <= MAX_FILE_SIZE);
+    if (list.length === 1 && accepted.length === 0) {
+      setError(SUPPORTED_TYPES.includes(list[0].type) ? t.tooLarge(formatBytes(MAX_FILE_SIZE)) : t.wrongType);
       return;
     }
-    if (file.size > MAX_FILE_SIZE) {
-      setError(t.tooLarge(formatBytes(MAX_FILE_SIZE)));
-      return;
-    }
+    const room = Math.max(MAX_FILES - (append ? items.length : 0), 0);
+    const taking = accepted.slice(0, room);
+    const messages: string[] = [];
+    if (list.length > accepted.length) messages.push(t.skipped(list.length - accepted.length, formatBytes(MAX_FILE_SIZE)));
+    if (accepted.length > taking.length) messages.push(t.tooMany(MAX_FILES));
+
     setBusy(true);
-    try {
-      const meta = await readMetadata(new Uint8Array(await file.arrayBuffer()));
-      const url = URL.createObjectURL(file);
-      setUrl(url);
-      setShowAll(false);
-      resetClean();
-      setLoaded({ file, url, meta, width: null, height: null });
-    } catch {
-      setError(t.unreadable);
-    } finally {
-      setBusy(false);
+    const added: Item[] = [];
+    let unreadable = 0;
+    for (const file of taking) {
+      try {
+        const meta = await readMetadata(new Uint8Array(await file.arrayBuffer()));
+        added.push({ id: `photo-${nextId.current++}`, file, url: makeUrl(file), meta, found: findCount(meta), width: null, height: null });
+      } catch {
+        unreadable++;
+      }
     }
+    setBusy(false);
+    if (unreadable) messages.push(taking.length === 1 ? t.unreadable : t.unreadableN(unreadable));
+    if (messages.length) setError(messages.join(" "));
+    if (added.length === 0) return;
+
+    if (append) {
+      setPicking(null);
+      setBatch(current => {
+        dropUrl(current?.url);
+        return null;
+      });
+      setItems(current => [...current, ...added]);
+      return;
+    }
+    items.forEach(item => dropUrl(item.url));
+    resetCleaning();
+    setShowAll(false);
+    setItems(added);
+    setActiveId(added[0].id);
+    scrollPending.current = true;
   };
+
+  // 결과가 처음 나타나면 결과 카드로 스크롤한다. 휴대폰에서는 소개 문단 때문에 결과가 첫 화면 밖에 있다.
+  useEffect(() => {
+    if (!scrollPending.current || items.length === 0) return;
+    scrollPending.current = false;
+    resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [items]);
 
   const openSample = async () => {
     setBusy(true);
     try {
       const blob = await (await fetch(SAMPLE_URL)).blob();
-      await open(new File([blob], "sample-photo-with-gps.jpg", { type: "image/jpeg" }));
+      await open([new File([blob], "sample-photo-with-gps.jpg", { type: "image/jpeg" })]);
     } catch {
       setError(t.sampleFailed);
       setBusy(false);
     }
   };
 
+  // 홈에서 넘겨받은 사진(?handoff=1)이나 샘플(?sample=1)을 바로 연다. StrictMode 의 이중 실행에도 한 번만 꺼낸다.
+  useEffect(() => {
+    if (started.current) return;
+    started.current = true;
+    const params = new URLSearchParams(window.location.search);
+    if (!params.has(HANDOFF_PARAM) && params.get("sample") !== "1") return;
+    window.history.replaceState(null, "", window.location.pathname);
+    (async () => {
+      const handed = params.has(HANDOFF_PARAM) ? await takeHandoff() : [];
+      if (handed.length) await open(handed);
+      else if (params.get("sample") === "1") await openSample();
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const clear = () => {
-    setUrl(null);
-    setLoaded(null);
+    items.forEach(item => dropUrl(item.url));
+    setItems([]);
+    setActiveId(null);
     setError(null);
-    resetClean();
+    resetCleaning();
   };
 
-  const onInput = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) open(file);
+  const cleanOne = async (item: Item, choice: Choice): Promise<Cleaned> => {
+    const type = choice === "keep" ? item.file.type : choice;
+    const blob = await makeCleanCopy(item.file, type, shrink ? SHRINK_SIDE : null);
+    // 만든 사본을 같은 파서로 다시 읽어, 실제로 지워졌는지 화면에 보여 준다. 재검사가 실패해도 사본은 준다.
+    let remaining: number | null = null;
+    try {
+      remaining = findCount(await readMetadata(new Uint8Array(await blob.arrayBuffer())));
+    } catch (error) {
+      console.warn("Re-checking the clean copy failed", error);
+    }
+    const name = cleanName(item.file.name, choice === "keep" || choice === item.file.type ? "keep" : type);
+    return { blob, url: makeUrl(blob), name, size: blob.size, remaining };
+  };
+
+  const remember = (id: string, cleaned: Cleaned) =>
+    setCleanedMap(current => {
+      dropUrl(current[id]?.url);
+      return { ...current, [id]: cleaned };
+    });
+
+  const cleanActive = async (choice: Choice) => {
+    if (!active) return;
+    setPicking(null);
+    setCleanError(null);
+    setWorking({ scope: "single", label: t.cleaning });
+    try {
+      const cleaned = await cleanOne(active, choice);
+      remember(active.id, cleaned);
+      download(cleaned.url, cleaned.name);
+    } catch (error) {
+      console.error("Making the clean copy failed", error);
+      setCleanError(t.cleanFailed);
+    } finally {
+      setWorking(null);
+    }
+  };
+
+  const cleanAll = async (choice: Choice) => {
+    setPicking(null);
+    setCleanError(null);
+    setBatch(current => {
+      dropUrl(current?.url);
+      return null;
+    });
+    const done: Cleaned[] = [];
+    let failed = 0;
+    try {
+      for (const [index, item] of items.entries()) {
+        setWorking({ scope: "batch", label: t.cleaningN(index + 1, items.length) });
+        try {
+          const cleaned = await cleanOne(item, choice);
+          remember(item.id, cleaned);
+          done.push(cleaned);
+        } catch (error) {
+          console.error("Making a clean copy failed", item.file.name, error);
+          failed++;
+        }
+      }
+      if (done.length) {
+        const { default: JSZip } = await import("jszip");
+        const zip = new JSZip();
+        const used = new Set<string>();
+        done.forEach(cleaned => zip.file(uniqueName(cleaned.name, used), cleaned.blob));
+        const blob = await zip.generateAsync({ type: "blob" });
+        const url = makeUrl(blob);
+        setBatch({ url, name: ZIP_NAME, size: blob.size, files: done, left: done.filter(cleaned => (cleaned.remaining ?? 0) > 0).length });
+        download(url, ZIP_NAME);
+      }
+      if (failed) setCleanError(done.length ? t.batchFailed(failed) : t.cleanFailed);
+    } catch (error) {
+      console.error("Bundling the clean copies failed", error);
+      setCleanError(t.cleanFailed);
+    } finally {
+      setWorking(null);
+    }
+  };
+
+  // 변환기·편집기로 넘어갈 때 지금 보고 있는 사진을 그대로 넘긴다.
+  const handTo = async (href: string, files: File[]) => {
+    const handed = await putHandoff(files);
+    router.push(handed ? withHandoff(href) : href);
+  };
+
+  const onInput = (event: ChangeEvent<HTMLInputElement>, append = false) => {
+    const files = Array.from(event.target.files ?? []);
     event.target.value = "";
+    open(files, append);
   };
 
   const onDrop = (event: DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     setDragging(false);
-    const file = event.dataTransfer.files?.[0];
-    if (file) open(file);
+    open(Array.from(event.dataTransfer.files ?? []));
   };
 
-  const meta = loaded?.meta ?? {};
+  const meta = active?.meta ?? {};
   const results = CHECKS.map(check => {
     const found = check.keys.some(key => hasValue(meta[key]));
     const detail = found ? (check.describe?.(meta, t) || check.keys.filter(key => hasValue(meta[key])).map(key => show(meta[key], t)).join(" · ")) : null;
     return { ...check, label: check.label[locale], found, detail };
   });
-  const foundCount = results.filter(result => result.found).length;
+  const foundCount = active?.found ?? 0;
+  const photosWithInfo = items.filter(item => item.found > 0).length;
   const point = coordinates(meta);
   const settings = SETTINGS.map(([key, read]) => [t.settingLabels[key], read(meta, t)] as const).filter(([, value]) => value);
   const allFields = Object.entries(meta).filter(([, value]) => hasValue(value));
+  const removedInCopy = activeCleaned?.remaining === 0;
+  const converterHref = `/convert/img/${t.toolQuery}`;
+  const editorHref = `/edit/image/${t.toolQuery}`;
+  const activeCleanFile = activeCleaned ? asFile(activeCleaned) : null;
+  const batchFiles = batch ? batch.files.map(asFile) : [];
+
+  const picker = (scope: "single" | "batch") => {
+    const targets = scope === "single" && active ? [active] : items;
+    return (
+      <FormatPicker
+        id={scope === "single" ? "clean-format-picker" : "batch-format-picker"}
+        t={t}
+        options={pickOptions(targets.map(item => item.file.type), t)}
+        onPick={scope === "single" ? cleanActive : cleanAll}
+        disabled={working !== null}
+        shrink={shrink}
+        onShrink={setShrink}
+        jpgNote={targets.some(item => item.file.type !== "image/jpeg")}
+      />
+    );
+  };
 
   return (
     <section className="mx-auto w-full max-w-5xl px-4 pb-12">
@@ -445,7 +737,7 @@ export default function ExifViewer({ locale = "en" }: { locale?: Locale }) {
         <p className="mt-4 text-lg leading-8 text-gray-600">{t.intro}</p>
       </header>
 
-      {!loaded && (
+      {!active && (
         <div
           className={`mx-auto max-w-4xl rounded-3xl border-2 border-dashed p-10 text-center transition md:p-14 ${dragging ? "border-black bg-gray-200 shadow-md" : "border-gray-400 bg-gray-100 hover:border-gray-500 hover:bg-gray-200 hover:shadow-md"}`}
           onDragEnter={event => { event.preventDefault(); setDragging(true); }}
@@ -465,81 +757,174 @@ export default function ExifViewer({ locale = "en" }: { locale?: Locale }) {
               {t.sample}
             </button>
           </div>
-          <input ref={inputRef} type="file" accept="image/jpeg,image/png,image/webp" onChange={onInput} className="sr-only" aria-label={t.inputLabel} />
+          <input ref={inputRef} type="file" multiple accept="image/jpeg,image/png,image/webp" onChange={event => onInput(event)} className="sr-only" aria-label={t.inputLabel} />
           <p className="mt-5 text-sm text-gray-500">{t.limits(formatBytes(MAX_FILE_SIZE))}</p>
         </div>
       )}
+      <input ref={addRef} type="file" multiple accept="image/jpeg,image/png,image/webp" onChange={event => onInput(event, true)} className="sr-only" aria-label={t.addMore} tabIndex={-1} />
 
       {error && <p role="alert" className="mx-auto mt-4 max-w-4xl rounded-xl bg-red-50 px-4 py-3 text-center text-sm font-medium text-red-700">{error}</p>}
 
-      {loaded && (
-        <div className="space-y-6">
+      {active && (
+        <div ref={resultsRef} className="scroll-mt-28 space-y-6">
+          {multi && (
+            <div data-batch className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm">
+              <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
+                <p className="min-w-0 flex-1 font-semibold text-black">{t.batchSummary(items.length, photosWithInfo)}</p>
+                <div className="grid grid-cols-1 gap-2 sm:flex sm:flex-wrap">
+                  {!batch && (
+                    <button type="button" onClick={() => setPicking(current => (current === "batch" ? null : "batch"))} disabled={working !== null} aria-expanded={picking === "batch"} aria-controls="batch-format-picker" className={primaryButton}>
+                      <Eraser className="h-4 w-4" aria-hidden="true" /> {working?.scope === "batch" ? working.label : t.cleanAll}
+                    </button>
+                  )}
+                  <button type="button" onClick={() => addRef.current?.click()} disabled={working !== null || items.length >= MAX_FILES} className={secondaryButton}>
+                    <Plus className="h-4 w-4" aria-hidden="true" /> {t.addMore}
+                  </button>
+                  <button type="button" onClick={clear} disabled={working !== null} className={secondaryButton}>
+                    <RotateCcw className="h-4 w-4" aria-hidden="true" /> {t.another}
+                  </button>
+                </div>
+              </div>
+              {picking === "batch" && picker("batch")}
+              {batch && (
+                <DoneCard
+                  ok={batch.left === 0}
+                  t={t}
+                  previews={inApp ? batch.files.map(cleaned => cleaned.url) : null}
+                  actions={
+                    <>
+                      {canShareFiles(batchFiles) && (
+                        <button type="button" onClick={() => shareFiles(batchFiles)} className={primaryButton}>
+                          <Share2 className="h-4 w-4" aria-hidden="true" /> {t.share}
+                        </button>
+                      )}
+                      <button type="button" onClick={() => download(batch.url, batch.name)} className={secondaryButton}>
+                        <Download className="h-4 w-4" aria-hidden="true" /> {t.downloadAgain}
+                      </button>
+                      <button type="button" onClick={() => setPicking(current => (current === "batch" ? null : "batch"))} aria-expanded={picking === "batch"} className={secondaryButton}>
+                        {t.otherFormat}
+                      </button>
+                    </>
+                  }
+                >
+                  {t.batchDone(batch.files.length, batch.left)} {t.cleanedSaved(batch.name, formatBytes(batch.size))}
+                </DoneCard>
+              )}
+              <ul aria-label={t.listLabel} className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                {items.map(item => {
+                  const cleaned = cleanedMap[item.id];
+                  const current = item.id === active.id;
+                  return (
+                    <li key={item.id}>
+                      <button
+                        type="button"
+                        onClick={() => { setActiveId(item.id); setPicking(open => (open === "single" ? null : open)); setShowAll(false); }}
+                        aria-current={current ? "true" : undefined}
+                        className={`flex w-full items-center gap-3 rounded-xl border p-2 text-left ${current ? "border-black bg-gray-50" : "border-gray-200 hover:border-gray-400"}`}
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={item.url} alt="" className="h-12 w-12 flex-shrink-0 rounded-lg bg-gray-100 object-cover" />
+                        <span className="min-w-0 flex-1">
+                          <span className="block truncate text-sm font-semibold text-black">{item.file.name}</span>
+                          <span className="text-xs text-gray-500">{formatBytes(item.file.size)}</span>
+                        </span>
+                        <span className={`whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold ${cleaned?.remaining === 0 ? "bg-green-100 text-green-800" : item.found ? "bg-amber-100 text-amber-900" : "bg-gray-100 text-gray-600"}`}>
+                          {cleaned?.remaining === 0 ? t.rowCleaned : item.found ? t.rowFound(item.found) : t.none}
+                        </span>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          )}
+
           <div className="flex flex-col gap-5 rounded-3xl border border-gray-200 bg-white p-5 shadow-sm md:flex-row">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={loaded.url}
+              key={active.id}
+              src={active.url}
               alt={t.previewAlt}
               className="h-40 w-full rounded-2xl bg-gray-100 object-contain md:w-56"
-              onLoad={event => { const image = event.currentTarget; setLoaded(current => current && { ...current, width: image.naturalWidth, height: image.naturalHeight }); }}
+              onLoad={event => {
+                const image = event.currentTarget;
+                const id = active.id;
+                setItems(current => current.map(item => (item.id === id ? { ...item, width: image.naturalWidth, height: image.naturalHeight } : item)));
+              }}
             />
             <div className="min-w-0 flex-1">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="truncate font-semibold text-black">{loaded.file.name}</p>
-                  <p className="text-sm text-gray-500">{formatBytes(loaded.file.size)}{loaded.width ? ` · ${loaded.width} × ${loaded.height}px` : ""}</p>
+                  <p className="truncate font-semibold text-black">{active.file.name}</p>
+                  <p className="text-sm text-gray-500">{formatBytes(active.file.size)}{active.width ? ` · ${active.width} × ${active.height}px` : ""}</p>
                 </div>
-                <button type="button" onClick={clear} className="inline-flex flex-shrink-0 whitespace-nowrap items-center gap-1 rounded-xl border border-gray-200 px-3 py-2 text-sm font-semibold text-black hover:bg-gray-50">
-                  <X className="h-4 w-4" aria-hidden="true" /> {t.another}
-                </button>
-              </div>
-              <div className={`mt-4 rounded-xl px-4 py-3 ${foundCount ? "bg-amber-50 text-amber-900" : "bg-green-50 text-green-800"}`}>
-                <div className="flex flex-col gap-3 text-sm font-semibold sm:flex-row sm:items-center">
-                  <span className="flex min-w-0 flex-1 items-start gap-2">
-                    {foundCount ? <ShieldAlert className="h-5 w-5 flex-shrink-0" aria-hidden="true" /> : <CheckCircle2 className="h-5 w-5 flex-shrink-0" aria-hidden="true" />}
-                    <span>{foundCount ? t.foundSummary(foundCount) : t.noneSummary}</span>
-                  </span>
-                  {foundCount > 0 && (
-                    <button
-                      type="button"
-                      onClick={() => { setCleanError(null); setPicking(open => !open); }}
-                      disabled={cleaning}
-                      aria-expanded={picking}
-                      aria-controls="clean-format-picker"
-                      className="inline-flex h-11 w-full flex-shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl bg-black px-4 text-sm font-semibold text-white hover:bg-gray-800 disabled:opacity-50 sm:w-auto"
-                    >
-                      <Eraser className="h-4 w-4" aria-hidden="true" />
-                      {cleaning ? t.cleaning : t.jumpToClean}
-                    </button>
-                  )}
-                </div>
-                {foundCount > 0 && !picking && !cleaned && !cleanError && <p className="mt-2 text-xs font-normal text-amber-800">{t.jumpHint}</p>}
-                {picking && (
-                  <div id="clean-format-picker" role="group" aria-label={t.pickTitle} className="mt-3 border-t border-amber-200 pt-3">
-                    <p className="text-sm font-semibold text-black">{t.pickTitle}</p>
-                    <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-3">
-                      {[...FORMATS].sort((a, b) => Number(b.type === loaded.file.type) - Number(a.type === loaded.file.type)).map(format => {
-                        const same = format.type === loaded.file.type;
-                        return (
-                          <button
-                            key={format.type}
-                            type="button"
-                            onClick={() => clean(same ? "keep" : format.type)}
-                            disabled={cleaning}
-                            className={`flex min-h-[44px] flex-col items-start rounded-xl border px-3 py-2 text-left disabled:opacity-50 ${same ? "border-black bg-white" : "border-gray-300 bg-white hover:border-gray-500"}`}
-                          >
-                            <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-black">
-                              <Download className="h-4 w-4" aria-hidden="true" /> {t.saveAs(format.label)}
-                            </span>
-                            <span className="mt-0.5 text-xs font-normal text-gray-600">{same ? `${t.sameAsOriginal} · ` : ""}{t.formatNotes[format.type]}</span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                    {loaded.file.type !== "image/jpeg" && <p className="mt-2 text-xs font-normal text-gray-600">{t.jpgNote}</p>}
-                  </div>
+                {!multi && !activeCleaned && (
+                  <button type="button" onClick={clear} className="inline-flex flex-shrink-0 items-center gap-1 whitespace-nowrap rounded-xl border border-gray-200 px-3 py-2 text-sm font-semibold text-black hover:bg-gray-50">
+                    <RotateCcw className="h-4 w-4" aria-hidden="true" /> {t.another}
+                  </button>
                 )}
               </div>
-              {cleaned && <CleanResult cleaned={cleaned} t={t} onAgain={() => download(cleaned.url, cleaned.name)} />}
+
+              {activeCleaned && activeCleanFile ? (
+                <DoneCard
+                  ok={activeCleaned.remaining === 0}
+                  t={t}
+                  previews={inApp ? [activeCleaned.url] : null}
+                  actions={
+                    <>
+                      {canShareFiles([activeCleanFile]) && (
+                        <button type="button" onClick={() => shareFiles([activeCleanFile])} className={primaryButton}>
+                          <Share2 className="h-4 w-4" aria-hidden="true" /> {t.share}
+                        </button>
+                      )}
+                      <button type="button" onClick={() => download(activeCleaned.url, activeCleaned.name)} className={secondaryButton}>
+                        <Download className="h-4 w-4" aria-hidden="true" /> {t.downloadAgain}
+                      </button>
+                      <button type="button" onClick={() => setPicking(current => (current === "single" ? null : "single"))} disabled={working !== null} aria-expanded={picking === "single"} aria-controls="clean-format-picker" className={secondaryButton}>
+                        {working?.scope === "single" ? working.label : t.otherFormat}
+                      </button>
+                      {!multi && (
+                        <button type="button" onClick={clear} className={secondaryButton}>
+                          <RotateCcw className="h-4 w-4" aria-hidden="true" /> {t.another}
+                        </button>
+                      )}
+                    </>
+                  }
+                >
+                  {activeCleaned.remaining === null ? t.verifyFailed : activeCleaned.remaining === 0 ? t.cleanedOk : t.cleanedLeft(activeCleaned.remaining)}{" "}
+                  {t.cleanedSaved(activeCleaned.name, formatBytes(activeCleaned.size))}
+                </DoneCard>
+              ) : (
+                <div className={`mt-4 rounded-xl px-4 py-3 ${foundCount ? "bg-amber-50 text-amber-900" : "bg-green-50 text-green-800"}`}>
+                  <div className="flex flex-col gap-3 text-sm font-semibold sm:flex-row sm:items-center">
+                    <span className="flex min-w-0 flex-1 items-start gap-2">
+                      {foundCount ? <ShieldAlert className="h-5 w-5 flex-shrink-0" aria-hidden="true" /> : <CheckCircle2 className="h-5 w-5 flex-shrink-0" aria-hidden="true" />}
+                      <span>{foundCount ? t.foundSummary(foundCount) : t.noneSummary}</span>
+                    </span>
+                    {foundCount > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => { setCleanError(null); setPicking(current => (current === "single" ? null : "single")); }}
+                        disabled={working !== null}
+                        aria-expanded={picking === "single"}
+                        aria-controls="clean-format-picker"
+                        className={`${primaryButton} w-full flex-shrink-0 sm:w-auto`}
+                      >
+                        <Eraser className="h-4 w-4" aria-hidden="true" />
+                        {working?.scope === "single" ? working.label : t.jumpToClean}
+                      </button>
+                    )}
+                    {foundCount === 0 && canShareFiles([active.file]) && (
+                      <button type="button" onClick={() => shareFiles([active.file])} className={`${primaryButton} w-full flex-shrink-0 sm:w-auto`}>
+                        <Share2 className="h-4 w-4" aria-hidden="true" /> {t.share}
+                      </button>
+                    )}
+                  </div>
+                  {foundCount > 0 && picking !== "single" && !cleanError && <p className="mt-2 text-xs font-normal text-amber-800">{t.jumpHint}</p>}
+                  {foundCount === 0 && <p className="mt-2 text-xs font-normal">{t.noneNext}</p>}
+                </div>
+              )}
+              {picking === "single" && picker("single")}
               {cleanError && <p role="alert" className="mt-3 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">{cleanError}</p>}
             </div>
           </div>
@@ -564,14 +949,16 @@ export default function ExifViewer({ locale = "en" }: { locale?: Locale }) {
                       </a>
                     )}
                   </div>
-                  <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${result.found ? "bg-amber-100 text-amber-900" : "bg-gray-100 text-gray-600"}`}>{result.found ? t.found : t.none}</span>
+                  <span className={`whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold ${result.found ? (removedInCopy ? "bg-green-100 text-green-800" : "bg-amber-100 text-amber-900") : "bg-gray-100 text-gray-600"}`}>
+                    {result.found ? (removedInCopy ? t.removedInCopy : t.found) : t.none}
+                  </span>
                 </li>
               ))}
             </ul>
             {point && <p className="mt-2 text-xs text-gray-500">{t.mapNote}</p>}
           </div>
 
-          {foundCount > 0 && (
+          {(photosWithInfo > 0 || multi) && (
             <div className="rounded-3xl border border-gray-200 bg-gray-50 p-5" data-clean>
               <h2 className="flex items-center gap-2 text-lg font-bold text-black">
                 <Eraser className="h-5 w-5 flex-shrink-0" aria-hidden="true" /> {t.cleanTitle}
@@ -579,8 +966,8 @@ export default function ExifViewer({ locale = "en" }: { locale?: Locale }) {
               <p className="mt-2 text-sm leading-6 text-gray-700">{t.cleanBody}</p>
               <p className="mt-4 text-sm leading-6 text-gray-600">
                 {t.cleanMore(
-                  <Link href={`/convert/img/${t.toolQuery}`} className="font-medium text-black underline">{t.converter}</Link>,
-                  <Link href={`/edit/image/${t.toolQuery}`} className="font-medium text-black underline">{t.editor}</Link>,
+                  <Link href={converterHref} onClick={event => { event.preventDefault(); handTo(converterHref, items.map(item => item.file)); }} className="font-medium text-black underline">{t.converter}</Link>,
+                  <Link href={editorHref} onClick={event => { event.preventDefault(); handTo(editorHref, [active.file]); }} className="font-medium text-black underline">{t.editor}</Link>,
                 )}
               </p>
             </div>

@@ -4,6 +4,7 @@ import { Camera, CircleAlert, Clock, Eraser, FileSearch, FileText, Fingerprint, 
 import exifDemo from "@/data/exif-demo.json";
 import pdfMetaDemo from "@/data/pdf-metadata-demo.json";
 import { alternatesFor } from "@/lib/locale";
+import HomePhotoDrop from "@/components/HomePhotoDrop";
 
 export const metadata: Metadata = {
   title: "BravoConvert - 사진을 보내기 전에 위치·기기 정보 확인하고 지우기",
@@ -45,14 +46,14 @@ const steps = [
   {
     icon: Eraser,
     title: "2. 지우기",
-    body: "이미지 변환기로 변환하거나 이미지 편집기에서 내보냅니다. 둘 다 사진을 픽셀에서 새로 만들기 때문에 원본의 메타데이터가 복사되지 않습니다.",
-    href: "/convert/img/?from=exif&lang=ko",
-    cta: "변환기 열기 (영문)",
+    body: "결과 화면에서 '바로 지우기'를 누르고 형식을 고르면 끝입니다. 사진을 픽셀에서 새로 그리기 때문에 원본의 메타데이터가 사본에 복사되지 않습니다. 여러 장이면 '모두 지우기'로 한 번에 받습니다.",
+    href: "/ko/view/exif/?sample=1",
+    cta: "샘플로 해보기",
   },
   {
     icon: Share2,
-    title: "3. 다시 확인하고 공유",
-    body: "새 파일을 뷰어로 다시 열면 아무것도 나오지 않아야 합니다. 그다음 사진 자체를 보세요. 표지판이나 얼굴은 메타데이터 도구가 잡아내지 못합니다.",
+    title: "3. 확인하고 공유",
+    body: "지운 사본은 자동으로 다시 검사해 남은 정보가 없는지 보여 주고, 휴대폰에서는 바로 공유할 수 있습니다. 사진에 찍힌 표지판이나 얼굴만은 직접 보세요.",
     href: "/ko/guides/exif-metadata-privacy/",
     cta: "실험 결과 보기",
   },
@@ -61,13 +62,13 @@ const steps = [
 const commonTasks = [
   {
     task: "중고거래에 집에서 찍은 사진을 올릴 때",
-    how: "집 안에서 찍은 판매 사진에는 집의 좌표가 들어 있을 수 있습니다. 올리기 전에 변환하고, 결과물 하나를 뷰어로 열어 위치가 사라졌는지 확인하세요.",
+    how: "집 안에서 찍은 판매 사진에는 집의 좌표가 들어 있을 수 있습니다. 올릴 사진을 한꺼번에 뷰어에 넣고 '모두 지우기'를 누르면, 위치가 빠진 사본을 받아 그대로 올릴 수 있습니다.",
     tool: "EXIF 뷰어",
     href: "/ko/view/exif/",
   },
   {
     task: "아이 사진을 공개 계정에 올릴 때",
-    how: "집이나 어린이집에서 찍은 사진이라면 위치가 먼저 걱정입니다. 뷰어로 확인하고, 위치가 있으면 변환한 파일을 올리세요. 교복, 이름표, 간판 같은 보이는 단서도 함께 살피세요.",
+    how: "집이나 어린이집에서 찍은 사진이라면 위치가 먼저 걱정입니다. 뷰어로 확인하고, 위치가 있으면 '바로 지우기'로 받은 사본을 올리세요. 교복, 이름표, 간판 같은 보이는 단서도 함께 살피세요.",
     tool: "EXIF 뷰어",
     href: "/ko/view/exif/",
   },
@@ -114,17 +115,7 @@ export default function KoreanHome() {
             사진 파일에는 그림만 있는 게 아닙니다. 찍은 장소, 시간, 휴대폰 기종이 함께 들어 있는 경우가 많습니다. 내 사진에 무엇이 있는지
             보고, 지우고, 그림만 보내세요. 파일은 어디에도 업로드되지 않습니다.
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-            <Link href="/ko/view/exif/" className="inline-flex items-center gap-2 rounded-xl bg-black px-6 py-3 font-bold text-white shadow-lg transition-all duration-300 hover:bg-gray-800">
-              <FileSearch className="h-5 w-5" aria-hidden="true" />
-              사진 확인하기
-            </Link>
-            <Link href="/convert/img/?from=exif&lang=ko" className="inline-flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-6 py-3 font-bold text-black transition-all duration-300 hover:bg-gray-200">
-              <Eraser className="h-5 w-5" aria-hidden="true" />
-              변환해서 메타데이터 지우기
-            </Link>
-          </div>
-          <p className="mt-4 text-sm text-gray-500">파일은 내 브라우저가 직접 읽고 처리합니다. 업로드는 없습니다.</p>
+          <HomePhotoDrop locale="ko" />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">

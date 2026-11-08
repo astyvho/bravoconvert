@@ -18,6 +18,7 @@ import {
   ZoomOut,
 } from "lucide-react";
 import { ChangeEvent, DragEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { takeHandoffIfRequested } from "@/lib/file-handoff";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 const MAX_SIDE = 16384;
@@ -167,6 +168,16 @@ export default function ImageEditor() {
     };
     image.src = url;
   }, []);
+
+  // A photo handed over from the EXIF viewer (?handoff=1) opens straight away.
+  const handoffStarted = useRef(false);
+  useEffect(() => {
+    if (handoffStarted.current) return;
+    handoffStarted.current = true;
+    takeHandoffIfRequested().then(files => {
+      if (files[0]) loadFile(files[0]);
+    });
+  }, [loadFile]);
 
   useEffect(() => {
     const handlePaste = (event: ClipboardEvent) => {

@@ -1,5 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 import { readFile, writeFile } from "node:fs/promises";
+import JSZip from "jszip";
 import path from "node:path";
 
 const SAMPLE = path.join(__dirname, "..", "..", "public", "guides", "exif-sample-with-metadata.jpg");
@@ -129,6 +130,7 @@ test("the clean copy button downloads a photo with no metadata, turned the right
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toBe("sample-photo-with-gps-clean.jpg");
   await expect(page.getByText("The clean copy was checked again: no identifying information found.")).toBeVisible();
+  await expect(check(page, "location")).toContainText("Removed in copy");
 
   // 받은 파일을 뷰어로 다시 열어 독립적으로 확인한다. 샘플은 640×480 에 90° 회전 플래그가 있으므로 결과는 480×640 이어야 한다.
   const saved = testInfo.outputPath(download.suggestedFilename());
@@ -157,4 +159,84 @@ test("the clean copy can be saved in another format", async ({ page }, testInfo)
   await page.getByLabel("Choose a JPG, PNG, or WebP photo").setInputFiles(saved);
   await expect(page.getByText("No identifying metadata found in this file.")).toBeVisible();
   await expect(page.getByText("480 × 640px")).toBeVisible();
+});
+
+test("several photos can be checked and cleaned at once into one ZIP", async ({ page }, testInfo) => {
+  const jpg = await readFile(SAMPLE);
+  await page.goto("/view/exif/");
+  await rejectOptionalCookies(page);
+  await page.getByLabel("Choose a JPG, PNG, or WebP photo").setInputFiles([
+    { name: "kitchen.jpg", mimeType: "image/jpeg", buffer: jpg },
+    { name: "garden.jpg", mimeType: "image/jpeg", buffer: jpg },
+  ]);
+  await expect(page.getByText("2 photos · 2 carry identifying information")).toBeVisible();
+
+  await page.getByRole("button", { name: "Remove from all" }).click();
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("group", { name: "Save the clean copy as" }).getByRole("button", { name: /Clean copy as JPG/ }).click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toBe("clean-photos.zip");
+  await expect(page.getByText("All 2 clean copies were checked again: no identifying information found.")).toBeVisible();
+  await expect(page.locator("[data-batch] li").getByText("Cleaned")).toHaveCount(2);
+
+  const saved = testInfo.outputPath("clean-photos.zip");
+  await download.saveAs(saved);
+  const zip = await JSZip.loadAsync(await readFile(saved));
+  expect(Object.keys(zip.files).sort()).toEqual(["garden-clean.jpg", "kitchen-clean.jpg"]);
+});
+
+test("the shrink option brings the long side down to 2048 px", async ({ page }) => {
+  await page.goto("/view/exif/");
+  await rejectOptionalCookies(page);
+  // 3000×1500 JPEG 을 브라우저에서 만들고, 샘플의 EXIF 를 붙이지 않아도 되도록 재인코딩 경로만 확인한다.
+  const big = await page.evaluate(async () => {
+    const canvas = document.createElement("canvas");
+    canvas.width = 3000;
+    canvas.height = 1500;
+    const context = canvas.getContext("2d")!;
+    context.fillStyle = "#3a7";
+    context.fillRect(0, 0, 3000, 1500);
+    const blob = await new Promise<Blob>(resolve => canvas.toBlob(b => resolve(b!), "image/jpeg", 0.9));
+    return Array.from(new Uint8Array(await blob.arrayBuffer()));
+  });
+  const tagged = Buffer.from(big);
+  // APP1(EXIF) 를 SOI 바로 뒤에 넣어 "정보 발견" 상태로 만든다.
+  const tiff = await sampleTiff();
+  const app1Body = Buffer.concat([Buffer.from("Exif\0\0", "binary"), tiff]);
+  const app1 = Buffer.alloc(4);
+  app1.writeUInt16BE(0xffe1, 0);
+  app1.writeUInt16BE(app1Body.length + 2, 2);
+  const withExif = Buffer.concat([tagged.subarray(0, 2), app1, app1Body, tagged.subarray(2)]);
+
+  await page.getByLabel("Choose a JPG, PNG, or WebP photo").setInputFiles({ name: "wide.jpg", mimeType: "image/jpeg", buffer: withExif });
+  await page.getByRole("button", { name: "Remove it now" }).click();
+  await page.getByLabel("Shrink the long side to 2048 px (smaller file)").check();
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: /Clean copy as JPG/ }).click();
+  const download = await downloadPromise;
+  const bytes = await readFile(await download.path());
+  // SOF0 에서 크기를 읽는다.
+  let offset = 2;
+  let size: [number, number] | null = null;
+  while (offset < bytes.length) {
+    const marker = bytes[offset + 1];
+    const length = bytes.readUInt16BE(offset + 2);
+    if (marker >= 0xc0 && marker <= 0xc2) { size = [bytes.readUInt16BE(offset + 7), bytes.readUInt16BE(offset + 5)]; break; }
+    offset += 2 + length;
+  }
+  // The sample EXIF carries a 90° rotation, so the 3000×1500 picture comes out upright as 1024×2048.
+  expect(size).toEqual([1024, 2048]);
+});
+
+test("the home page and the converter take the photo without choosing it again", async ({ page }) => {
+  await page.goto("/");
+  await rejectOptionalCookies(page);
+  await page.getByLabel("Choose photos to check").setInputFiles(SAMPLE);
+  await expect(page).toHaveURL(/\/view\/exif\/$/);
+  await expect(page.getByText("This photo carries 3 kinds of identifying information.")).toBeVisible();
+
+  await page.locator("[data-clean]").getByRole("link", { name: "Image Converter" }).click();
+  await expect(page).toHaveURL(/\/convert\/img\/\?from=exif&handoff=1$/);
+  await expect(page.locator("[data-metadata-notice]")).toContainText("The photos you were checking are already added below.");
+  await expect(page.getByText("exif-sample-with-metadata.jpg").first()).toBeVisible();
 });

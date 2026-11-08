@@ -1,4 +1,7 @@
 import { expect, test } from "@playwright/test";
+import path from "node:path";
+
+const SAMPLE = path.join(__dirname, "..", "..", "public", "guides", "exif-sample-with-metadata.jpg");
 
 const SITE = "https://bravoconvert.com";
 
@@ -77,12 +80,26 @@ test("tools reached from the EXIF context say that converting removes the metada
 
   await page.goto("/convert/img/?from=exif&lang=ko");
   const ko = page.locator("[data-metadata-notice]");
-  await expect(ko).toContainText("변환하면 사진에 숨은 정보가 지워집니다");
+  await expect(ko).toContainText("여기서 저장하면 사진에 숨은 정보가 빠집니다");
   await expect(ko.getByRole("link", { name: "EXIF 뷰어로 돌아가기" })).toHaveAttribute("href", "/ko/view/exif/");
 
   await page.goto("/edit/image/?from=exif");
-  await expect(page.locator("[data-metadata-notice]")).toContainText("Converting removes the photo's hidden information");
+  await expect(page.locator("[data-metadata-notice]")).toContainText("Saving here leaves the photo's hidden information behind");
 
   await page.goto("/ko/view/exif/");
   await expect(page.locator('main a[href="/convert/img/?from=exif&lang=ko"]').first()).toBeVisible();
+
+  // 한국어에서 넘어온 영문 도구의 언어 전환은 하던 일(EXIF 뷰어)로 돌려보낸다.
+  await page.goto("/convert/img/?from=exif&lang=ko");
+  await expect(page.getByRole("link", { name: "한국어" }).first()).toHaveAttribute("href", "/ko/view/exif/");
+});
+
+test("the Korean home sends chosen photos straight into the viewer", async ({ page }) => {
+  await page.goto("/ko/");
+  await page.getByLabel("확인할 사진 선택").setInputFiles(SAMPLE);
+  await expect(page).toHaveURL(/\/ko\/view\/exif\/$/);
+  await expect(page.getByText("이 사진에는 신원을 드러낼 수 있는 정보가 3종류 들어 있습니다.")).toBeVisible();
+
+  await page.goto("/ko/view/exif/?sample=1");
+  await expect(page.getByText("이 사진에는 신원을 드러낼 수 있는 정보가 3종류 들어 있습니다.")).toBeVisible();
 });
