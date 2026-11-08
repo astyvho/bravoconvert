@@ -6,56 +6,33 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://bravoconvert.com"),
-  title: "BravoConvert - Free Online Image Editor and File Converter",
-  description: "Resize, rotate and flip images, convert JPG, PNG and WebP files, combine images into PDF, or render PDF pages as images. Processing stays in your browser.",
+  title: "BravoConvert - Check and Remove Photo Metadata Before You Share",
+  description: "See whether a photo reveals its GPS location, time, or device, then remove that metadata by converting it. Image and PDF tools that run in your browser, with nothing uploaded.",
   keywords: [
-    "file converter",
-    "free file converter",
-    "online file converter",
+    "EXIF viewer",
+    "photo metadata",
+    "check photo location",
+    "remove EXIF data",
+    "remove GPS from photo",
+    "strip metadata",
     "image converter",
     "online image editor",
-    "resize image",
-    "rotate image",
-    "flip image",
-    "PDF converter",
-    "metadata removal",
-    "EXIF data removal",
-    "privacy protection",
-    "strip metadata",
-    "remove photo data",
-    "PNG to WebP",
-    "PNG to JPG",
-    "JPG to WebP",
-    "WebP to JPG",
-    "JPG to PNG",
-    "PNG to PDF",
-    "PDF to JPG",
-    "PDF to PNG",
-    "batch conversion",
-    "bulk converter",
-    "privacy safe converter",
-    "BravoConvert",
-    "photo converter",
-    "fast file converter",
-    "browser file converter",
-    "no install converter",
-    "convert files online",
-    "file conversion tool",
-    "image format converter",
-    "PDF image converter",
-    "image compression",
-    "images to PDF"
+    "PDF to image",
+    "merge PDF",
+    "split PDF",
+    "no upload",
+    "BravoConvert"
   ],
   openGraph: {
-    title: "BravoConvert - Free Online Image Editor and File Converter",
-    description: "Edit images, convert image formats, combine images into PDF, and turn PDF pages into JPG or PNG—all in your browser.",
+    title: "BravoConvert - Check What a Photo Reveals Before You Share It",
+    description: "Check a photo for GPS location, time and device details, then remove them by converting it. Everything runs in your browser.",
     type: "website",
     url: "https://bravoconvert.com"
   },
   twitter: {
     card: "summary_large_image",
-    title: "BravoConvert - Browser-Based Image Editor and Converter",
-    description: "Resize, rotate and flip images, convert image formats, or export PDF pages as images. Free and no installation required."
+    title: "BravoConvert - Check What a Photo Reveals Before You Share It",
+    description: "Check a photo for GPS location, time and device details, then remove them by converting it. Nothing is uploaded."
   },
   alternates: {
     canonical: "/",
@@ -126,11 +103,11 @@ export default function RootLayout({
             <div className="mb-4">
               {/* 도구 링크 — 모든 페이지의 정적 HTML에 포함되어야 크롤러가 따라갈 수 있다 */}
               <nav aria-label="Tools" className="mb-4 flex flex-wrap justify-center gap-x-2 gap-y-1 text-sm font-medium">
+                <Link href="/view/exif/" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">EXIF Viewer</Link>
                 <Link href="/convert/img/" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">Image Converter</Link>
                 <Link href="/convert/pdf/" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">PDF to Image Converter</Link>
                 <Link href="/edit/image/" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">Image Editor</Link>
                 <Link href="/edit/pdf/" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">Merge & Split PDF</Link>
-                <Link href="/view/exif/" className="hover:text-gray-700 px-2 py-1 text-black transition-colors duration-300">EXIF Viewer</Link>
               </nav>
 
               {/* 데스크톱 푸터 링크 */}

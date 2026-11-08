@@ -115,6 +115,9 @@ test("all tools and consent layout render at desktop and iPhone widths", async (
     await expect(page.getByRole("heading", { name: "Merge and split PDF files" })).toBeVisible();
     await page.goto("/view/exif/");
     await expect(page.getByRole("heading", { name: "EXIF viewer" })).toBeVisible();
+    await page.goto("/");
+    await expect(page.getByRole("heading", { level: 1, name: "Check what a photo reveals before you share it" })).toBeVisible();
+    await expect(page.getByText("None of the fields survived.")).toBeVisible();
     await page.evaluate(() => localStorage.removeItem("bravoconvert-consent-v1"));
   }
 });

@@ -19,7 +19,7 @@ const UPDATED = benchmarks.generatedAt;
 export const metadata: Metadata = {
   title: "Guides: Measured Answers About Image and PDF Conversion | BravoConvert",
   description:
-    "Six guides built on byte counts we measured ourselves, in the same browser engine the converters use — format comparisons, file size, PDF output resolution, EXIF privacy, troubleshooting and terminology.",
+    "Six guides built on measurements we took ourselves, in the same browser engine the tools use — what EXIF metadata reveals and whether it survives conversion, format comparisons, file size, PDF output resolution, troubleshooting and terminology.",
   alternates: { canonical: "/guides/" },
   openGraph: {
     title: "Guides: Measured Answers About Image and PDF Conversion",
@@ -39,6 +39,20 @@ const webpAt = (s: typeof photo, q: number) => s.webp.find((e) => e.quality === 
 const pdfJpg95 = benchmarks.pdfPage.jpeg.find((e) => e.quality === 0.95)!.bytes;
 
 const groups = [
+  {
+    heading: "What your files reveal",
+    blurb: "The information that travels inside a photo, and what it takes to remove it — tested rather than assumed.",
+    items: [
+      {
+        href: "/guides/exif-metadata-privacy/",
+        icon: Fingerprint,
+        title: "EXIF data and privacy",
+        description:
+          "We built a photo carrying GPS coordinates, camera model and a timestamp, converted it, and read the metadata back field by field. Includes what stripping EXIF does not protect you from.",
+        finding: `Every field was gone after conversion — ${exifDemo.exifBlockBytes} bytes of metadata that a viewer never sees but any EXIF reader can pull out.`,
+      },
+    ],
+  },
   {
     heading: "Choosing a format and a size",
     blurb:
@@ -67,8 +81,8 @@ const groups = [
     ],
   },
   {
-    heading: "Working with PDFs and metadata",
-    blurb: "What actually comes out of the tools, and what travels along with your files.",
+    heading: "Working with PDFs",
+    blurb: "What actually comes out when a document becomes images.",
     items: [
       {
         href: "/guides/pdf-to-image-use-cases/",
@@ -79,14 +93,6 @@ const groups = [
         finding: `Pages render at ${benchmarks.pdfPage.dpi} DPI, so A4 becomes ${benchmarks.pdfPage.pixelSize.width}×${benchmarks.pdfPage.pixelSize.height}. For a text document, JPG came out ${(
           pdfJpg95 / benchmarks.pdfPage.png
         ).toFixed(1)}× larger than PNG.`,
-      },
-      {
-        href: "/guides/exif-metadata-privacy/",
-        icon: Fingerprint,
-        title: "EXIF data and privacy",
-        description:
-          "We built a photo carrying GPS coordinates, camera model and a timestamp, converted it, and read the metadata back field by field. Includes what stripping EXIF does not protect you from.",
-        finding: `Every field was gone after conversion — ${exifDemo.exifBlockBytes} bytes of metadata that a viewer never sees but any EXIF reader can pull out.`,
       },
     ],
   },
@@ -155,8 +161,8 @@ export default function GuidesIndexPage() {
           </h1>
           <p className="mb-4 text-xl text-black">Measured answers, not rules of thumb</p>
           <p className="text-base text-gray-600">
-            {totalGuides} guides on picking formats, shrinking files, converting PDFs, and what
-            travels inside an image
+            {totalGuides} guides on what travels inside a photo, picking formats, shrinking files,
+            and converting PDFs
           </p>
           <p className="mt-4 text-sm text-gray-500">
             Published <time dateTime={PUBLISHED}>{PUBLISHED}</time> · Updated{" "}
@@ -217,7 +223,15 @@ export default function GuidesIndexPage() {
         <section className="mt-10 rounded-xl border border-gray-200 bg-white p-6 shadow-lg md:p-8">
           <h2 className="mb-3 text-2xl font-bold text-black">Where to start</h2>
           <p className="mb-4 text-gray-700 leading-7">
-            If you are here because a file is too big, read{" "}
+            If you are about to share a photo, start with{" "}
+            <Link className="underline font-medium" href="/guides/exif-metadata-privacy/">
+              EXIF data and privacy
+            </Link>{" "}
+            and check the file in the{" "}
+            <Link className="underline font-medium" href="/view/exif/">
+              EXIF Viewer
+            </Link>
+            . If you are here because a file is too big, read{" "}
             <Link className="underline font-medium" href="/guides/reduce-image-file-size/">
               how to reduce image file size
             </Link>{" "}

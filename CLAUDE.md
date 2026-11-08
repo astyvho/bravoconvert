@@ -6,6 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 BravoConvert is a Next.js 14 web application providing free online file conversion tools for images and PDFs. The application runs entirely client-side for privacy and performance, with no server uploads required.
 
+**Positioning (since 2026-11-08): check what a file reveals before sharing it.** The EXIF Viewer leads the home page and menus; the converters are presented as the way to remove metadata as well as everyday tools. This was chosen because generic-converter search terms rank 75–94 against large incumbents while `exif viewer` ranked ~22 within weeks. New content should serve this focus with measured, original findings rather than adding generic converter features.
+
 ## Development Commands
 
 ```bash

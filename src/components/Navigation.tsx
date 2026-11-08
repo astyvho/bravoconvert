@@ -46,7 +46,7 @@ export default function Navigation() {
         
         {/* Desktop menu */}
         <div className="hidden md:flex items-center gap-6 text-sm relative z-10">
-          {/* Converter tools dropdown */}
+          {/* Tools dropdown */}
           <div 
             ref={dropdownRef}
             className="relative"
@@ -56,7 +56,7 @@ export default function Navigation() {
             <button
               className="flex items-center gap-1 hover:text-black text-black transition-all duration-300 font-medium px-4 py-2.5 rounded-xl hover:bg-gray-200 hover:shadow-sm"
             >
-              Converters
+              Tools
               <ChevronDown size={16} className={`transition-transform duration-200 ${isConverterOpen ? 'rotate-180' : ''}`} />
             </button>
             
@@ -68,6 +68,10 @@ export default function Navigation() {
             >
               {/* Top virtual padding area - expand mouse over area */}
               <div className="h-4 bg-transparent"></div>
+              <Link href="/view/exif/" className="block px-4 py-3 text-black hover:bg-gray-100 transition-all duration-200 border-b border-gray-100">
+                <div className="font-medium">EXIF Viewer</div>
+                <div className="text-xs text-gray-600">See a photo&apos;s hidden metadata</div>
+              </Link>
               <Link href="/convert/img/" className="block px-4 py-3 text-black hover:bg-gray-100 transition-all duration-200 border-b border-gray-100">
                 <div className="font-medium">Image Converter</div>
                 <div className="text-xs text-gray-600">PNG, JPG, WEBP, PDF & more</div>
@@ -83,10 +87,6 @@ export default function Navigation() {
               <Link href="/edit/pdf/" className="block px-4 py-3 text-black hover:bg-gray-100 transition-all duration-200 border-b border-gray-100">
                 <div className="font-medium">Merge & Split PDF</div>
                 <div className="text-xs text-gray-600">Combine PDFs or extract pages</div>
-              </Link>
-              <Link href="/view/exif/" className="block px-4 py-3 text-black hover:bg-gray-100 transition-all duration-200 border-b border-gray-100">
-                <div className="font-medium">EXIF Viewer</div>
-                <div className="text-xs text-gray-600">See a photo&apos;s hidden metadata</div>
               </Link>
               {/* Bottom virtual padding area - expand mouse over area */}
               <div className="h-4 bg-transparent"></div>
@@ -117,6 +117,10 @@ export default function Navigation() {
         {/* Mobile dropdown menu — always in the DOM so crawlers see the tool links; visibility is CSS only */}
         <div className={`absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden md:hidden ${isMenuOpen ? '' : 'pointer-events-none invisible opacity-0'}`}>
           <div className="flex flex-col">
+            <Link href="/view/exif/" onClick={() => setIsMenuOpen(false)} className="hover:text-black text-black transition-all duration-300 font-medium px-6 py-4 hover:bg-gray-200 border-b border-gray-100">
+              <div className="font-medium">EXIF Viewer</div>
+              <div className="text-xs text-gray-600">See a photo&apos;s hidden metadata</div>
+            </Link>
             <Link href="/convert/img/" onClick={() => setIsMenuOpen(false)} className="hover:text-black text-black transition-all duration-300 font-medium px-6 py-4 hover:bg-gray-200 border-b border-gray-100">
               <div className="font-medium">Image Converter</div>
               <div className="text-xs text-gray-600">PNG, JPG, WEBP, PDF & more</div>
@@ -132,10 +136,6 @@ export default function Navigation() {
             <Link href="/edit/pdf/" onClick={() => setIsMenuOpen(false)} className="hover:text-black text-black transition-all duration-300 font-medium px-6 py-4 hover:bg-gray-200 border-b border-gray-100">
               <div className="font-medium">Merge & Split PDF</div>
               <div className="text-xs text-gray-600">Combine PDFs or extract pages</div>
-            </Link>
-            <Link href="/view/exif/" onClick={() => setIsMenuOpen(false)} className="hover:text-black text-black transition-all duration-300 font-medium px-6 py-4 hover:bg-gray-200 border-b border-gray-100">
-              <div className="font-medium">EXIF Viewer</div>
-              <div className="text-xs text-gray-600">See a photo&apos;s hidden metadata</div>
             </Link>
             <Link href="/how-to-use/" onClick={() => setIsMenuOpen(false)} className="hover:text-black text-black transition-all duration-300 font-medium px-6 py-4 hover:bg-gray-200 border-b border-gray-100">How to Use</Link>
             <Link href="/guides/" onClick={() => setIsMenuOpen(false)} className="hover:text-black text-black transition-all duration-300 font-medium px-6 py-4 hover:bg-gray-200 border-b border-gray-100">Guides</Link>

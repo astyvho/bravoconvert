@@ -116,7 +116,7 @@ test("rejects encrypted and non-PDF files with a clear message", async ({ page }
   await rejectOptionalCookies(page);
   await page.getByLabel("Choose PDF files to merge").setInputFiles([good, locked, fake]);
 
-  await expect(page.getByText("password-protected or encrypted")).toBeVisible();
+  await expect(page.getByText("This PDF is password-protected or encrypted")).toBeVisible();
   await expect(page.getByText("could not be read as a PDF")).toBeVisible();
   await expect(page.getByText("Add at least two readable PDFs.")).toBeVisible();
   await expect(page.getByRole("button", { name: "Merge PDFs" })).toBeDisabled();

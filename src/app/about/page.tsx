@@ -25,6 +25,8 @@ export const metadata: Metadata = {
 };
 
 const workflows = [
+  "Check a JPG, PNG or WebP photo for location, time, device, serial number, owner and software details",
+  "Remove a photo's EXIF block by converting or exporting it, then confirm in the viewer",
   "Convert between JPG, PNG and WebP, one file or a batch",
   "Combine several images into a single PDF document",
   "Render PDF pages as JPG or PNG images",
@@ -64,7 +66,7 @@ export default function AboutPage() {
             About BravoConvert
           </h1>
           <p className="mb-4 text-xl text-black">
-            Everyday image and PDF work, done without uploading anything
+            Know what your files reveal before you share them, and handle them without uploading anything
           </p>
           <p className="text-base text-gray-600">
             What the site does, how it works, what it will not do, and how it pays for itself
@@ -85,6 +87,13 @@ export default function AboutPage() {
               finish in a second. This site does those everyday jobs entirely inside your browser
               instead.
             </p>
+            <p className="mt-4 text-gray-700 leading-7">
+              Building it made a second problem obvious. The files people share carry information they
+              never see: a phone photo can hold the coordinates of the room it was taken in, the minute
+              it was taken and the model of the phone. So the site&apos;s focus is now the step before
+              sharing — check what a file reveals, remove what it should not carry, and confirm the
+              result — with the format and PDF tools serving that job as well as the everyday ones.
+            </p>
           </section>
 
           <section>
@@ -94,10 +103,14 @@ export default function AboutPage() {
             </h2>
             <p className="mb-4 text-gray-700 leading-7">
               Five tools, each doing one thing:{" "}
+              <Link className="underline font-medium" href="/view/exif/">
+                EXIF Viewer
+              </Link>{" "}
+              for checking what a photo reveals about where, when, and on what it was taken before you share it,{" "}
               <Link className="underline font-medium" href="/convert/img/">
                 Image Converter
               </Link>{" "}
-              for changing formats and batching,{" "}
+              for changing formats and batching — and, because it rebuilds each image, for removing that metadata,{" "}
               <Link className="underline font-medium" href="/convert/pdf/">
                 PDF Converter
               </Link>{" "}
@@ -109,11 +122,7 @@ export default function AboutPage() {
               <Link className="underline font-medium" href="/edit/pdf/">
                 Merge &amp; Split PDF
               </Link>{" "}
-              for combining PDFs or pulling pages out of one while keeping them as real PDF pages, and{" "}
-              <Link className="underline font-medium" href="/view/exif/">
-                EXIF Viewer
-              </Link>{" "}
-              for checking what a photo reveals about where, when, and on what it was taken before you share it.
+              for combining PDFs or pulling pages out of one while keeping them as real PDF pages.
             </p>
             <ul className="list-disc space-y-2 pl-6 text-gray-700">
               {workflows.map((item) => (
@@ -225,9 +234,11 @@ export default function AboutPage() {
               What is next
             </h2>
             <p className="text-gray-700 leading-7">
-              The Image Editor currently covers resize, rotate and flip. Free-form cropping, batch
-              editing and additional input formats are under consideration, and will only ship once
-              they work reliably in a browser rather than approximately. The{" "}
+              More measured guides on what files reveal — including what the major sharing apps do
+              and do not strip from a photo — are planned, and will be added one at a time. Checking
+              the hidden properties of a PDF, such as its author and the software that made it, is under
+              consideration, and like everything else will only ship once it works reliably in a
+              browser rather than approximately. The{" "}
               <Link className="underline font-medium" href="/changelog/">
                 changelog
               </Link>{" "}
