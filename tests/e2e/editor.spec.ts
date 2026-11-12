@@ -102,6 +102,7 @@ test("editor supports resizing, rotation, flips, history, replacement, and all e
 });
 
 test("all tools and consent layout render at desktop and iPhone widths", async ({ page }) => {
+  test.slow(); // ten page loads on a dev server that compiles each route on first visit
   for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 }]) {
     await page.setViewportSize(viewport);
     await page.goto("/edit/image/");
