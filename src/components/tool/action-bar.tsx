@@ -12,6 +12,7 @@ function useIsDesktop() {
     const query = window.matchMedia(DESKTOP);
     const update = () => setDesktop(query.matches);
     update();
+    // media-query-polyfill.ts gives Safari before 14 the addEventListener used here.
     query.addEventListener("change", update);
     return () => query.removeEventListener("change", update);
   }, []);
