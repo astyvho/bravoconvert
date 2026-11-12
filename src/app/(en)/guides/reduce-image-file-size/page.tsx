@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+import ContentHeader from "@/components/content/content-header";
+import IconTile from "@/components/tool/icon-tile";
+import Prose from "@/components/tool/prose";
 import Link from "next/link";
 import { FlaskConical, Gauge, Layers, Minimize2, SlidersHorizontal, Tag } from "lucide-react";
 import benchmarks from "@/data/format-benchmarks.json";
@@ -97,35 +100,31 @@ const articleSchema = {
 
 export default function ReduceFileSizeGuide() {
   return (
-    <main className="min-h-screen bg-gray-50 py-12 px-4">
+    <main>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
       />
-      <div className="max-w-4xl mx-auto">
-        <header className="mb-12 text-center">
-          <h1 className="mb-4 flex items-center justify-center text-4xl font-bold text-black md:text-6xl">
-            <Minimize2 className="mr-4 h-16 w-16 flex-shrink-0 text-gray-700" aria-hidden="true" />
-            Reduce Image File Size
-          </h1>
-          <p className="mb-4 text-xl text-black">Four levers, measured against each other</p>
-          <p className="text-base text-gray-600">
+      <div className="mx-auto w-full max-w-[1120px] px-4 pb-16 pt-6 sm:px-6">
+        <ContentHeader label="Guide" title="Reduce Image File Size">
+          <p className="mt-3 text-lg leading-relaxed text-foreground">Four levers, measured against each other</p>
+          <p className="mt-2 text-base leading-relaxed text-muted-foreground">
             The same source photo run through each technique, with the byte count of every result
           </p>
-          <p className="mt-4 text-sm text-gray-500">
+          <p className="mt-4 text-sm text-muted-foreground">
             Published <time dateTime={PUBLISHED}>{PUBLISHED}</time> · Updated{" "}
             <time dateTime={UPDATED}>{UPDATED}</time>
           </p>
-        </header>
+        </ContentHeader>
 
-        <article className="space-y-10 rounded-xl border border-gray-200 bg-white p-6 shadow-lg transition-all duration-300 hover:shadow-xl md:p-10">
-          <p className="text-gray-700 leading-7">
+        <Prose as="article" className="mt-10 max-w-[720px] space-y-10">
+          <p className="text-muted-foreground leading-7">
             Large images slow down pages, get bounced by upload limits, and eat storage. Four things
             change the file size: the format you pick, the pixel dimensions, the quality setting, and
             the metadata riding along. They are not close to equal, so the order you pull them matters.
           </p>
 
-          <div className="rounded-xl bg-blue-50 border border-blue-200 p-5 text-gray-800">
+          <div className="rounded-field bg-primary-soft border border-transparent p-5 text-foreground">
             <strong>Short version:</strong> format and dimensions do the heavy lifting. On our test
             photo, switching from PNG to WebP removed {pct(webpAt(0.8), photo.png)} of the file before
             touching anything else, and halving the dimensions removed a further{" "}
@@ -134,13 +133,13 @@ export default function ReduceFileSizeGuide() {
           </div>
 
           <section>
-            <h2 className="mb-3 flex items-center gap-3 text-2xl font-bold text-black">
-              <FlaskConical className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+            <h2>
+              <IconTile icon={FlaskConical} size="sm" tone="blue" className="hidden sm:inline-flex" />
               Where these numbers come from
             </h2>
-            <p className="text-gray-700 leading-7">
+            <p className="text-muted-foreground leading-7">
               Every figure below was produced by encoding one deterministic {photo.width}×{photo.height}{" "}
-              test photograph through the Canvas <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm">toBlob</code>{" "}
+              test photograph through the Canvas <code className="rounded bg-muted px-1.5 py-0.5 text-sm">toBlob</code>{" "}
               API in Chromium {benchmarks.engine} on {UPDATED} — the same encode path the{" "}
               <Link className="underline font-medium" href="/convert/img/">
                 Image Converter
@@ -154,47 +153,47 @@ export default function ReduceFileSizeGuide() {
           </section>
 
           <section>
-            <h2 className="mb-3 flex items-center gap-3 text-2xl font-bold text-black">
-              <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-black text-sm font-bold text-white">
+            <h2>
+              <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground">
                 1
               </span>
               Choose the format first
             </h2>
-            <p className="text-gray-700 leading-7 mb-4">
+            <p className="text-muted-foreground leading-7 mb-4">
               This is the largest single lever for photographs, and it costs you nothing visible. The
               test photo is {kb(photo.png)} as a PNG because PNG is lossless and has to record every
               grain of sensor noise exactly. The same image at quality 0.8 is {kb(jpegAt(0.8))} as JPG
               and {kb(webpAt(0.8))} as WebP.
             </p>
-            <div className="overflow-x-auto rounded-lg border border-gray-200">
+            <div className="prose-wide">
               <table className="w-full text-left text-sm">
-                <thead className="bg-gray-100 text-black">
+                <thead className="bg-muted text-foreground">
                   <tr>
                     <th className="p-3 font-bold">Format</th>
                     <th className="p-3 font-bold">Size</th>
                     <th className="p-3 font-bold">Saved vs PNG</th>
                   </tr>
                 </thead>
-                <tbody className="text-gray-700">
-                  <tr className="border-t border-gray-200">
-                    <td className="p-3 font-medium text-black">PNG</td>
+                <tbody className="text-muted-foreground">
+                  <tr className="border-t border-border">
+                    <td className="p-3 font-medium text-foreground">PNG</td>
                     <td className="p-3">{kb(photo.png)}</td>
-                    <td className="p-3 text-gray-400">—</td>
+                    <td className="p-3 text-muted-foreground">—</td>
                   </tr>
-                  <tr className="border-t border-gray-200">
-                    <td className="p-3 font-medium text-black">JPG, quality 0.8</td>
+                  <tr className="border-t border-border">
+                    <td className="p-3 font-medium text-foreground">JPG, quality 0.8</td>
                     <td className="p-3">{kb(jpegAt(0.8))}</td>
                     <td className="p-3">{pct(jpegAt(0.8), photo.png)}</td>
                   </tr>
-                  <tr className="border-t border-gray-200">
-                    <td className="p-3 font-medium text-black">WebP, quality 0.8</td>
+                  <tr className="border-t border-border">
+                    <td className="p-3 font-medium text-foreground">WebP, quality 0.8</td>
                     <td className="p-3">{kb(webpAt(0.8))}</td>
                     <td className="p-3">{pct(webpAt(0.8), photo.png)}</td>
                   </tr>
                 </tbody>
               </table>
             </div>
-            <p className="mt-4 text-gray-700 leading-7">
+            <p className="mt-4 text-muted-foreground leading-7">
               If the image needs transparency you cannot use JPG at all, but WebP keeps the alpha
               channel and is still far smaller than PNG. The one case where PNG is the right answer is
               flat graphics and screenshots, where lossless is both smaller and cleaner than a lossy
@@ -203,13 +202,13 @@ export default function ReduceFileSizeGuide() {
           </section>
 
           <section>
-            <h2 className="mb-3 flex items-center gap-3 text-2xl font-bold text-black">
-              <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-black text-sm font-bold text-white">
+            <h2>
+              <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground">
                 2
               </span>
               Reduce the dimensions — this beats the rule of thumb
             </h2>
-            <p className="text-gray-700 leading-7 mb-4">
+            <p className="text-muted-foreground leading-7 mb-4">
               The common advice is that file size falls in proportion to pixel count: half the width
               and half the height means a quarter of the pixels, so expect roughly a quarter of the
               bytes. The measurements say you do better than that.
@@ -219,12 +218,12 @@ export default function ReduceFileSizeGuide() {
               width={1554}
               height={292}
               alt="The same photograph at 900x600, 675x450, 450x300 and 225x150 pixels, drawn at true relative size with the file size of each"
-              className="mb-5 h-auto w-full rounded-lg border border-gray-200"
+              className="mb-5 h-auto w-full rounded-field border border-border"
               loading="lazy"
             />
-            <div className="overflow-x-auto rounded-lg border border-gray-200">
+            <div className="prose-wide">
               <table className="w-full text-left text-sm">
-                <thead className="bg-gray-100 text-black">
+                <thead className="bg-muted text-foreground">
                   <tr>
                     <th className="p-3 font-bold">Scale</th>
                     <th className="p-3 font-bold">Dimensions</th>
@@ -233,10 +232,10 @@ export default function ReduceFileSizeGuide() {
                     <th className="p-3 font-bold">WebP bytes remaining</th>
                   </tr>
                 </thead>
-                <tbody className="text-gray-700">
+                <tbody className="text-muted-foreground">
                   {resize.rows.map((row) => (
-                    <tr key={row.scale} className="border-t border-gray-200">
-                      <td className="p-3 font-medium text-black">
+                    <tr key={row.scale} className="border-t border-border">
+                      <td className="p-3 font-medium text-foreground">
                         {Math.round(row.scale * 100)}%
                       </td>
                       <td className="p-3">
@@ -245,13 +244,13 @@ export default function ReduceFileSizeGuide() {
                       <td className="p-3">{Math.round((row.pixels / full.pixels) * 100)}%</td>
                       <td className="p-3">
                         {kb(row.jpeg)}{" "}
-                        <span className="text-gray-500">
+                        <span className="text-muted-foreground">
                           ({Math.round((row.jpeg / full.jpeg) * 100)}%)
                         </span>
                       </td>
                       <td className="p-3">
                         {kb(row.webp)}{" "}
-                        <span className="text-gray-500">
+                        <span className="text-muted-foreground">
                           ({Math.round((row.webp / full.webp) * 100)}%)
                         </span>
                       </td>
@@ -260,19 +259,19 @@ export default function ReduceFileSizeGuide() {
                 </tbody>
               </table>
             </div>
-            <p className="mt-4 text-gray-700 leading-7">
+            <p className="mt-4 text-muted-foreground leading-7">
               At 75% scale the image keeps{" "}
               {Math.round((resize.rows[1].pixels / full.pixels) * 100)}% of its pixels but only{" "}
               {Math.round((resize.rows[1].jpeg / full.jpeg) * 100)}% of its JPG bytes. At 50% it keeps
               a quarter of the pixels and under a fifth of the bytes.
             </p>
-            <p className="mt-4 text-gray-700 leading-7">
+            <p className="mt-4 text-muted-foreground leading-7">
               The reason is that downscaling averages neighbouring pixels together, and that averaging
               destroys exactly the high-frequency noise that is most expensive to encode. You are not
               only sending fewer pixels — you are sending pixels that compress better. WebP gains even
               more from this than JPG.
             </p>
-            <div className="mt-4 rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm text-gray-600">
+            <div className="mt-4 rounded-field border border-border bg-muted p-4 text-sm text-muted-foreground">
               Resizing down cannot be undone, so work from a copy. Keep the aspect ratio locked in the{" "}
               <Link className="underline font-medium" href="/edit/image/">
                 Image Editor
@@ -283,19 +282,19 @@ export default function ReduceFileSizeGuide() {
           </section>
 
           <section>
-            <h2 className="mb-3 flex items-center gap-3 text-2xl font-bold text-black">
-              <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-black text-sm font-bold text-white">
+            <h2>
+              <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground">
                 3
               </span>
               Lower the quality setting
             </h2>
-            <p className="text-gray-700 leading-7 mb-4">
+            <p className="text-muted-foreground leading-7 mb-4">
               Quality is the fine adjustment. It moves the file a lot at the top of the scale and much
               less at the bottom, which is the opposite of how people usually reach for it.
             </p>
-            <div className="overflow-x-auto rounded-lg border border-gray-200">
+            <div className="prose-wide">
               <table className="w-full text-left text-sm">
-                <thead className="bg-gray-100 text-black">
+                <thead className="bg-muted text-foreground">
                   <tr>
                     <th className="p-3 font-bold">Quality</th>
                     <th className="p-3 font-bold">JPG</th>
@@ -303,13 +302,13 @@ export default function ReduceFileSizeGuide() {
                     <th className="p-3 font-bold">Change from 0.95</th>
                   </tr>
                 </thead>
-                <tbody className="text-gray-700">
+                <tbody className="text-muted-foreground">
                   {photo.jpeg.map((entry) => (
-                    <tr key={entry.quality} className="border-t border-gray-200">
-                      <td className="p-3 font-medium text-black">{entry.quality}</td>
+                    <tr key={entry.quality} className="border-t border-border">
+                      <td className="p-3 font-medium text-foreground">{entry.quality}</td>
                       <td className="p-3">{kb(entry.bytes)}</td>
                       <td className="p-3">{kb(webpAt(entry.quality))}</td>
-                      <td className="p-3 text-gray-500">
+                      <td className="p-3 text-muted-foreground">
                         {entry.quality === 0.95 ? "—" : `−${pct(entry.bytes, jpegAt(0.95))}`}
                       </td>
                     </tr>
@@ -317,7 +316,7 @@ export default function ReduceFileSizeGuide() {
                 </tbody>
               </table>
             </div>
-            <p className="mt-4 text-gray-700 leading-7">
+            <p className="mt-4 text-muted-foreground leading-7">
               Dropping from 0.95 to 0.8 removes {pct(jpegAt(0.8), jpegAt(0.95))} of the file for a
               difference most people cannot see. Going further to 0.6 removes{" "}
               {pct(jpegAt(0.6), jpegAt(0.95))} in total, and by 0.4 the encoder is visibly smoothing
@@ -327,13 +326,13 @@ export default function ReduceFileSizeGuide() {
           </section>
 
           <section>
-            <h2 className="mb-3 flex items-center gap-3 text-2xl font-bold text-black">
-              <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-black text-sm font-bold text-white">
+            <h2>
+              <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground">
                 4
               </span>
               Drop embedded metadata
             </h2>
-            <p className="text-gray-700 leading-7">
+            <p className="text-muted-foreground leading-7">
               Camera and phone photos carry an EXIF block holding camera settings, timestamps, and
               sometimes GPS coordinates. It is worth removing — but be clear about why. A typical EXIF
               block is a few kilobytes against a photo measured in hundreds, so it will not rescue an
@@ -347,11 +346,11 @@ export default function ReduceFileSizeGuide() {
           </section>
 
           <section>
-            <h2 className="mb-4 flex items-center gap-3 text-2xl font-bold text-black">
-              <Gauge className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+            <h2>
+              <IconTile icon={Gauge} size="sm" tone="blue" className="hidden sm:inline-flex" />
               Stacking the levers
             </h2>
-            <p className="text-gray-700 leading-7 mb-4">
+            <p className="text-muted-foreground leading-7 mb-4">
               Applied together on the same source image, the first two levers alone account for almost
               the entire reduction:
             </p>
@@ -359,16 +358,16 @@ export default function ReduceFileSizeGuide() {
               {cascade.map((row, index) => (
                 <div
                   key={row.step}
-                  className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-gray-200 bg-gray-50 p-4"
+                  className="flex flex-wrap items-center justify-between gap-3 rounded-field border border-border bg-muted p-4"
                 >
                   <div>
-                    <div className="font-medium text-black">{row.step}</div>
-                    <div className="text-sm text-gray-600">{row.detail}</div>
+                    <div className="font-medium text-foreground">{row.step}</div>
+                    <div className="text-sm text-muted-foreground">{row.detail}</div>
                   </div>
                   <div className="text-right">
-                    <div className="text-lg font-bold text-black">{kb(row.bytes)}</div>
+                    <div className="text-lg font-bold text-foreground">{kb(row.bytes)}</div>
                     {index > 0 && (
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm text-muted-foreground">
                         {pct(row.bytes, cascade[0].bytes)} smaller than the original
                       </div>
                     )}
@@ -376,7 +375,7 @@ export default function ReduceFileSizeGuide() {
                 </div>
               ))}
             </div>
-            <p className="mt-4 text-gray-700 leading-7">
+            <p className="mt-4 text-muted-foreground leading-7">
               {kb(cascade[0].bytes)} down to {kb(cascade[2].bytes)} — a{" "}
               {pct(cascade[2].bytes, cascade[0].bytes)} reduction, without ever moving the quality
               slider below 0.8.
@@ -384,40 +383,40 @@ export default function ReduceFileSizeGuide() {
           </section>
 
           <section>
-            <h2 className="mb-4 text-2xl font-bold text-black">Recipes</h2>
+            <h2>Recipes</h2>
             <div className="grid gap-4 md:grid-cols-2">
-              <div className="rounded-lg border border-gray-200 bg-gray-50 p-5">
-                <div className="mb-2 flex items-center gap-2 font-bold text-black">
+              <div className="rounded-field border border-border bg-muted p-5">
+                <div className="mb-2 flex items-center gap-2 font-bold text-foreground">
                   <SlidersHorizontal className="h-5 w-5" /> Photo for a web page
                 </div>
-                <p className="text-sm text-gray-700">
+                <p className="text-sm text-muted-foreground">
                   WebP at quality 0.8, resized to the width the page actually renders. Sending a
                   4000px-wide photo into a 800px slot wastes most of the file.
                 </p>
               </div>
-              <div className="rounded-lg border border-gray-200 bg-gray-50 p-5">
-                <div className="mb-2 flex items-center gap-2 font-bold text-black">
+              <div className="rounded-field border border-border bg-muted p-5">
+                <div className="mb-2 flex items-center gap-2 font-bold text-foreground">
                   <Tag className="h-5 w-5" /> Upload with a hard size limit
                 </div>
-                <p className="text-sm text-gray-700">
+                <p className="text-sm text-muted-foreground">
                   Resize first, then lower quality only if you are still over. Resizing preserves
                   apparent sharpness better than heavy compression at full size does.
                 </p>
               </div>
-              <div className="rounded-lg border border-gray-200 bg-gray-50 p-5">
-                <div className="mb-2 flex items-center gap-2 font-bold text-black">
+              <div className="rounded-field border border-border bg-muted p-5">
+                <div className="mb-2 flex items-center gap-2 font-bold text-foreground">
                   <Layers className="h-5 w-5" /> Logo or screenshot with transparency
                 </div>
-                <p className="text-sm text-gray-700">
+                <p className="text-sm text-muted-foreground">
                   WebP if the destination accepts it, PNG otherwise. Never JPG — it cannot store
                   transparent pixels and will fill them with a solid colour.
                 </p>
               </div>
-              <div className="rounded-lg border border-gray-200 bg-gray-50 p-5">
-                <div className="mb-2 flex items-center gap-2 font-bold text-black">
+              <div className="rounded-field border border-border bg-muted p-5">
+                <div className="mb-2 flex items-center gap-2 font-bold text-foreground">
                   <Gauge className="h-5 w-5" /> Email attachment
                 </div>
-                <p className="text-sm text-gray-700">
+                <p className="text-sm text-muted-foreground">
                   JPG at 0.8 resized to around 1600px on the long edge. Universally readable and
                   comfortably under typical attachment limits.
                 </p>
@@ -425,8 +424,8 @@ export default function ReduceFileSizeGuide() {
             </div>
           </section>
 
-          <div className="rounded-xl border border-gray-200 bg-gray-50 p-6">
-            <p className="text-gray-700">
+          <div className="rounded-field border border-border bg-muted p-6">
+            <p className="text-muted-foreground">
               Start with the{" "}
               <Link className="underline font-medium" href="/convert/img/">
                 Image Converter
@@ -438,7 +437,7 @@ export default function ReduceFileSizeGuide() {
               to resize first. Both run entirely in your browser, so the file never leaves your device.
             </p>
           </div>
-        </article>
+        </Prose>
       </div>
     </main>
   );

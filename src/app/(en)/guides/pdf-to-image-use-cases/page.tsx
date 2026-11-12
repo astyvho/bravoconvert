@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+import ContentHeader from "@/components/content/content-header";
+import IconTile from "@/components/tool/icon-tile";
+import Prose from "@/components/tool/prose";
 import Link from "next/link";
 import {
   AlertTriangle,
@@ -93,29 +96,25 @@ const articleSchema = {
 
 export default function PdfUseCasesGuide() {
   return (
-    <main className="min-h-screen bg-gray-50 py-12 px-4">
+    <main>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
       />
-      <div className="max-w-4xl mx-auto">
-        <header className="mb-12 text-center">
-          <h1 className="mb-4 flex items-center justify-center text-4xl font-bold text-black md:text-6xl">
-            <Files className="mr-4 h-16 w-16 flex-shrink-0 text-gray-700" aria-hidden="true" />
-            PDF to Image
-          </h1>
-          <p className="mb-4 text-xl text-black">What you actually get, and when it is worth it</p>
-          <p className="text-base text-gray-600">
+      <div className="mx-auto w-full max-w-[1120px] px-4 pb-16 pt-6 sm:px-6">
+        <ContentHeader label="Guide" title="PDF to Image">
+          <p className="mt-3 text-lg leading-relaxed text-foreground">What you actually get, and when it is worth it</p>
+          <p className="mt-2 text-base leading-relaxed text-muted-foreground">
             The output resolution, the format choice, and the cases where an image beats the PDF
           </p>
-          <p className="mt-4 text-sm text-gray-500">
+          <p className="mt-4 text-sm text-muted-foreground">
             Published <time dateTime={PUBLISHED}>{PUBLISHED}</time> · Updated{" "}
             <time dateTime={UPDATED}>{UPDATED}</time>
           </p>
-        </header>
+        </ContentHeader>
 
-        <article className="space-y-10 rounded-xl border border-gray-200 bg-white p-6 shadow-lg transition-all duration-300 hover:shadow-xl md:p-10">
-          <p className="text-gray-700 leading-7">
+        <Prose as="article" className="mt-10 max-w-[720px] space-y-10">
+          <p className="text-muted-foreground leading-7">
             A PDF is built for page layout and printing. Converting a page to an image trades away
             selectable text, searchability, and vector sharpness at arbitrary zoom, in exchange for a
             file that opens instantly anywhere. Whether that is a good trade depends on what happens
@@ -124,11 +123,11 @@ export default function PdfUseCasesGuide() {
           </p>
 
           <section>
-            <h2 className="mb-3 flex items-center gap-3 text-2xl font-bold text-black">
-              <Ruler className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+            <h2>
+              <IconTile icon={Ruler} size="sm" tone="blue" className="hidden sm:inline-flex" />
               The resolution you actually get
             </h2>
-            <p className="text-gray-700 leading-7 mb-4">
+            <p className="text-muted-foreground leading-7 mb-4">
               PDF pages are measured in points, and there are 72 points to an inch. The{" "}
               <Link className="underline font-medium" href="/convert/pdf/">
                 PDF Converter
@@ -137,19 +136,19 @@ export default function PdfUseCasesGuide() {
               <strong>{pdf.dpi} DPI</strong>. So a standard A4 page comes out at{" "}
               {pdf.pixelSize.width}×{pdf.pixelSize.height} pixels.
             </p>
-            <div className="overflow-x-auto rounded-lg border border-gray-200">
+            <div className="prose-wide">
               <table className="w-full text-left text-sm">
-                <thead className="bg-gray-100 text-black">
+                <thead className="bg-muted text-foreground">
                   <tr>
                     <th className="p-3 font-bold">Page size</th>
                     <th className="p-3 font-bold">Points</th>
                     <th className="p-3 font-bold">Output pixels at {pdf.dpi} DPI</th>
                   </tr>
                 </thead>
-                <tbody className="text-gray-700">
+                <tbody className="text-muted-foreground">
                   {pageSizes.map((size) => (
-                    <tr key={size.name} className="border-t border-gray-200">
-                      <td className="p-3 font-medium text-black">{size.name}</td>
+                    <tr key={size.name} className="border-t border-border">
+                      <td className="p-3 font-medium text-foreground">{size.name}</td>
                       <td className="p-3">
                         {size.w} × {size.h}
                       </td>
@@ -161,7 +160,7 @@ export default function PdfUseCasesGuide() {
                 </tbody>
               </table>
             </div>
-            <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-gray-700">
+            <div className="mt-4 rounded-field border border-transparent bg-status-found p-4 text-sm text-muted-foreground">
               <strong>{pdf.dpi} DPI is a screen resolution, not a print one.</strong> It is comfortably
               sharp on any display and fine for slides, chat, and web use. Commercial print generally
               wants 300 DPI, so a converted page is not a substitute for sending the original PDF to a
@@ -170,16 +169,16 @@ export default function PdfUseCasesGuide() {
           </section>
 
           <section>
-            <h2 className="mb-3 flex items-center gap-3 text-2xl font-bold text-black">
-              <Monitor className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+            <h2>
+              <IconTile icon={Monitor} size="sm" tone="blue" className="hidden sm:inline-flex" />
               PNG or JPG? The answer is not the usual one
             </h2>
-            <p className="text-gray-700 leading-7 mb-4">
+            <p className="text-muted-foreground leading-7 mb-4">
               People reach for JPG out of habit, because for photographs it is dramatically smaller.
               A document page is not a photograph. It is mostly flat white with hard-edged black text —
               precisely the content JPG handles worst and PNG handles best.
             </p>
-            <p className="text-gray-700 leading-7 mb-4">
+            <p className="text-muted-foreground leading-7 mb-4">
               We rendered this synthetic report page at the exact size the converter produces and
               measured both outputs:
             </p>
@@ -189,30 +188,30 @@ export default function PdfUseCasesGuide() {
               width={pdf.pixelSize.width}
               height={pdf.pixelSize.height}
               alt={`A synthetic report page with a heading, body text, a table and a bar chart, rendered at ${pdf.pixelSize.width} by ${pdf.pixelSize.height} pixels`}
-              className="mx-auto mb-5 h-auto w-full max-w-sm rounded-lg border border-gray-200"
+              className="mx-auto mb-5 h-auto w-full max-w-sm rounded-field border border-border"
               loading="lazy"
             />
 
-            <div className="overflow-x-auto rounded-lg border border-gray-200">
+            <div className="prose-wide">
               <table className="w-full text-left text-sm">
-                <thead className="bg-gray-100 text-black">
+                <thead className="bg-muted text-foreground">
                   <tr>
                     <th className="p-3 font-bold">Output</th>
                     <th className="p-3 font-bold">Size</th>
                     <th className="p-3 font-bold">Notes</th>
                   </tr>
                 </thead>
-                <tbody className="text-gray-700">
-                  <tr className="border-t border-gray-200 bg-green-50">
-                    <td className="p-3 font-medium text-black">PNG</td>
-                    <td className="p-3 font-medium text-black">{kb(pdf.png)}</td>
+                <tbody className="text-muted-foreground">
+                  <tr className="border-t border-border bg-status-clean">
+                    <td className="p-3 font-medium text-foreground">PNG</td>
+                    <td className="p-3 font-medium text-foreground">{kb(pdf.png)}</td>
                     <td className="p-3">Lossless — text edges stay crisp</td>
                   </tr>
-                  <tr className="border-t border-gray-200">
-                    <td className="p-3 font-medium text-black">
-                      JPG <span className="text-gray-500">(quality {CONVERTER_JPG_QUALITY})</span>
+                  <tr className="border-t border-border">
+                    <td className="p-3 font-medium text-foreground">
+                      JPG <span className="text-muted-foreground">(quality {CONVERTER_JPG_QUALITY})</span>
                     </td>
-                    <td className="p-3 font-medium text-black">{kb(jpgActual)}</td>
+                    <td className="p-3 font-medium text-foreground">{kb(jpgActual)}</td>
                     <td className="p-3">
                       {(jpgActual / pdf.png).toFixed(1)}× larger than PNG, and lossy
                     </td>
@@ -221,14 +220,14 @@ export default function PdfUseCasesGuide() {
               </table>
             </div>
 
-            <div className="mt-4 rounded-xl bg-blue-50 border border-blue-200 p-5 text-gray-800">
+            <div className="mt-4 rounded-field bg-primary-soft border border-transparent p-5 text-foreground">
               <strong>For text documents, choose PNG.</strong> On this page JPG produced a file{" "}
               {(jpgActual / pdf.png).toFixed(1)} times larger than PNG while also introducing ringing
               around every letter. You pay more bytes for worse text. JPG only starts winning when the
               page is dominated by photographs rather than text.
             </div>
 
-            <p className="mt-4 text-gray-700 leading-7">
+            <p className="mt-4 text-muted-foreground leading-7">
               For the curious: the converter uses quality {CONVERTER_JPG_QUALITY} for JPG output.
               Lower settings do get smaller — {kb(jpegAt(0.6))} at quality 0.6 — but they visibly
               degrade text, which defeats the point of converting a document you want people to read.
@@ -236,20 +235,20 @@ export default function PdfUseCasesGuide() {
           </section>
 
           <section>
-            <h2 className="mb-4 text-2xl font-bold text-black">When converting is the right call</h2>
+            <h2>When converting is the right call</h2>
             <div className="grid gap-4 md:grid-cols-2">
               {cases.map((item) => {
                 const Icon = item.icon;
                 return (
                   <div
                     key={item.title}
-                    className="rounded-lg border border-gray-200 bg-gray-50 p-5"
+                    className="rounded-field border border-border bg-muted p-5"
                   >
-                    <div className="mb-2 flex items-center gap-2 font-bold text-black">
-                      <Icon className="h-5 w-5 flex-shrink-0 text-gray-700" aria-hidden="true" />
+                    <div className="mb-2 flex items-center gap-2 font-bold text-foreground">
+                      <Icon className="h-5 w-5 flex-shrink-0 text-muted-foreground" aria-hidden="true" />
                       {item.title}
                     </div>
-                    <p className="text-sm text-gray-700 leading-6">{item.body}</p>
+                    <p className="text-sm text-muted-foreground leading-6">{item.body}</p>
                   </div>
                 );
               })}
@@ -257,25 +256,25 @@ export default function PdfUseCasesGuide() {
           </section>
 
           <section>
-            <h2 className="mb-3 flex items-center gap-3 text-2xl font-bold text-black">
-              <AlertTriangle className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+            <h2>
+              <IconTile icon={AlertTriangle} size="sm" tone="blue" className="hidden sm:inline-flex" />
               When to keep the PDF instead
             </h2>
-            <ul className="space-y-3 text-gray-700 leading-7">
-              <li className="rounded-lg border-l-4 border-black bg-gray-50 p-4">
+            <ul className="space-y-3 text-muted-foreground leading-7">
+              <li className="rounded-field border-l-4 border-primary bg-muted p-4">
                 <strong>The recipient needs to search or copy the text.</strong> Rendering flattens
                 everything to pixels. There is no text left to select, search, or feed to a screen
                 reader.
               </li>
-              <li className="rounded-lg border-l-4 border-black bg-gray-50 p-4">
+              <li className="rounded-field border-l-4 border-primary bg-muted p-4">
                 <strong>It is going to a commercial printer.</strong> {pdf.dpi} DPI will look soft in
                 print. The original PDF holds vector text that prints sharp at any size.
               </li>
-              <li className="rounded-lg border-l-4 border-black bg-gray-50 p-4">
+              <li className="rounded-field border-l-4 border-primary bg-muted p-4">
                 <strong>The document is long.</strong> A 40-page report becomes 40 separate files.
                 They arrive as a ZIP, but the recipient still has to open them one at a time.
               </li>
-              <li className="rounded-lg border-l-4 border-black bg-gray-50 p-4">
+              <li className="rounded-field border-l-4 border-primary bg-muted p-4">
                 <strong>It needs to stay a legal or archival record.</strong> An image of a signed
                 document is not the same artifact as the signed PDF.
               </li>
@@ -283,8 +282,8 @@ export default function PdfUseCasesGuide() {
           </section>
 
           <section>
-            <h2 className="mb-3 text-2xl font-bold text-black">Practical limits</h2>
-            <p className="text-gray-700 leading-7">
+            <h2>Practical limits</h2>
+            <p className="text-muted-foreground leading-7">
               The PDF Converter accepts files up to <strong>50 MB</strong> and works entirely in your
               browser, so the document never gets uploaded anywhere. Password-protected or encrypted
               PDFs cannot be opened and will fail to load — remove the password in whatever tool
@@ -302,8 +301,8 @@ export default function PdfUseCasesGuide() {
             </p>
           </section>
 
-          <div className="rounded-xl border border-gray-200 bg-gray-50 p-6">
-            <p className="text-gray-700">
+          <div className="rounded-field border border-border bg-muted p-6">
+            <p className="text-muted-foreground">
               Convert a document with the{" "}
               <Link className="underline font-medium" href="/convert/pdf/">
                 PDF Converter
@@ -316,7 +315,7 @@ export default function PdfUseCasesGuide() {
               {kb(pdf.webp.find((w) => w.quality === 0.8)!.bytes)} in our measurements.
             </p>
           </div>
-        </article>
+        </Prose>
       </div>
     </main>
   );

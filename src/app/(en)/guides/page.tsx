@@ -3,7 +3,6 @@ import { alternatesFor } from "@/lib/locale";
 import Link from "next/link";
 import {
   BarChart3,
-  BookMarked,
   Fingerprint,
   FlaskConical,
   LifeBuoy,
@@ -12,6 +11,10 @@ import {
   Files,
   FileText,
 } from "lucide-react";
+import ContentHeader from "@/components/content/content-header";
+import ToolCard from "@/components/home/tool-card";
+import IconTile, { type IconTileTone } from "@/components/tool/icon-tile";
+import Prose from "@/components/tool/prose";
 import benchmarks from "@/data/format-benchmarks.json";
 import exifDemo from "@/data/exif-demo.json";
 import pdfMetaDemo from "@/data/pdf-metadata-demo.json";
@@ -132,6 +135,8 @@ const groups = [
   },
 ];
 
+const TONES: IconTileTone[] = ["blue", "yellow", "green", "pink", "peach"];
+
 const totalGuides = groups.reduce((n, g) => n + g.items.length, 0);
 
 const itemListSchema = {
@@ -159,124 +164,113 @@ const itemListSchema = {
 
 export default function GuidesIndexPage() {
   return (
-    <main className="min-h-screen bg-gray-50 py-12 px-4">
+    <main>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
       />
-      <div className="max-w-4xl mx-auto">
-        <header className="mb-10 text-center">
-          <h1 className="mb-4 flex items-center justify-center text-4xl font-bold text-black md:text-6xl">
-            <BookMarked className="mr-4 h-16 w-16 flex-shrink-0 text-gray-700" aria-hidden="true" />
-            Guides
-          </h1>
-          <p className="mb-4 text-xl text-black">Measured answers, not rules of thumb</p>
-          <p className="text-base text-gray-600">
+      <div className="mx-auto w-full max-w-[1120px] px-4 pb-16 pt-6 sm:px-6">
+        <ContentHeader label="Guides" title="Guides">
+          <p className="mt-3 text-lg leading-relaxed text-foreground">Measured answers, not rules of thumb</p>
+          <p className="mt-2 text-base leading-relaxed text-muted-foreground">
             {totalGuides} guides on what travels inside a photo, picking formats, shrinking files,
             and converting PDFs
           </p>
-          <p className="mt-4 text-sm text-gray-500">
+          <p className="mt-4 text-sm text-muted-foreground">
             Published <time dateTime={PUBLISHED}>{PUBLISHED}</time> · Updated{" "}
             <time dateTime={UPDATED}>{UPDATED}</time>
           </p>
-        </header>
+        </ContentHeader>
 
-        <div className="mb-10 rounded-xl border border-blue-200 bg-blue-50 p-6 text-gray-800">
-          <div className="mb-2 flex items-center gap-3 font-bold text-black">
-            <FlaskConical className="h-6 w-6 flex-shrink-0 text-gray-700" aria-hidden="true" />
-            Why these guides quote exact numbers
+        <div className="mt-8 flex max-w-[880px] gap-4 rounded-card bg-primary-soft p-6">
+          <IconTile icon={FlaskConical} tone="blue" size="sm" className="hidden bg-card sm:inline-flex" />
+          <div>
+            <p className="font-bold text-foreground">Why these guides quote exact numbers</p>
+            <p className="mt-2 leading-7 text-foreground">
+              Most articles about image formats repeat the same approximate ratios without saying where
+              they came from. The figures here were produced by a script in this project that encodes
+              deterministic test images through the Canvas{" "}
+              <code className="rounded bg-card px-1.5 py-0.5 text-sm">toBlob</code> API in Chromium{" "}
+              {benchmarks.engine} — the same code path the{" "}
+              <Link className="font-semibold text-primary underline underline-offset-4" href="/convert/img/">
+                Image Converter
+              </Link>{" "}
+              runs in your browser. So when a guide says a photo lands at {kb(webpAt(photo, 0.8))}, that
+              is what this site would actually hand you. The source images are published for download so
+              you can reproduce any of it.
+            </p>
           </div>
-          <p className="leading-7">
-            Most articles about image formats repeat the same approximate ratios without saying where
-            they came from. The figures here were produced by a script in this project that encodes
-            deterministic test images through the Canvas{" "}
-            <code className="rounded bg-white/70 px-1.5 py-0.5 text-sm">toBlob</code> API in Chromium{" "}
-            {benchmarks.engine} — the same code path the{" "}
-            <Link className="underline font-medium" href="/convert/img/">
-              Image Converter
-            </Link>{" "}
-            runs in your browser. So when a guide says a photo lands at {kb(webpAt(photo, 0.8))}, that
-            is what this site would actually hand you. The source images are published for download so
-            you can reproduce any of it.
-          </p>
         </div>
 
-        <div className="space-y-10">
-          {groups.map((group) => (
+        <div className="mt-12 space-y-12">
+          {groups.map((group, groupIndex) => (
             <section key={group.heading}>
-              <h2 className="mb-1 text-2xl font-bold text-black">{group.heading}</h2>
-              <p className="mb-5 text-gray-600">{group.blurb}</p>
-              <div className="grid gap-6 md:grid-cols-2">
-                {group.items.map((item) => {
-                  const Icon = item.icon;
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className="group flex flex-col rounded-xl border border-gray-200 bg-white p-6 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-gray-400 hover:shadow-xl"
-                    >
-                      <Icon className="mb-4 h-8 w-8 flex-shrink-0 text-gray-700" aria-hidden="true" />
-                      <h3 className="mb-2 text-xl font-bold text-black group-hover:underline">
-                        {item.title}
-                      </h3>
-                      <p className="mb-4 leading-6 text-gray-700">{item.description}</p>
-                      <p className="mt-auto rounded-lg border-l-4 border-gray-300 bg-gray-50 px-4 py-3 text-sm leading-6 text-gray-600">
-                        <strong className="text-gray-700">What we found:</strong> {item.finding}
-                      </p>
-                    </Link>
-                  );
-                })}
+              <h2 className="text-h2 text-foreground">{group.heading}</h2>
+              <p className="mt-2 max-w-[720px] text-muted-foreground">{group.blurb}</p>
+              <div className="mt-6 grid gap-5 md:grid-cols-2">
+                {group.items.map((item, itemIndex) => (
+                  <ToolCard
+                    key={item.href}
+                    icon={item.icon}
+                    tone={TONES[(groupIndex * 2 + itemIndex) % TONES.length]}
+                    title={item.title}
+                    body={item.description}
+                    note={<><strong className="text-foreground">What we found:</strong> {item.finding}</>}
+                    href={item.href}
+                    cta="Read the guide"
+                  />
+                ))}
               </div>
             </section>
           ))}
         </div>
 
-        <section className="mt-10 rounded-xl border border-gray-200 bg-white p-6 shadow-lg md:p-8">
-          <h2 className="mb-3 text-2xl font-bold text-black">Where to start</h2>
-          <p className="mb-4 text-gray-700 leading-7">
+        <Prose as="section" className="mt-12">
+          <h2>Where to start</h2>
+          <p>
             If you are about to share a photo, start with{" "}
-            <Link className="underline font-medium" href="/guides/exif-metadata-privacy/">
+            <Link href="/guides/exif-metadata-privacy/">
               EXIF data and privacy
             </Link>{" "}
             and check the file in the{" "}
-            <Link className="underline font-medium" href="/view/exif/">
+            <Link href="/view/exif/">
               EXIF Viewer
             </Link>
             . If you are here because a file is too big, read{" "}
-            <Link className="underline font-medium" href="/guides/reduce-image-file-size/">
+            <Link href="/guides/reduce-image-file-size/">
               how to reduce image file size
             </Link>{" "}
             first — it ranks the four things you can change by how much they actually move the number.
             If you are choosing between formats, start with the{" "}
-            <Link className="underline font-medium" href="/guides/jpg-png-webp-comparison/">
+            <Link href="/guides/jpg-png-webp-comparison/">
               format comparison
             </Link>
             . If something is failing outright, go straight to{" "}
-            <Link className="underline font-medium" href="/guides/troubleshooting/">
+            <Link href="/guides/troubleshooting/">
               troubleshooting
             </Link>
             .
           </p>
-          <p className="text-gray-700 leading-7">
+          <p>
             Prefer to just use the tools? The{" "}
-            <Link className="underline font-medium" href="/convert/img/">
+            <Link href="/convert/img/">
               Image Converter
             </Link>
             ,{" "}
-            <Link className="underline font-medium" href="/convert/pdf/">
+            <Link href="/convert/pdf/">
               PDF Converter
             </Link>{" "}
             and{" "}
-            <Link className="underline font-medium" href="/edit/image/">
+            <Link href="/edit/image/">
               Image Editor
             </Link>{" "}
             all run entirely in your browser, and the{" "}
-            <Link className="underline font-medium" href="/how-to-use/">
+            <Link href="/how-to-use/">
               how-to page
             </Link>{" "}
             walks through each one.
           </p>
-        </section>
+        </Prose>
       </div>
     </main>
   );

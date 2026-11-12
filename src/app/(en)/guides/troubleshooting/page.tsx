@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+import ContentHeader from "@/components/content/content-header";
+import IconTile from "@/components/tool/icon-tile";
+import Prose from "@/components/tool/prose";
 import Link from "next/link";
 import { Cpu, LifeBuoy, ListChecks, Smartphone } from "lucide-react";
 
@@ -52,8 +55,8 @@ const issues = [
       <>
         Check the table above. The image tools take JPG, PNG and WebP only — not HEIC from an iPhone,
         not RAW files like CR2 or DNG, not TIFF, GIF, BMP or SVG. A file renamed from{" "}
-        <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm">.heic</code> to{" "}
-        <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm">.jpg</code> is still HEIC inside
+        <code className="rounded bg-muted px-1.5 py-0.5 text-sm">.heic</code> to{" "}
+        <code className="rounded bg-muted px-1.5 py-0.5 text-sm">.jpg</code> is still HEIC inside
         and will still be rejected, because the check reads the file&rsquo;s actual type rather than
         its name. On an iPhone, setting <em>Camera → Formats → Most Compatible</em> makes new photos
         JPG.
@@ -199,34 +202,30 @@ const faqSchema = {
 
 export default function TroubleshootingGuide() {
   return (
-    <main className="min-h-screen bg-gray-50 py-12 px-4">
+    <main>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
-      <div className="max-w-4xl mx-auto">
-        <header className="mb-12 text-center">
-          <h1 className="mb-4 flex items-center justify-center text-4xl font-bold text-black md:text-6xl">
-            <LifeBuoy className="mr-4 h-16 w-16 flex-shrink-0 text-gray-700" aria-hidden="true" />
-            Troubleshooting
-          </h1>
-          <p className="mb-4 text-xl text-black">What went wrong, and why</p>
-          <p className="text-base text-gray-600">
+      <div className="mx-auto w-full max-w-[1120px] px-4 pb-16 pt-6 sm:px-6">
+        <ContentHeader label="Guide" title="Troubleshooting">
+          <p className="mt-3 text-lg leading-relaxed text-foreground">What went wrong, and why</p>
+          <p className="mt-2 text-base leading-relaxed text-muted-foreground">
             Most failures come down to a format, a size ceiling, or your device running out of room
           </p>
-          <p className="mt-4 text-sm text-gray-500">
+          <p className="mt-4 text-sm text-muted-foreground">
             Published <time dateTime={PUBLISHED}>{PUBLISHED}</time> · Updated{" "}
             <time dateTime={UPDATED}>{UPDATED}</time>
           </p>
-        </header>
+        </ContentHeader>
 
-        <article className="space-y-10 rounded-xl border border-gray-200 bg-white p-6 shadow-lg transition-all duration-300 hover:shadow-xl md:p-10">
+        <Prose as="article" className="mt-10 max-w-[720px] space-y-10">
           <section>
-            <h2 className="mb-3 flex items-center gap-3 text-2xl font-bold text-black">
-              <Cpu className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+            <h2>
+              <IconTile icon={Cpu} size="sm" tone="blue" className="hidden sm:inline-flex" />
               First, the thing that explains most problems
             </h2>
-            <p className="text-gray-700 leading-7">
+            <p className="text-muted-foreground leading-7">
               Every conversion on this site runs inside your browser. Nothing is uploaded, and there is
               no server doing the work. That is good for privacy, and it is also why the limits look the
               way they do: the ceilings exist because your device has to hold the whole image in memory,
@@ -236,13 +235,13 @@ export default function TroubleshootingGuide() {
           </section>
 
           <section>
-            <h2 className="mb-4 flex items-center gap-3 text-2xl font-bold text-black">
-              <ListChecks className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+            <h2>
+              <IconTile icon={ListChecks} size="sm" tone="blue" className="hidden sm:inline-flex" />
               The actual limits
             </h2>
-            <div className="overflow-x-auto rounded-lg border border-gray-200">
+            <div className="prose-wide">
               <table className="w-full text-left text-sm">
-                <thead className="bg-gray-100 text-black">
+                <thead className="bg-muted text-foreground">
                   <tr>
                     <th className="p-3 font-bold">Tool</th>
                     <th className="p-3 font-bold">Accepts</th>
@@ -250,10 +249,10 @@ export default function TroubleshootingGuide() {
                     <th className="p-3 font-bold">Ceiling</th>
                   </tr>
                 </thead>
-                <tbody className="text-gray-700">
+                <tbody className="text-muted-foreground">
                   {limits.map((row) => (
-                    <tr key={row.tool} className="border-t border-gray-200">
-                      <td className="p-3 font-medium text-black">
+                    <tr key={row.tool} className="border-t border-border">
+                      <td className="p-3 font-medium text-foreground">
                         <Link className="underline" href={row.href}>
                           {row.tool}
                         </Link>
@@ -266,7 +265,7 @@ export default function TroubleshootingGuide() {
                 </tbody>
               </table>
             </div>
-            <p className="mt-4 text-sm text-gray-600">
+            <p className="mt-4 text-sm text-muted-foreground">
               HEIC, RAW formats, TIFF, GIF, BMP, SVG and AVIF are not accepted as input. If a file is
               rejected and you are sure of the extension, the file&rsquo;s real format is probably not
               what its name claims.
@@ -274,29 +273,29 @@ export default function TroubleshootingGuide() {
           </section>
 
           <section>
-            <h2 className="mb-5 text-2xl font-bold text-black">Common problems</h2>
+            <h2>Common problems</h2>
             <div className="space-y-5">
               {issues.map((item, index) => (
-                <div key={item.problem} className="rounded-lg border border-gray-200 bg-gray-50 p-5">
-                  <h3 className="mb-2 flex items-start gap-3 text-lg font-bold text-black">
-                    <span className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-black to-gray-800 text-xs font-bold text-white">
+                <div key={item.problem} className="rounded-field border border-border bg-muted p-5">
+                  <h3 className="mb-2 flex items-start gap-3 text-lg font-bold text-foreground">
+                    <span className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
                       {index + 1}
                     </span>
                     {item.problem}
                   </h3>
-                  <p className="mb-2 pl-9 text-sm font-medium text-gray-600">Why: {item.cause}</p>
-                  <p className="pl-9 text-gray-700 leading-7">{item.fix}</p>
+                  <p className="mb-2 pl-9 text-sm font-medium text-muted-foreground">Why: {item.cause}</p>
+                  <p className="pl-9 text-muted-foreground leading-7">{item.fix}</p>
                 </div>
               ))}
             </div>
           </section>
 
           <section>
-            <h2 className="mb-3 flex items-center gap-3 text-2xl font-bold text-black">
-              <Smartphone className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+            <h2>
+              <IconTile icon={Smartphone} size="sm" tone="blue" className="hidden sm:inline-flex" />
               Still stuck?
             </h2>
-            <p className="text-gray-700 leading-7">
+            <p className="text-muted-foreground leading-7">
               If none of the above fits, the{" "}
               <Link className="underline font-medium" href="/faq/">
                 FAQ
@@ -310,7 +309,7 @@ export default function TroubleshootingGuide() {
               not attach the file itself — we cannot accept uploads, and describing it is enough.
             </p>
           </section>
-        </article>
+        </Prose>
       </div>
     </main>
   );

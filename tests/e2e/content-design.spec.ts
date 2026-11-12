@@ -47,3 +47,26 @@ test("FAQ questions open and close from the keyboard", async ({ page }) => {
   await page.keyboard.press("Enter");
   await expect(answer).toBeHidden();
 });
+
+const EN_GUIDES = [
+  "/guides/",
+  "/guides/exif-metadata-privacy/",
+  "/guides/glossary/",
+  "/guides/jpg-png-webp-comparison/",
+  "/guides/pdf-metadata-privacy/",
+  "/guides/pdf-to-image-use-cases/",
+  "/guides/reduce-image-file-size/",
+  "/guides/troubleshooting/",
+];
+for (const url of EN_GUIDES) {
+  test(`${url} uses the content template`, async ({ page }) => {
+    await expectContentRedesigned(page, url);
+  });
+}
+
+test("the guides index lists every guide as a card", async ({ page }) => {
+  await page.goto("/guides/");
+  for (const url of EN_GUIDES.slice(1)) {
+    await expect(page.locator(`a[href="${url}"]`, { hasText: "Read the guide" })).toHaveCount(1);
+  }
+});

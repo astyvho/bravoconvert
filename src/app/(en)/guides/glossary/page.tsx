@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import ContentHeader from "@/components/content/content-header";
+import Prose from "@/components/tool/prose";
 import Link from "next/link";
 import { Library } from "lucide-react";
 import benchmarks from "@/data/format-benchmarks.json";
@@ -197,36 +199,32 @@ const glossarySchema = {
 
 export default function GlossaryPage() {
   return (
-    <main className="min-h-screen bg-gray-50 py-12 px-4">
+    <main>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(glossarySchema) }}
       />
-      <div className="max-w-4xl mx-auto">
-        <header className="mb-12 text-center">
-          <h1 className="mb-4 flex items-center justify-center text-4xl font-bold text-black md:text-6xl">
-            <Library className="mr-4 h-16 w-16 flex-shrink-0 text-gray-700" aria-hidden="true" />
-            Glossary
-          </h1>
-          <p className="mb-4 text-xl text-black">
+      <div className="mx-auto w-full max-w-[1120px] px-4 pb-16 pt-6 sm:px-6">
+        <ContentHeader label="Guide" title="Glossary">
+          <p className="mt-3 text-lg leading-relaxed text-foreground">
             {terms.length} terms, in plain language
           </p>
-          <p className="text-base text-gray-600">
+          <p className="mt-2 text-base leading-relaxed text-muted-foreground">
             Each one with what it means and what it actually changes about your file
           </p>
-          <p className="mt-4 text-sm text-gray-500">
+          <p className="mt-4 text-sm text-muted-foreground">
             Published <time dateTime={PUBLISHED}>{PUBLISHED}</time> · Updated{" "}
             <time dateTime={UPDATED}>{UPDATED}</time>
           </p>
-        </header>
+        </ContentHeader>
 
-        <article className="space-y-8 rounded-xl border border-gray-200 bg-white p-6 shadow-lg transition-all duration-300 hover:shadow-xl md:p-10">
+        <Prose as="article" className="mt-10 max-w-[720px] space-y-10">
           <nav aria-label="Sections" className="flex flex-wrap gap-2">
             {groups.map((group) => (
               <a
                 key={group}
                 href={`#${group.toLowerCase().replace(/[^a-z]+/g, "-")}`}
-                className="rounded-full border border-gray-300 bg-gray-50 px-4 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-200"
+                className="rounded-full border border-border bg-muted px-4 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted"
               >
                 {group}
               </a>
@@ -235,20 +233,20 @@ export default function GlossaryPage() {
 
           {groups.map((group) => (
             <section key={group} id={group.toLowerCase().replace(/[^a-z]+/g, "-")}>
-              <h2 className="mb-4 border-b border-gray-200 pb-2 text-2xl font-bold text-black">
+              <h2>
                 {group}
               </h2>
-              <dl className="divide-y divide-gray-200">
+              <dl className="divide-y divide-border">
                 {terms
                   .filter((t) => t.group === group)
                   .map((item) => (
                     <div key={item.term} className="py-5 first:pt-0 last:pb-0">
-                      <dt className="mb-2 text-lg font-bold text-black">{item.term}</dt>
-                      <dd className="text-gray-700 leading-7">
+                      <dt className="mb-2 text-lg font-bold text-foreground">{item.term}</dt>
+                      <dd className="text-muted-foreground leading-7">
                         {item.body}
                         {item.practical && (
-                          <span className="mt-2 block rounded-lg border-l-4 border-gray-300 bg-gray-50 px-4 py-2 text-sm text-gray-600">
-                            <strong className="text-gray-700">In practice:</strong> {item.practical}
+                          <span className="mt-2 block rounded-field border-l-4 border-border bg-muted px-4 py-2 text-sm text-muted-foreground">
+                            <strong className="text-muted-foreground">In practice:</strong> {item.practical}
                           </span>
                         )}
                       </dd>
@@ -258,8 +256,8 @@ export default function GlossaryPage() {
             </section>
           ))}
 
-          <div className="rounded-xl border border-gray-200 bg-gray-50 p-6">
-            <p className="text-gray-700">
+          <div className="rounded-field border border-border bg-muted p-6">
+            <p className="text-muted-foreground">
               Several of these terms are explored with measured numbers in the{" "}
               <Link className="underline font-medium" href="/guides/jpg-png-webp-comparison/">
                 format comparison
@@ -275,7 +273,7 @@ export default function GlossaryPage() {
               .
             </p>
           </div>
-        </article>
+        </Prose>
       </div>
     </main>
   );
