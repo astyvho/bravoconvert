@@ -23,3 +23,27 @@ async function expectContentRedesigned(page: Page, url: string) {
 test("About uses the content template", async ({ page }) => {
   await expectContentRedesigned(page, "/about/");
 });
+
+test("FAQ uses the content template", async ({ page }) => {
+  await expectContentRedesigned(page, "/faq/");
+});
+
+test("FAQ answers are in the static HTML even while folded", async ({ page }) => {
+  const html = await (await page.request.get("/faq/")).text();
+  expect(html).toContain("does not require an app, extension, account, or login");
+  await page.goto("/faq/");
+  await expect(page.locator("details")).not.toHaveCount(0);
+  await expect(page.locator("details[open]")).toHaveCount(0);
+});
+
+test("FAQ questions open and close from the keyboard", async ({ page }) => {
+  await page.goto("/faq/");
+  const question = page.locator("summary", { hasText: "What image formats can I convert?" });
+  const answer = page.getByText("You can convert JPG/JPEG, PNG, and WebP images to JPG, PNG, or WebP.");
+  await expect(answer).toBeHidden();
+  await question.focus();
+  await page.keyboard.press("Enter");
+  await expect(answer).toBeVisible();
+  await page.keyboard.press("Enter");
+  await expect(answer).toBeHidden();
+});

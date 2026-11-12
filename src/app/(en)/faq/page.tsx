@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { HelpCircle } from "lucide-react";
+import ContentHeader from "@/components/content/content-header";
+import { Accordion, AccordionItem } from "@/components/ui/accordion";
 
 export const metadata: Metadata = {
   title: "Image Editor and Converter FAQ | BravoConvert",
@@ -207,46 +208,29 @@ export default function FAQ() {
   ];
 
   return (
-    <main className="min-h-screen bg-gray-50 py-12 px-4">
-      <div className="max-w-4xl mx-auto">
-        {/* Hero Section */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-6xl font-bold text-black mb-4 flex items-center justify-center">
-            <HelpCircle className="w-16 h-16 text-gray-700 mr-4" />
-            FAQ
-          </h1>
-          <p className="text-xl text-black mb-8">
+    <main>
+      <div className="mx-auto w-full max-w-[1120px] px-4 pb-16 pt-6 sm:px-6">
+        <ContentHeader label="FAQ" title="FAQ">
+          <p className="mt-3 text-lg leading-relaxed text-foreground">
             Frequently Asked Questions
           </p>
-          <p className="text-base text-gray-600">
+          <p className="mt-2 text-base leading-relaxed text-muted-foreground">
             Find answers to common questions about BravoConvert
           </p>
-        </div>
+        </ContentHeader>
 
-        {/* FAQ Categories */}
-        <div className="space-y-8">
-          {faqs.map((category, categoryIndex) => (
-            <div key={categoryIndex} className="bg-white rounded-xl p-8 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300">
-              <h2 className="text-3xl font-bold text-black mb-8 flex items-center">
-                <span className="w-2 h-8 bg-black rounded mr-3"></span>
-                {category.category}
-              </h2>
-              <div className="space-y-6">
-                {category.questions.map((faq, index) => (
-                  <div key={index} className="bg-gray-50 rounded-lg p-6 border-l-4 border-black hover:bg-gray-100 transition-all duration-300">
-                    <h3 className="text-xl font-bold text-black mb-4 flex items-center">
-                      <span className="w-8 h-8 bg-gradient-to-br from-black to-gray-800 text-white rounded-full flex items-center justify-center text-sm font-bold mr-4 shadow-md">
-                        {index + 1}
-                      </span>
-                      {faq.question}
-                    </h3>
-                    <p className="text-base text-gray-700 leading-relaxed pl-12">
-                      {faq.answer}
-                    </p>
-                  </div>
+        <div className="mt-10 max-w-[720px] space-y-10">
+          {faqs.map(category => (
+            <section key={category.category}>
+              <h2 className="mb-4 text-h2 text-foreground">{category.category}</h2>
+              <Accordion>
+                {category.questions.map(faq => (
+                  <AccordionItem key={faq.question} question={faq.question}>
+                    <p>{faq.answer}</p>
+                  </AccordionItem>
                 ))}
-              </div>
-            </div>
+              </Accordion>
+            </section>
           ))}
         </div>
       </div>
