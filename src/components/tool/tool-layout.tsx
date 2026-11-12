@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import { cn } from "@/lib/utils";
 
 /**
  * The tool page's work area: main column (list, canvas, thumbnails) and a 400px panel that sticks
@@ -20,12 +19,23 @@ export default function ToolLayout({
   results?: ReactNode;
   className?: string;
 }) {
+  // Sticky on desktop, but never taller than the screen below the header: a long panel scrolls on its
+  // own instead of hiding its lower part until the main column ends. Side padding keeps card shadows.
+  const panelColumn = (
+    <div className="min-w-0 lg:sticky lg:top-24 lg:col-start-2 lg:row-start-1 lg:-mx-3 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:overscroll-contain lg:px-3 lg:pb-4">
+      {panel}
+    </div>
+  );
+
   return (
     <div className={className}>
       {panel ? (
         <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_400px] lg:items-start">
-          <div className={cn("min-w-0", panelFirstOnMobile && "order-last lg:order-none")}>{main}</div>
-          <div className={cn("min-w-0 lg:sticky lg:top-24", panelFirstOnMobile && "order-first lg:order-none")}>{panel}</div>
+          {/* With panelFirstOnMobile the panel is first in the DOM, so reading and focus order match the
+              stacked phone layout; grid placement still puts it in the right-hand column on desktop. */}
+          {panelFirstOnMobile && panelColumn}
+          <div className="min-w-0 lg:col-start-1 lg:row-start-1">{main}</div>
+          {!panelFirstOnMobile && panelColumn}
         </div>
       ) : (
         main

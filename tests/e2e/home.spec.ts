@@ -33,3 +33,14 @@ test("Korean home mirrors the English structure with Korean copy", async ({ page
   await page.setViewportSize({ width: 320, height: 700 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 });
+
+test("the hero eyebrow is not styled as a status badge", async ({ page }) => {
+  // Amber is reserved for "found"; the eyebrow is decoration (spec 5.2).
+  for (const [url, text] of [["/", "Free · private · right in your browser"], ["/ko/", "무료 · 업로드 없음 · 브라우저에서 바로"]] as const) {
+    await page.goto(url);
+    const eyebrow = page.getByText(text, { exact: true });
+    const colours = await eyebrow.evaluate(el => [getComputedStyle(el).backgroundColor, getComputedStyle(el).color]);
+    expect(colours[0]).not.toBe("rgb(254, 243, 199)");
+    expect(colours[1]).not.toBe("rgb(180, 83, 9)");
+  }
+});

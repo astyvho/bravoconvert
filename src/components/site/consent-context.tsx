@@ -1,5 +1,6 @@
 "use client";
 
+import "./media-query-polyfill";
 import { createContext, useContext, useMemo, useState, type ReactNode } from "react";
 
 // Whether the cookie-consent banner is currently open. ConsentManager owns the banner and sets it;

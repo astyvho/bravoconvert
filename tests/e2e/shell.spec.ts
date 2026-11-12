@@ -50,3 +50,11 @@ test("tool links are in the static HTML of every page", async ({ request }) => {
     }
   }
 });
+
+test("the Tools menu uses the 16px field radius, not the component default", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto("/");
+  await page.getByRole("button", { name: "Tools" }).click();
+  await expect(page.getByRole("menu")).toBeVisible();
+  expect(await page.getByRole("menu").evaluate(el => getComputedStyle(el).borderTopLeftRadius)).toBe("16px");
+});

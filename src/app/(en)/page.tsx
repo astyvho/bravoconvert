@@ -186,7 +186,7 @@ export default function Home() {
         {/* Hero: copy and actions left, the sample "photo" with its findings right. */}
         <section className="grid items-center gap-10 pt-6 lg:grid-cols-[1.05fr_.95fr] lg:gap-12 lg:pt-14">
           <div>
-            <span className="inline-flex items-center gap-2 rounded-full bg-status-found px-3.5 py-1.5 text-caption text-status-found-foreground">
+            <span className="inline-flex items-center gap-2 rounded-full bg-muted px-3.5 py-1.5 text-caption text-foreground">
               Free · private · right in your browser
             </span>
             <h1 className="mt-5 text-[36px] font-extrabold leading-[1.1] tracking-tight text-foreground lg:text-display">

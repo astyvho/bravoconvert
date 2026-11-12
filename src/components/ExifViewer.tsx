@@ -408,7 +408,7 @@ function FormatPicker({ id, t, options, onPick, disabled, shrink, onShrink, jpgN
 }) {
   const shrinkId = `${id}-shrink`;
   return (
-    <div id={id} role="group" aria-label={t.pickTitle} className="mt-4 scroll-mt-28 rounded-field bg-muted/60 p-3">
+    <div id={id} role="group" aria-label={t.pickTitle} className="mt-4 scroll-mb-32 scroll-mt-28 rounded-field bg-muted/60 p-3">
       <p className="text-sm font-bold text-foreground">{t.pickTitle}</p>
       <div className={`mt-2 grid grid-cols-1 gap-2 ${options.length > 3 ? "sm:grid-cols-2" : "sm:grid-cols-3"}`}>
         {options.map(option => (
@@ -775,6 +775,13 @@ export default function ExifViewer({ locale = "en" }: { locale?: Locale }) {
     );
   };
 
+  // On phones the report sits above a list of up to 30 rows; after tapping a row far down, bring the
+  // report that just changed back into view. On desktop it is already beside the list.
+  const showReportOnPhone = () => {
+    if (!window.matchMedia?.("(max-width: 1023px)").matches) return;
+    resultsRef.current?.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
+  };
+
   const startPicking = (scope: "single" | "batch") => {
     setCleanError(null);
     setPicking(current => (current === scope ? null : scope));
@@ -867,7 +874,7 @@ export default function ExifViewer({ locale = "en" }: { locale?: Locale }) {
                 meta={formatBytes(item.file.size)}
                 selected={current}
                 ariaCurrent={current ? "true" : undefined}
-                onSelect={() => { setActiveId(item.id); setPicking(open => (open === "single" ? null : open)); setShowAll(false); }}
+                onSelect={() => { setActiveId(item.id); setPicking(open => (open === "single" ? null : open)); setShowAll(false); showReportOnPhone(); }}
                 badge={<StatusBadge status={status} className="whitespace-nowrap">{cleaned?.remaining === 0 ? t.rowCleaned : item.found ? t.rowFound(item.found) : t.none}</StatusBadge>}
               />
             );

@@ -316,3 +316,103 @@ test("an in-app browser gets the press-and-hold preview after cleaning", async (
   await expect(page.getByText("Press and hold an image below to save it.")).toBeVisible();
   await context.close();
 });
+
+// Final-review findings. Each test failed before its fix.
+
+async function pngFiles(page: Page, testInfo: { outputPath: (name: string) => string }, count: number) {
+  const files: string[] = [];
+  for (let i = 0; i < count; i++) {
+    const file = testInfo.outputPath(`r${i}.png`);
+    await page.setContent(`<div style="width:64px;height:48px;background:hsl(${i * 17} 70% 50%)"></div>`);
+    await page.locator("div").screenshot({ path: file });
+    files.push(file);
+  }
+  return files;
+}
+
+test("on a phone, tapping a photo far down the list brings its report into view", async ({ page }, testInfo) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  const files = await pngFiles(page, testInfo, 20);
+  await page.goto("/view/exif/");
+  await rejectOptionalCookies(page);
+  await page.getByLabel("Choose a JPG, PNG, or WebP photo").setInputFiles([SAMPLE, ...files]);
+  await expect(page.getByText("21 photos · 1 carry identifying information")).toBeVisible();
+  await page.getByRole("list", { name: "Photos you added" }).getByRole("listitem").nth(18).getByRole("button").click();
+  await expect(page.getByTestId("exif-report")).toBeInViewport();
+});
+
+test("on a phone the opened format picker is not hidden under the pinned action bar", async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.goto("/view/exif/");
+  await rejectOptionalCookies(page);
+  await page.getByRole("button", { name: "Try a sample photo" }).click();
+  await page.getByRole("button", { name: "Remove it now" }).click();
+  const bar = page.locator("[data-action-bar]");
+  await expect(bar).toHaveAttribute("data-fixed", "true");
+  const shrink = page.getByLabel("Shrink the long side to 2048 px (smaller file)");
+  await expect.poll(async () => (await shrink.boundingBox())!.y + (await shrink.boundingBox())!.height <= (await bar.boundingBox())!.y).toBe(true);
+});
+
+test("on a short desktop screen the sticky report panel still fits on screen", async ({ page }, testInfo) => {
+  await page.setViewportSize({ width: 1280, height: 600 });
+  const files = await pngFiles(page, testInfo, 29);
+  await page.goto("/view/exif/");
+  await rejectOptionalCookies(page);
+  await page.getByLabel("Choose a JPG, PNG, or WebP photo").setInputFiles([SAMPLE, ...files]);
+  await expect(page.getByText("30 photos · 1 carry identifying information")).toBeVisible();
+  await page.getByRole("button", { name: "Remove it now" }).click();
+  await page.waitForTimeout(600);
+  // Part-way down the 30-row list, where the panel is stuck under the header.
+  await page.evaluate(() => window.scrollTo(0, 400));
+  const panel = page.getByTestId("exif-report").locator("xpath=..");
+  await expect.poll(async () => {
+    const box = (await panel.boundingBox())!;
+    return box.y >= 0 && box.y + box.height <= 600;
+  }).toBe(true);
+  const shrink = page.getByLabel("Shrink the long side to 2048 px (smaller file)");
+  await shrink.scrollIntoViewIfNeeded();
+  await expect(shrink).toBeInViewport();
+});
+
+test("the report comes before the photo list in reading and focus order", async ({ page }, testInfo) => {
+  const files = await pngFiles(page, testInfo, 2);
+  await page.goto("/view/exif/");
+  await rejectOptionalCookies(page);
+  await page.getByLabel("Choose a JPG, PNG, or WebP photo").setInputFiles([SAMPLE, ...files]);
+  await expect(page.getByText("3 photos · 1 carry identifying information")).toBeVisible();
+  const reportFirst = await page.evaluate(() => {
+    const report = document.querySelector('[data-testid="exif-report"]')!;
+    const list = document.querySelector('ul[aria-label="Photos you added"]')!;
+    return Boolean(report.compareDocumentPosition(list) & Node.DOCUMENT_POSITION_FOLLOWING);
+  });
+  expect(reportFirst).toBe(true);
+});
+
+test("the viewer still works where media queries have no addEventListener (Safari 13)", async ({ page }) => {
+  await page.addInitScript(() => {
+    // Safari before 14 only has the older addListener/removeListener. The methods are inherited
+    // from EventTarget, so they are shadowed with undefined rather than deleted.
+    Object.defineProperty(MediaQueryList.prototype, "addEventListener", { value: undefined, configurable: true });
+    Object.defineProperty(MediaQueryList.prototype, "removeEventListener", { value: undefined, configurable: true });
+  });
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.goto("/view/exif/");
+  await rejectOptionalCookies(page);
+  await page.getByRole("button", { name: "Try a sample photo" }).click();
+  await expect(page.getByText("This photo carries 3 kinds of identifying information.")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Remove it now" })).toBeVisible();
+});
+
+test("custom radius and shadow tokens win over component defaults", async ({ page }) => {
+  await page.goto("/view/exif/");
+  await rejectOptionalCookies(page);
+  await page.getByRole("button", { name: "Try a sample photo" }).click();
+  await page.getByRole("button", { name: "Remove it now" }).click();
+  const choice = page.getByRole("group", { name: "Save the clean copy as" }).getByRole("button").first();
+  expect(await choice.evaluate(el => getComputedStyle(el).borderTopLeftRadius)).toBe("16px");
+  // shadow-none computes to transparent layers, shadow-soft to a visible one.
+  expect(await page.locator("[data-clean]").evaluate(el => getComputedStyle(el).boxShadow)).toMatch(/^(none|(rgba\(0, 0, 0, 0\) 0px 0px 0px 0px(, )?)+)$/);
+  // Badges combine text-caption with a status colour; both must survive the class merge.
+  const badge = page.locator('[data-check="location"]').getByText("Found", { exact: true });
+  expect(await badge.evaluate(el => getComputedStyle(el).fontSize)).toBe("12px");
+});
