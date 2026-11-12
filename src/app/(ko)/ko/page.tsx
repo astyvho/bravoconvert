@@ -1,6 +1,18 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Camera, CircleAlert, Clock, Eraser, FileSearch, FileText, Fingerprint, ListChecks, MapPin, PenLine, Share2, ShieldCheck, User } from "lucide-react";
+import { Camera, Check, CircleAlert, Clock, Eraser, FileSearch, FileText, Fingerprint, ListChecks, MapPin, PenLine, Share2, ShieldCheck, User } from "lucide-react";
+import { buttonVariants } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import PageContainer from "@/components/site/page-container";
+import IconTile from "@/components/tool/icon-tile";
+import StatusBadge from "@/components/tool/status-badge";
+import ReportPanel from "@/components/tool/report-panel";
+import HeroStage from "@/components/home/hero-stage";
+import StepCard from "@/components/home/step-card";
+import TaskCard from "@/components/home/task-card";
+import RevealItem from "@/components/home/reveal-item";
+import { demoReport, demoReportCounts } from "@/lib/demo-report";
+import { cn } from "@/lib/utils";
 import exifDemo from "@/data/exif-demo.json";
 import pdfMetaDemo from "@/data/pdf-metadata-demo.json";
 import { alternatesFor } from "@/lib/locale";
@@ -86,11 +98,19 @@ const commonTasks = [
   },
 ];
 
+const STEP_TONES = ["blue", "yellow", "green"] as const;
+const TH = "p-3 text-left text-sm font-bold text-foreground";
+const TD = "p-3 text-sm tabular-nums";
+const INLINE_LINK = "font-semibold text-primary underline-offset-4 hover:underline";
+const kb = (bytes: number) => `${Math.round(bytes / 1024).toLocaleString()} KB`;
+
 export default function KoreanHome() {
   const survivedCount = exifDemo.after.filter((f) => f.value !== null).length;
+  const report = demoReport("ko");
+  const counts = demoReportCounts("ko");
 
   return (
-    <main className="min-h-screen bg-white flex flex-col items-center px-4">
+    <main>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -105,168 +125,191 @@ export default function KoreanHome() {
           }),
         }}
       />
-      <div className="w-full max-w-5xl">
-        <div className="text-center mb-12">
-          <p className="mb-3 text-sm font-semibold uppercase tracking-wide text-brand-600">BravoConvert</p>
-          <h1 className="text-4xl md:text-6xl font-bold text-black mb-6 leading-tight">
-            보내기 전에, 사진에 뭐가 남아 있는지 보세요
-          </h1>
-          <p className="text-lg md:text-xl text-black max-w-3xl mx-auto mb-8 leading-8">
-            휴대폰으로 찍은 사진에는 찍은 장소와 시간, 기종이 같이 저장되는 경우가 많아요. 보내기 전에 확인하고 지워서 보내세요.
-          </p>
-          <HomePhotoDrop locale="ko" />
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl mx-auto">
-          {steps.map((step) => {
-            const Icon = step.icon;
-            return (
-              <div key={step.title} className="flex flex-col rounded-2xl border border-gray-200 bg-white p-5">
-                <div className="flex items-center gap-3">
-                  <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
-                    <Icon className="h-5 w-5" aria-hidden="true" />
-                  </span>
-                  <h2 className="text-lg font-bold text-black">{step.title}</h2>
-                </div>
-                <p className="mt-3 text-sm leading-6 text-gray-700">{step.body}</p>
-                <Link href={step.href} className="mt-auto inline-flex items-center gap-1 pt-3 text-sm font-semibold text-brand-700 hover:text-brand-800">
-                  {step.cta} <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                </Link>
-              </div>
-            );
-          })}
-        </div>
-
-        <section className="max-w-5xl mx-auto mt-16 space-y-12 text-gray-800">
+      <PageContainer>
+        {/* 첫 화면: 왼쪽 글과 버튼, 오른쪽 샘플 사진과 발견 항목 */}
+        <section className="grid items-center gap-10 pt-6 lg:grid-cols-[1.05fr_.95fr] lg:gap-12 lg:pt-14">
           <div>
-            <h2 className="mb-4 flex items-center gap-3 text-3xl font-bold text-black">
-              <ShieldCheck className="hidden h-8 w-8 flex-shrink-0 text-brand-600 sm:block" aria-hidden="true" />
+            <span className="inline-flex items-center gap-2 rounded-full bg-muted px-3.5 py-1.5 text-caption text-status-found-foreground">
+              무료 · 업로드 없음 · 브라우저에서 바로
+            </span>
+            <h1 className="mt-5 text-[34px] font-extrabold leading-[1.15] tracking-tight text-foreground lg:text-[48px] lg:leading-[1.1]">
+              보내기 전에, 사진에 뭐가 남아 있는지 보세요
+            </h1>
+            <p className="mt-5 max-w-[520px] text-lg leading-8 text-muted-foreground">
+              휴대폰으로 찍은 사진에는 찍은 장소와 시간, 기종이 같이 저장되는 경우가 많아요. 보내기 전에 확인하고 지워서 보내세요.
+            </p>
+            <div className="mt-7 flex flex-wrap gap-3">
+              <Link href="/ko/view/exif/" className={buttonVariants({ size: "lg" })}>사진 확인하기</Link>
+              <Link href="/ko/view/exif/?sample=1" className={buttonVariants({ variant: "secondary", size: "lg" })}>샘플 사진 보기</Link>
+            </div>
+            <ul className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-[13px] font-semibold text-muted-foreground">
+              {["서버로 올라가지 않아요", "가입 없음", "한 번에 지우기"].map((item) => (
+                <li key={item} className="inline-flex items-center gap-1.5"><Check className="h-4 w-4 text-status-clean-foreground" aria-hidden="true" />{item}</li>
+              ))}
+            </ul>
+          </div>
+          <HeroStage locale="ko" />
+        </section>
+
+        <section className="mt-12 lg:mt-16">
+          <HomePhotoDrop locale="ko" />
+        </section>
+
+        {/* 검사 결과가 어떻게 보이는지: 실제 샘플 사진과 측정값 */}
+        <section className="mt-20">
+          <div className="mx-auto max-w-[560px] text-center">
+            <h2 className="text-h2 text-foreground">이렇게 확인해 드려요</h2>
+            <p className="mt-3 text-base leading-8 text-muted-foreground">
+              사진에 남을 수 있는 정보 여섯 가지를 하나씩 확인하고, 쉬운 말로 알려 드려요.
+            </p>
+          </div>
+          <div className="mt-8 grid gap-5 lg:grid-cols-[300px_1fr]">
+            <Card className="relative min-h-[220px] overflow-hidden bg-tile-peach lg:min-h-0">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={exifDemo.sourceFile} alt="검사 결과에 쓰인 샘플 사진" className="absolute inset-0 h-full w-full object-cover" />
+              <span className="absolute bottom-4 left-4 rounded-full bg-card px-3 py-1.5 text-caption text-foreground shadow-soft">샘플 사진 · {kb(exifDemo.sourceBytes)}</span>
+            </Card>
+            <ReportPanel
+              data-testid="sample-report"
+              title={`${counts.found}개를 찾았어요`}
+              summary={<StatusBadge status="found">{counts.total}개 중 {counts.found}개 있음</StatusBadge>}
+              items={report}
+              rowBadge={(item) => <StatusBadge status={item.found ? "found" : "clean"}>{item.found ? "있음" : "없음"}</StatusBadge>}
+              footer={
+                <>
+                  <Link href="/ko/view/exif/?sample=1" className={buttonVariants()}>바로 지우기</Link>
+                  <Link href="/ko/view/exif/" className={buttonVariants({ variant: "secondary" })}>다른 사진 확인</Link>
+                  <span className="basis-full text-[13px] text-muted-foreground sm:ml-auto sm:basis-auto">받은 사본은 자동으로 다시 검사해요.</span>
+                </>
+              }
+            />
+          </div>
+        </section>
+
+        <section className="mt-20">
+          <h2 className="text-center text-h2 text-foreground">세 단계면 돼요</h2>
+          <div className="mt-8 grid gap-5 md:grid-cols-3">
+            {steps.map((step, index) => (
+              <StepCard
+                key={step.title}
+                index={`0${index + 1}`}
+                icon={step.icon}
+                tone={STEP_TONES[index]}
+                title={step.title.replace(/^\d+\.\s*/, "")}
+                body={step.body}
+                href={step.href}
+                cta={step.cta}
+              />
+            ))}
+          </div>
+        </section>
+
+        <section className="mt-20 space-y-16">
+          <div>
+            <h2 className="flex items-center gap-3 text-h2 text-foreground">
+              <IconTile icon={ShieldCheck} size="sm" tone="blue" className="hidden sm:inline-flex" />
               직접 해 봤어요: 지우고 나면 뭐가 남을까
             </h2>
-            <p className="leading-7 mb-5">
+            <p className="mt-4 max-w-[760px] leading-7 text-muted-foreground">
               눈으로는 안 보이는 정보 {exifDemo.before.length}개({exifDemo.exifBlockBytes}바이트)를 넣은 샘플 사진을 만들고, 변환기와 똑같은
               방식으로 다시 저장한 다음 EXIF 파서로 읽어 봤어요.
             </p>
-            <div className="overflow-x-auto rounded-xl border border-gray-200">
-              <table className="w-full text-left text-sm">
-                <caption className="caption-top border-b border-gray-200 p-3 text-left">
-                  <span className={`rounded-full px-3 py-1 text-xs font-semibold ${survivedCount === 0 ? "bg-green-100 text-green-800" : "bg-amber-100 text-amber-900"}`}>
-                    {survivedCount === 0 ? `${exifDemo.before.length}개 모두 지워짐` : `${survivedCount}개 남음`}
-                  </span>
-                </caption>
-                <thead className="bg-gray-100 text-black">
-                  <tr>
-                    <th className="p-3 font-bold">항목</th>
-                    <th className="p-3 font-bold">원본 값</th>
-                  </tr>
-                </thead>
-                <tbody className="text-gray-700">
-                  {exifDemo.before.map((row, index) => (
-                    <tr key={row.field} className="border-t border-gray-200">
-                      <td className="p-3 font-medium text-black">{demoLabels[row.field] ?? row.field}</td>
-                      <td className="p-3 font-mono">
-                        {exifDemo.after[index].value === null ? (
-                          <s className="text-gray-400">{String(row.value)}</s>
-                        ) : (
-                          <>
-                            {String(row.value)} <span className="ml-1 rounded-full bg-amber-100 px-2 py-0.5 font-sans text-xs font-semibold text-amber-900">남음</span>
-                          </>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <p className="mt-4 leading-7">
+            <Card className="mt-6 overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <caption className="caption-top border-b border-border p-4 text-left">
+                    <StatusBadge status={survivedCount === 0 ? "clean" : "found"}>
+                      {survivedCount === 0 ? `${exifDemo.before.length}개 모두 지워짐` : `${survivedCount}개 남음`}
+                    </StatusBadge>
+                  </caption>
+                  <thead className="bg-muted/60">
+                    <tr><th className={TH}>항목</th><th className={TH}>원본 값</th></tr>
+                  </thead>
+                  <tbody>
+                    {exifDemo.before.map((row, index) => (
+                      <tr key={row.field} className="border-t border-border">
+                        <td className={cn(TD, "font-semibold text-foreground")}>{demoLabels[row.field] ?? row.field}</td>
+                        <td className={cn(TD, "text-muted-foreground")}>
+                          {exifDemo.after[index].value === null ? (
+                            <s>{String(row.value)}</s>
+                          ) : (
+                            <>{String(row.value)} <StatusBadge status="found" className="ml-1">남음</StatusBadge></>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </Card>
+            <p className="mt-4 max-w-[760px] leading-7 text-muted-foreground">
               {survivedCount === 0 ? "남은 건 하나도 없었어요." : `${survivedCount}개가 남았어요.`} 샘플은 가짜 정보를 넣은 실제
-              파일이라 <Link href="/ko/view/exif/" className="underline font-medium">뷰어에서 직접 열어 볼 수</Link> 있어요. 실험 과정과
+              파일이라 <Link href="/ko/view/exif/" className={INLINE_LINK}>뷰어에서 직접 열어 볼 수</Link> 있어요. 실험 과정과
               정보를 지워도 못 막는 것들은{" "}
-              <Link href="/ko/guides/exif-metadata-privacy/" className="underline font-medium">EXIF와 개인정보 가이드</Link>에 정리해 뒀어요.
+              <Link href="/ko/guides/exif-metadata-privacy/" className={INLINE_LINK}>EXIF와 개인정보 가이드</Link>에 정리해 뒀어요.
             </p>
           </div>
 
           <div>
-            <h2 className="mb-4 text-3xl font-bold text-black">사진에 남는 정보 여섯 가지</h2>
-            <p className="mb-5 leading-7">
+            <h2 className="text-h2 text-foreground">사진에 남는 정보 여섯 가지</h2>
+            <p className="mt-4 max-w-[760px] leading-7 text-muted-foreground">
               EXIF 뷰어가 확인하는 항목이에요. 한 사진에 전부 들어 있는 경우는 드물고, 무엇이 남는지는 기기와 설정에 따라 달라요.
             </p>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {revealed.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <div key={item.label} className="rounded-xl border border-gray-200 bg-gray-50 p-5">
-                    <div className="mb-1 flex items-center gap-2 font-bold text-black">
-                      <Icon className="h-5 w-5 flex-shrink-0 text-gray-700" aria-hidden="true" />
-                      {item.label}
-                    </div>
-                    <p className="text-sm leading-6 text-gray-700">{item.body}</p>
-                  </div>
-                );
-              })}
+            <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {revealed.map((item) => <RevealItem key={item.label} icon={item.icon} label={item.label} body={item.body} />)}
             </div>
           </div>
 
-          <div>
-            <h2 className="mb-4 flex items-center gap-3 text-3xl font-bold text-black">
-              <FileText className="hidden h-8 w-8 flex-shrink-0 text-brand-600 sm:block" aria-hidden="true" />
+          <div className="max-w-[760px]">
+            <h2 className="flex items-center gap-3 text-h2 text-foreground">
+              <IconTile icon={FileText} size="sm" tone="pink" className="hidden sm:inline-flex" />
               PDF에도 작성자 정보가 남아요
             </h2>
-            <p className="leading-7">
+            <p className="mt-4 leading-7 text-muted-foreground">
               PDF에는 작성자, 초안 제목, 만든 프로그램 같은 문서 속성과 검토 메모가 들어 있을 수 있어요. 직접 해 보니 병합·추출·분할하면
               속성은 지워졌지만 메모는{" "}
               {pdfMetaDemo.merged.comments.length > 0 ? "검토자 이름까지 그대로 남았어요" : "같이 지워졌어요"}. 검은 상자로 가린
               글자도{" "}
               {pdfMetaDemo.coveredText.extractableAfterExtract ? "여전히 복사할 수 있었어요" : "복사되지 않았어요"}. 자세한 결과는{" "}
-              <Link href="/ko/guides/pdf-metadata-privacy/" className="underline font-medium">PDF가 드러내는 것</Link>에 있어요.
+              <Link href="/ko/guides/pdf-metadata-privacy/" className={INLINE_LINK}>PDF가 드러내는 것</Link>에 있어요.
             </p>
           </div>
 
           <div>
-            <h2 className="mb-4 flex items-center gap-3 text-3xl font-bold text-black">
-              <ListChecks className="hidden h-8 w-8 flex-shrink-0 text-brand-600 sm:block" aria-hidden="true" />
+            <h2 className="flex items-center gap-3 text-h2 text-foreground">
+              <IconTile icon={ListChecks} size="sm" tone="blue" className="hidden sm:inline-flex" />
               이럴 때 쓰면 좋아요
             </h2>
-            <div className="grid gap-4 md:grid-cols-2">
-              {commonTasks.map((task) => (
-                <div key={task.task} className="rounded-xl border border-gray-200 bg-gray-50 p-5">
-                  <div className="mb-1 font-bold text-black">{task.task}</div>
-                  <p className="text-sm leading-6 text-gray-700">
-                    {task.how}{" "}
-                    <Link href={task.href} className="underline font-medium">
-                      {task.tool}
-                    </Link>
-                  </p>
-                </div>
-              ))}
+            <div className="mt-6 grid gap-4 md:grid-cols-2">
+              {commonTasks.map((task) => <TaskCard key={task.task} task={task.task} how={task.how} tool={task.tool} href={task.href} />)}
             </div>
           </div>
 
-          <div>
-            <h2 className="mb-3 flex items-center gap-3 text-2xl font-bold text-black">
-              <CircleAlert className="hidden h-7 w-7 flex-shrink-0 text-brand-600 sm:block" aria-hidden="true" />
+          <div className="max-w-[760px]">
+            <h2 className="flex items-center gap-3 text-h2 text-foreground">
+              <IconTile icon={CircleAlert} size="sm" tone="yellow" className="hidden sm:inline-flex" />
               정보를 지워도 남는 것
             </h2>
-            <p className="leading-7 mb-3">
+            <p className="mt-4 leading-7 text-muted-foreground">
               여기서 지우는 건 사진 파일에 붙어 있는 정보뿐이고, 사진에 찍힌 건 그대로예요. 도로명 표지판, 동·호수, 얼굴, 창문에 비친 모습,
               뒤에 켜진 모니터로도 장소와 사람을 알 수 있어요. 보내기 전에 사진을 한 번 더 보세요.
             </p>
-            <p className="leading-7">
+            <p className="mt-3 leading-7 text-muted-foreground">
               JPG, PNG, WebP 사진과 PDF 문서를 열 수 있어요. 아이폰 기본 형식인 HEIC, 그리고 RAW, TIFF, GIF, BMP는 아직 안 돼요.
               아이폰은 설정 → 카메라 → 포맷에서 &ldquo;높은 호환성&rdquo;을 고르면 JPG로 찍혀요. 지우기는 사본을 만드는 거라 원본은 그대로
               남아요.
             </p>
           </div>
 
-          <div className="rounded-xl border border-gray-200 bg-gray-50 p-6">
-            <h2 className="mb-2 text-xl font-bold text-black">한국어로 볼 수 있는 페이지</h2>
-            <p className="leading-7">
+          <Card className="p-6">
+            <h2 className="text-h3 text-foreground">한국어로 볼 수 있는 페이지</h2>
+            <p className="mt-2 leading-7 text-muted-foreground">
               지금은 EXIF 뷰어와 개인정보 가이드만 한국어예요. 이미지 변환기, PDF 도구, FAQ는 영어지만 화면이 단순해서 버튼 몇 개만 알면
-              쓸 수 있어요. 가이드는 <Link href="/ko/guides/" className="underline font-medium">가이드 목록</Link>에 모아 뒀어요.
+              쓸 수 있어요. 가이드는 <Link href="/ko/guides/" className={INLINE_LINK}>가이드 목록</Link>에 모아 뒀어요.
             </p>
-          </div>
+          </Card>
         </section>
-      </div>
+      </PageContainer>
     </main>
   );
 }
