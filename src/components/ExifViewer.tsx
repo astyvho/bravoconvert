@@ -1,12 +1,26 @@
 "use client";
 
 import Link from "next/link";
-import { Camera, CheckCircle2, ChevronDown, Clock, Download, Eraser, Fingerprint, ImageIcon, MapPin, PenLine, Plus, RotateCcw, Share2, ShieldAlert, Upload, User } from "lucide-react";
+import { Camera, CheckCircle2, ChevronDown, Clock, Download, Eraser, Fingerprint, ImageIcon, MapPin, PenLine, Plus, RotateCcw, Share2, ShieldAlert, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, DragEvent, type ReactNode, useEffect, useRef, useState } from "react";
 import { formatExifDate, readMetadata, type Metadata } from "@/lib/photo-metadata";
 import type { Locale } from "@/lib/locale";
+import type { ReportItemId } from "@/lib/demo-report";
 import { HANDOFF_PARAM, putHandoff, takeHandoff, withHandoff } from "@/lib/file-handoff";
+import { motion, useReducedMotion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import PageContainer from "@/components/site/page-container";
+import ActionBar from "@/components/tool/action-bar";
+import DropZone from "@/components/tool/drop-zone";
+import { FileList, FileRow } from "@/components/tool/file-list";
+import IconTile from "@/components/tool/icon-tile";
+import { ReportRow } from "@/components/tool/report-panel";
+import StatusBadge from "@/components/tool/status-badge";
+import ToolLayout from "@/components/tool/tool-layout";
+import ToolPageHeader from "@/components/tool/tool-page-header";
 
 const MAX_FILE_SIZE = 25 * 1024 * 1024;
 const SUPPORTED_TYPES = ["image/jpeg", "image/png", "image/webp"];
@@ -21,7 +35,7 @@ type Loaded = {
 };
 
 type Check = {
-  id: string;
+  id: ReportItemId;
   label: Record<Locale, string>;
   icon: typeof MapPin;
   keys: string[];
@@ -40,6 +54,7 @@ const STRINGS = {
     sample: "Try a sample photo",
     inputLabel: "Choose a JPG, PNG, or WebP photo",
     limits: (max: string) => `JPG, PNG or WebP · up to ${max} each`,
+    maxChip: (max: string) => `Up to ${max} each`,
     wrongType: "Choose a JPG, PNG, or WebP image.",
     tooLarge: (max: string) => `This image is larger than ${max}.`,
     unreadable: "The metadata in this image could not be read. The file may be damaged.",
@@ -113,6 +128,7 @@ const STRINGS = {
     sample: "샘플 사진으로 해보기",
     inputLabel: "JPG, PNG, WebP 사진 선택",
     limits: (max: string) => `JPG, PNG, WebP · 한 장에 ${max}까지`,
+    maxChip: (max: string) => `한 장에 ${max}까지`,
     wrongType: "JPG, PNG, WebP 사진만 열 수 있어요.",
     tooLarge: (max: string) => `${max}보다 큰 사진은 열 수 없어요.`,
     unreadable: "이 사진의 정보를 읽지 못했어요. 파일이 깨졌을 수 있어요.",
@@ -380,9 +396,6 @@ function pickOptions(types: string[], t: Strings): PickOption[] {
   ];
 }
 
-const primaryButton = "inline-flex h-11 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl bg-brand-600 px-4 text-sm font-semibold text-white hover:bg-brand-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 disabled:opacity-50";
-const secondaryButton = "inline-flex h-11 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl border border-gray-300 bg-white px-4 text-sm font-semibold text-black hover:border-gray-500 disabled:opacity-50";
-
 function FormatPicker({ id, t, options, onPick, disabled, shrink, onShrink, jpgNote }: {
   id: string;
   t: Strings;
@@ -393,30 +406,33 @@ function FormatPicker({ id, t, options, onPick, disabled, shrink, onShrink, jpgN
   onShrink: (value: boolean) => void;
   jpgNote: boolean;
 }) {
+  const shrinkId = `${id}-shrink`;
   return (
-    <div id={id} role="group" aria-label={t.pickTitle} className="mt-3 rounded-xl border border-gray-200 bg-white p-3">
-      <p className="text-sm font-semibold text-black">{t.pickTitle}</p>
+    <div id={id} role="group" aria-label={t.pickTitle} className="mt-4 scroll-mt-28 rounded-field bg-muted/60 p-3">
+      <p className="text-sm font-bold text-foreground">{t.pickTitle}</p>
       <div className={`mt-2 grid grid-cols-1 gap-2 ${options.length > 3 ? "sm:grid-cols-2" : "sm:grid-cols-3"}`}>
         {options.map(option => (
-          <button
+          <Button
             key={option.choice}
             type="button"
+            variant={option.primary ? "primary" : "secondary"}
+            size="md"
             onClick={() => onPick(option.choice)}
             disabled={disabled}
-            className={`flex min-h-[44px] flex-col items-start rounded-xl border px-3 py-2 text-left disabled:opacity-50 ${option.primary ? "border-brand-600 bg-brand-50" : "border-gray-300 hover:border-gray-500"}`}
+            className="h-auto min-h-[44px] flex-col items-start gap-0.5 whitespace-normal rounded-field py-2.5 text-left"
           >
-            <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-black">
-              <Download className="h-4 w-4" aria-hidden="true" /> {option.label}
+            <span className="inline-flex items-center gap-1.5 text-sm font-bold">
+              <Download aria-hidden="true" /> {option.label}
             </span>
-            <span className="mt-0.5 text-xs font-normal text-gray-600">{option.note}</span>
-          </button>
+            <span className={`text-xs font-medium ${option.primary ? "text-primary-foreground/85" : "text-muted-foreground"}`}>{option.note}</span>
+          </Button>
         ))}
       </div>
-      <label className="mt-3 flex items-center gap-2 text-sm text-gray-800">
-        <input type="checkbox" checked={shrink} onChange={event => onShrink(event.target.checked)} className="h-4 w-4 accent-brand-600" />
-        {t.shrink}
-      </label>
-      {jpgNote && <p className="mt-2 text-xs text-gray-600">{t.jpgNote}</p>}
+      <div className="mt-3 flex items-center gap-2.5">
+        <Checkbox id={shrinkId} checked={shrink} onCheckedChange={value => onShrink(value === true)} className="h-5 w-5 rounded-md" />
+        <label htmlFor={shrinkId} className="text-sm font-medium text-foreground">{t.shrink}</label>
+      </div>
+      {jpgNote && <p className="mt-2 text-xs text-muted-foreground">{t.jpgNote}</p>}
     </div>
   );
 }
@@ -424,19 +440,19 @@ function FormatPicker({ id, t, options, onPick, disabled, shrink, onShrink, jpgN
 // 지운 뒤의 완료 카드. 결과 문장, 다음 행동 버튼, 앱 안 브라우저라면 길게 눌러 저장할 미리보기.
 function DoneCard({ ok, t, previews, actions, children }: { ok: boolean; t: Strings; previews: string[] | null; actions: ReactNode; children: ReactNode }) {
   return (
-    <div data-done className={`mt-4 rounded-xl px-4 py-3 ${ok ? "bg-green-50 text-green-800" : "bg-amber-50 text-amber-900"}`}>
-      <p role="status" className="flex items-start gap-2 text-sm font-semibold">
+    <div data-done className={`mt-4 rounded-field px-4 py-3.5 ${ok ? "bg-status-clean text-status-clean-foreground" : "bg-status-found text-status-found-foreground"}`}>
+      <p role="status" className="flex items-start gap-2 text-sm font-bold">
         {ok ? <CheckCircle2 className="h-5 w-5 flex-shrink-0" aria-hidden="true" /> : <ShieldAlert className="h-5 w-5 flex-shrink-0" aria-hidden="true" />}
         <span>{children}</span>
       </p>
       <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:flex-wrap">{actions}</div>
       {previews && (
         <>
-          <p className="mt-3 text-xs">{t.inAppHint}</p>
+          <p className="mt-3 text-xs font-medium">{t.inAppHint}</p>
           <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
             {previews.map(url => (
               // eslint-disable-next-line @next/next/no-img-element
-              <img key={url} src={url} alt="" className="w-full rounded-lg bg-white object-contain" />
+              <img key={url} src={url} alt="" className="w-full rounded-tile-sm bg-card object-contain" />
             ))}
           </div>
         </>
@@ -461,6 +477,7 @@ export default function ExifViewer({ locale = "en" }: { locale?: Locale }) {
   const [picking, setPicking] = useState<"single" | "batch" | null>(null);
   const [shrink, setShrink] = useState(false);
   const [inApp, setInApp] = useState(false);
+  const reducedMotion = useReducedMotion();
   const inputRef = useRef<HTMLInputElement>(null);
   const addRef = useRef<HTMLInputElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
@@ -736,6 +753,12 @@ export default function ExifViewer({ locale = "en" }: { locale?: Locale }) {
   const activeCleanFile = activeCleaned ? asFile(activeCleaned) : null;
   const batchFiles = batch ? batch.files.map(asFile) : [];
 
+  // 휴대폰에서는 Remove it now 가 화면 아래에 붙어 있어, 펼친 형식 선택이 화면 밖일 수 있다. 펼치면 보이게 스크롤한다.
+  useEffect(() => {
+    if (!picking) return;
+    document.getElementById(picking === "single" ? "clean-format-picker" : "batch-format-picker")?.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "nearest" });
+  }, [picking, reducedMotion]);
+
   const picker = (scope: "single" | "batch") => {
     const targets = scope === "single" && active ? [active] : items;
     return (
@@ -752,298 +775,337 @@ export default function ExifViewer({ locale = "en" }: { locale?: Locale }) {
     );
   };
 
+  const startPicking = (scope: "single" | "batch") => {
+    setCleanError(null);
+    setPicking(current => (current === scope ? null : scope));
+  };
+
+  const previewCard = active && (
+    <Card className="p-4">
+      <div className={multi ? "flex flex-col gap-4 sm:flex-row sm:items-center" : ""}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          key={active.id}
+          src={active.url}
+          alt={t.previewAlt}
+          className={multi ? "h-40 w-full rounded-field bg-muted object-contain sm:w-56 sm:flex-shrink-0" : "max-h-[420px] w-full rounded-field bg-muted object-contain"}
+          onLoad={event => {
+            const image = event.currentTarget;
+            const id = active.id;
+            setItems(current => current.map(item => (item.id === id ? { ...item, width: image.naturalWidth, height: image.naturalHeight } : item)));
+          }}
+        />
+        <div className={`flex min-w-0 flex-1 items-start justify-between gap-3 ${multi ? "" : "mt-4"}`}>
+          <div className="min-w-0">
+            <p className="truncate text-sm font-bold text-foreground">{active.file.name}</p>
+            <p className="text-caption font-medium text-muted-foreground tabular-nums">{formatBytes(active.file.size)}{active.width ? ` · ${active.width} × ${active.height}px` : ""}</p>
+          </div>
+          {!multi && !activeCleaned && (
+            <Button type="button" variant="secondary" size="sm" onClick={clear} className="flex-shrink-0">
+              <RotateCcw aria-hidden="true" /> {t.another}
+            </Button>
+          )}
+        </div>
+      </div>
+    </Card>
+  );
+
+  const batchCard = active && multi && (
+    <Card data-batch>
+      <CardHeader className="flex-col items-stretch gap-3 sm:flex-row sm:items-center">
+        <h2 className="min-w-0 flex-1 text-base font-bold text-foreground">{t.batchSummary(items.length, photosWithInfo)}</h2>
+        <div className="grid grid-cols-1 gap-2 sm:flex sm:flex-wrap sm:justify-end">
+          {!batch && (
+            <Button type="button" size="sm" onClick={() => startPicking("batch")} disabled={working !== null} aria-expanded={picking === "batch"} aria-controls="batch-format-picker">
+              <Eraser aria-hidden="true" /> {working?.scope === "batch" ? working.label : t.cleanAll}
+            </Button>
+          )}
+          <Button type="button" variant="secondary" size="sm" onClick={() => addRef.current?.click()} disabled={working !== null || items.length >= MAX_FILES}>
+            <Plus aria-hidden="true" /> {t.addMore}
+          </Button>
+          <Button type="button" variant="secondary" size="sm" onClick={clear} disabled={working !== null}>
+            <RotateCcw aria-hidden="true" /> {t.another}
+          </Button>
+        </div>
+      </CardHeader>
+      <CardContent>
+        {picking === "batch" && picker("batch")}
+        {batch && (
+          <DoneCard
+            ok={batch.left === 0}
+            t={t}
+            previews={inApp ? batch.files.map(cleaned => cleaned.url) : null}
+            actions={
+              <>
+                {canShareFiles(batchFiles) && (
+                  <Button type="button" size="sm" onClick={() => shareFiles(batchFiles)}>
+                    <Share2 aria-hidden="true" /> {t.share}
+                  </Button>
+                )}
+                <Button type="button" variant="secondary" size="sm" onClick={() => saveBatch(batch.zip, batch.files)}>
+                  <Download aria-hidden="true" /> {t.downloadAgain}
+                </Button>
+                <Button type="button" variant="secondary" size="sm" onClick={() => startPicking("batch")} aria-expanded={picking === "batch"}>
+                  {t.otherFormat}
+                </Button>
+              </>
+            }
+          >
+            {t.batchDone(batch.files.length, batch.left)} {batch.zip ? t.cleanedSaved(batch.zip.name, formatBytes(batch.zip.size)) : t.savedSeparately(batch.files.length)}
+          </DoneCard>
+        )}
+        <FileList label={t.listLabel} className={`grid gap-1 sm:grid-cols-2 ${picking === "batch" || batch ? "mt-4" : ""}`}>
+          {items.map(item => {
+            const cleaned = cleanedMap[item.id];
+            const current = item.id === active.id;
+            const status = cleaned?.remaining === 0 ? "clean" : item.found ? "found" : "neutral";
+            return (
+              <FileRow
+                key={item.id}
+                thumbUrl={item.url}
+                name={item.file.name}
+                meta={formatBytes(item.file.size)}
+                selected={current}
+                ariaCurrent={current ? "true" : undefined}
+                onSelect={() => { setActiveId(item.id); setPicking(open => (open === "single" ? null : open)); setShowAll(false); }}
+                badge={<StatusBadge status={status} className="whitespace-nowrap">{cleaned?.remaining === 0 ? t.rowCleaned : item.found ? t.rowFound(item.found) : t.none}</StatusBadge>}
+              />
+            );
+          })}
+        </FileList>
+      </CardContent>
+    </Card>
+  );
+
+  const missing = results.filter(result => !result.found);
+  const reportCard = active && (
+    <Card>
+      <CardHeader>
+        <h2 className="text-h3 text-foreground">{t.checkTitle}</h2>
+        <StatusBadge status={removedInCopy || foundCount === 0 ? "clean" : "found"} className="whitespace-nowrap">
+          {removedInCopy ? t.removedInCopy : foundCount ? t.rowFound(foundCount) : t.none}
+        </StatusBadge>
+      </CardHeader>
+      <CardContent>
+        <ul className="divide-y divide-muted">
+          {results.filter(result => result.found).map(result => (
+            <ReportRow
+              key={result.id}
+              data-check={result.id}
+              item={{ id: result.id, label: result.label, value: result.detail, found: !removedInCopy }}
+              icon={result.icon}
+              className="items-start"
+              badge={<StatusBadge status={removedInCopy ? "clean" : "found"} className="whitespace-nowrap">{removedInCopy ? t.removedInCopy : t.found}</StatusBadge>}
+            >
+              {result.id === "location" && point && (
+                <a
+                  href={`https://www.openstreetmap.org/?mlat=${point.lat.toFixed(5)}&mlon=${point.lon.toFixed(5)}#map=16/${point.lat.toFixed(5)}/${point.lon.toFixed(5)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-1 inline-block text-[13px] font-semibold text-primary underline-offset-4 hover:underline"
+                >
+                  {t.map}
+                </a>
+              )}
+            </ReportRow>
+          ))}
+          {missing.length > 0 && (
+            <li data-none className="grid grid-cols-[36px_1fr] items-start gap-3 py-3 text-sm">
+              <IconTile icon={CheckCircle2} tone="clean" size="sm" />
+              <p className="min-w-0 self-center text-[13px] text-muted-foreground">
+                <span className="font-bold text-foreground">{t.notFound}: </span>
+                {missing.map((result, index) => (
+                  <span key={result.id} data-check={result.id}>{result.label}{index < missing.length - 1 ? " · " : ""}</span>
+                ))}
+              </p>
+            </li>
+          )}
+        </ul>
+        {point && <p className="mt-1 text-xs text-muted-foreground">{t.mapNote}</p>}
+
+        {activeCleaned && activeCleanFile ? (
+          <DoneCard
+            ok={activeCleaned.remaining === 0}
+            t={t}
+            previews={inApp ? [activeCleaned.url] : null}
+            actions={
+              <>
+                {canShareFiles([activeCleanFile]) && (
+                  <Button type="button" size="sm" onClick={() => shareFiles([activeCleanFile])}>
+                    <Share2 aria-hidden="true" /> {t.share}
+                  </Button>
+                )}
+                <Button type="button" variant="secondary" size="sm" onClick={() => download(activeCleaned.url, activeCleaned.name)}>
+                  <Download aria-hidden="true" /> {t.downloadAgain}
+                </Button>
+                <Button type="button" variant="secondary" size="sm" onClick={() => startPicking("single")} disabled={working !== null} aria-expanded={picking === "single"} aria-controls="clean-format-picker">
+                  {working?.scope === "single" ? working.label : t.otherFormat}
+                </Button>
+                {!multi && (
+                  <Button type="button" variant="secondary" size="sm" onClick={clear}>
+                    <RotateCcw aria-hidden="true" /> {t.another}
+                  </Button>
+                )}
+              </>
+            }
+          >
+            {activeCleaned.remaining === null ? t.verifyFailed : activeCleaned.remaining === 0 ? t.cleanedOk : t.cleanedLeft(activeCleaned.remaining)}{" "}
+            {t.cleanedSaved(activeCleaned.name, formatBytes(activeCleaned.size))}
+          </DoneCard>
+        ) : (
+          <>
+            <div className={`mt-4 rounded-field px-4 py-3.5 ${foundCount ? "bg-status-found text-status-found-foreground" : "bg-status-clean text-status-clean-foreground"}`}>
+              <p className="flex items-start gap-2 text-sm font-bold">
+                {foundCount ? <ShieldAlert className="h-5 w-5 flex-shrink-0" aria-hidden="true" /> : <CheckCircle2 className="h-5 w-5 flex-shrink-0" aria-hidden="true" />}
+                <span>{foundCount ? t.foundSummary(foundCount) : t.noneSummary}</span>
+              </p>
+              {foundCount > 0 && picking !== "single" && !cleanError && <p className="mt-1.5 text-xs font-medium">{t.jumpHint}</p>}
+              {foundCount === 0 && <p className="mt-1.5 text-xs font-medium">{t.noneNext}</p>}
+            </div>
+            {(foundCount > 0 || canShareFiles([active.file])) && (
+              <ActionBar className="mt-4">
+                {foundCount > 0 ? (
+                  <Button type="button" size="lg" onClick={() => startPicking("single")} disabled={working !== null} aria-expanded={picking === "single"} aria-controls="clean-format-picker" className="w-full">
+                    <Eraser aria-hidden="true" />
+                    {working?.scope === "single" ? working.label : t.jumpToClean}
+                  </Button>
+                ) : (
+                  <Button type="button" size="lg" onClick={() => shareFiles([active.file])} className="w-full">
+                    <Share2 aria-hidden="true" /> {t.share}
+                  </Button>
+                )}
+              </ActionBar>
+            )}
+          </>
+        )}
+        {picking === "single" && picker("single")}
+        {cleanError && <p role="alert" className="mt-3 rounded-field bg-destructive px-4 py-3 text-sm font-semibold text-destructive-foreground">{cleanError}</p>}
+      </CardContent>
+    </Card>
+  );
+
+  const panel = active && (reducedMotion ? (
+    <div key={active.id} data-testid="exif-report" data-motion="off">{reportCard}</div>
+  ) : (
+    <motion.div key={active.id} data-testid="exif-report" data-motion="on" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }}>
+      {reportCard}
+    </motion.div>
+  ));
+
+  const resultCards = active && (
+    <>
+      {(photosWithInfo > 0 || multi) && (
+        <Card data-clean className="bg-muted/60 shadow-none">
+          <CardContent className="p-5">
+            <h2 className="text-base font-bold text-foreground">{t.cleanTitle}</h2>
+            <p className="mt-1 text-sm leading-6 text-muted-foreground">
+              {t.cleanMore(
+                <Link href={converterHref} onClick={event => { event.preventDefault(); handTo(converterHref, items.map(item => item.file)); }} className="font-semibold text-primary underline-offset-4 hover:underline">{t.converter}</Link>,
+                <Link href={editorHref} onClick={event => { event.preventDefault(); handTo(editorHref, [active.file]); }} className="font-semibold text-primary underline-offset-4 hover:underline">{t.editor}</Link>,
+              )}
+            </p>
+          </CardContent>
+        </Card>
+      )}
+
+      {settings.length > 0 && (
+        <Card>
+          <CardHeader>
+            <h2 className="text-h3 text-foreground">{t.settingsTitle}</h2>
+          </CardHeader>
+          <CardContent>
+            <dl className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {settings.map(([label, value]) => (
+                <div key={label} className="rounded-field bg-muted/60 px-4 py-3">
+                  <dt className="text-caption font-semibold uppercase tracking-wide text-muted-foreground">{label}</dt>
+                  <dd className="mt-1 text-sm font-bold text-foreground tabular-nums">{value}</dd>
+                </div>
+              ))}
+            </dl>
+          </CardContent>
+        </Card>
+      )}
+
+      {allFields.length > 0 && (
+        <Card className="p-5">
+          <button type="button" onClick={() => setShowAll(value => !value)} aria-expanded={showAll} className="flex w-full items-center justify-between rounded-field text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+            <h2 className="text-h3 text-foreground">{t.allFields(allFields.length)}</h2>
+            <ChevronDown className={`h-5 w-5 text-muted-foreground transition-transform ${showAll ? "rotate-180" : ""}`} aria-hidden="true" />
+          </button>
+          {showAll && (
+            <div className="mt-4 overflow-x-auto">
+              <table className="w-full min-w-[420px] text-left text-sm">
+                <tbody>
+                  {allFields.map(([key, value]) => (
+                    <tr key={key} className="border-b border-muted align-top">
+                      <th className="py-2 pr-4 font-semibold text-muted-foreground">{key}</th>
+                      <td className="break-all py-2 text-foreground">{show(value, t)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </Card>
+      )}
+    </>
+  );
+
   return (
-    <section className="mx-auto w-full max-w-5xl px-4 pb-12">
-      <header className="mx-auto mb-8 max-w-3xl text-center">
-        <span className="inline-flex items-center gap-2 rounded-full bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-700">
-          <ImageIcon className="h-4 w-4" aria-hidden="true" /> {t.badge}
-        </span>
-        <h1 className="mt-5 text-4xl font-bold tracking-tight text-black md:text-5xl">{t.title}</h1>
-        <p className="mt-4 text-lg leading-8 text-gray-600">{t.intro}</p>
-      </header>
+    <PageContainer className="pb-12">
+      <ToolPageHeader
+        crumb={locale === "ko" ? ["도구", "EXIF 뷰어"] : ["Tools", "EXIF Viewer"]}
+        title={t.title}
+        intro={t.intro}
+        icon={ImageIcon}
+        tone="blue"
+        chips={[{ label: "JPG" }, { label: "PNG" }, { label: "WebP" }, { label: t.maxChip(formatBytes(MAX_FILE_SIZE)) }, { label: t.badge, ok: true }]}
+        className="mb-6"
+      />
 
       {!active && (
-        <div
-          className={`mx-auto max-w-4xl rounded-3xl border-2 border-dashed p-10 text-center transition md:p-14 ${dragging ? "border-black bg-gray-200 shadow-md" : "border-gray-400 bg-gray-100 hover:border-gray-500 hover:bg-gray-200 hover:shadow-md"}`}
+        <DropZone
+          title={t.drop}
+          note={t.limits(formatBytes(MAX_FILE_SIZE))}
+          dragging={dragging}
+          busy={busy}
           onDragEnter={event => { event.preventDefault(); setDragging(true); }}
           onDragOver={event => event.preventDefault()}
           onDragLeave={event => { if (event.currentTarget === event.target) setDragging(false); }}
           onDrop={onDrop}
+          actions={
+            <>
+              <Button type="button" size="lg" onClick={() => inputRef.current?.click()} disabled={busy}>
+                {busy ? t.reading : t.choose}
+              </Button>
+              <Button type="button" variant="secondary" size="lg" onClick={openSample} disabled={busy}>
+                {t.sample}
+              </Button>
+            </>
+          }
         >
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-brand-600 text-white">
-            <Upload className="h-7 w-7" aria-hidden="true" />
-          </div>
-          <h2 className="mt-6 text-2xl font-bold text-black">{t.drop}</h2>
-          <div className="mt-6 flex flex-wrap justify-center gap-3">
-            <button type="button" onClick={() => inputRef.current?.click()} disabled={busy} className="rounded-xl bg-brand-600 px-6 py-3 font-semibold text-white transition hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-600 focus:ring-offset-2 disabled:opacity-50">
-              {busy ? t.reading : t.choose}
-            </button>
-            <button type="button" onClick={openSample} disabled={busy} className="rounded-xl border border-gray-300 bg-white px-6 py-3 font-semibold text-black transition hover:border-gray-500 disabled:opacity-50">
-              {t.sample}
-            </button>
-          </div>
           <input ref={inputRef} type="file" multiple accept="image/jpeg,image/png,image/webp" onChange={event => onInput(event)} className="sr-only" aria-label={t.inputLabel} />
-          <p className="mt-5 text-sm text-gray-500">{t.limits(formatBytes(MAX_FILE_SIZE))}</p>
-        </div>
+        </DropZone>
       )}
       <input ref={addRef} type="file" multiple accept="image/jpeg,image/png,image/webp" onChange={event => onInput(event, true)} className="sr-only" aria-label={t.addMore} tabIndex={-1} />
 
-      {error && <p role="alert" className="mx-auto mt-4 max-w-4xl rounded-xl bg-red-50 px-4 py-3 text-center text-sm font-medium text-red-700">{error}</p>}
+      {error && <p role="alert" className="mt-4 rounded-field bg-destructive px-4 py-3 text-center text-sm font-semibold text-destructive-foreground">{error}</p>}
 
       {active && (
-        <div ref={resultsRef} className="scroll-mt-28 space-y-6">
-          {multi && (
-            <div data-batch className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm">
-              <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
-                <p className="min-w-0 flex-1 font-semibold text-black">{t.batchSummary(items.length, photosWithInfo)}</p>
-                <div className="grid grid-cols-1 gap-2 sm:flex sm:flex-wrap">
-                  {!batch && (
-                    <button type="button" onClick={() => setPicking(current => (current === "batch" ? null : "batch"))} disabled={working !== null} aria-expanded={picking === "batch"} aria-controls="batch-format-picker" className={primaryButton}>
-                      <Eraser className="h-4 w-4" aria-hidden="true" /> {working?.scope === "batch" ? working.label : t.cleanAll}
-                    </button>
-                  )}
-                  <button type="button" onClick={() => addRef.current?.click()} disabled={working !== null || items.length >= MAX_FILES} className={secondaryButton}>
-                    <Plus className="h-4 w-4" aria-hidden="true" /> {t.addMore}
-                  </button>
-                  <button type="button" onClick={clear} disabled={working !== null} className={secondaryButton}>
-                    <RotateCcw className="h-4 w-4" aria-hidden="true" /> {t.another}
-                  </button>
-                </div>
+        <div ref={resultsRef} className="scroll-mt-28">
+          <ToolLayout
+            panelFirstOnMobile
+            main={
+              <div className="space-y-5">
+                {previewCard}
+                {batchCard}
               </div>
-              {picking === "batch" && picker("batch")}
-              {batch && (
-                <DoneCard
-                  ok={batch.left === 0}
-                  t={t}
-                  previews={inApp ? batch.files.map(cleaned => cleaned.url) : null}
-                  actions={
-                    <>
-                      {canShareFiles(batchFiles) && (
-                        <button type="button" onClick={() => shareFiles(batchFiles)} className={primaryButton}>
-                          <Share2 className="h-4 w-4" aria-hidden="true" /> {t.share}
-                        </button>
-                      )}
-                      <button type="button" onClick={() => saveBatch(batch.zip, batch.files)} className={secondaryButton}>
-                        <Download className="h-4 w-4" aria-hidden="true" /> {t.downloadAgain}
-                      </button>
-                      <button type="button" onClick={() => setPicking(current => (current === "batch" ? null : "batch"))} aria-expanded={picking === "batch"} className={secondaryButton}>
-                        {t.otherFormat}
-                      </button>
-                    </>
-                  }
-                >
-                  {t.batchDone(batch.files.length, batch.left)} {batch.zip ? t.cleanedSaved(batch.zip.name, formatBytes(batch.zip.size)) : t.savedSeparately(batch.files.length)}
-                </DoneCard>
-              )}
-              <ul aria-label={t.listLabel} className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
-                {items.map(item => {
-                  const cleaned = cleanedMap[item.id];
-                  const current = item.id === active.id;
-                  return (
-                    <li key={item.id}>
-                      <button
-                        type="button"
-                        onClick={() => { setActiveId(item.id); setPicking(open => (open === "single" ? null : open)); setShowAll(false); }}
-                        aria-current={current ? "true" : undefined}
-                        className={`flex w-full items-center gap-3 rounded-xl border p-2 text-left ${current ? "border-brand-600 bg-brand-50" : "border-gray-200 hover:border-gray-400"}`}
-                      >
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={item.url} alt="" className="h-12 w-12 flex-shrink-0 rounded-lg bg-gray-100 object-cover" />
-                        <span className="min-w-0 flex-1">
-                          <span className="block truncate text-sm font-semibold text-black">{item.file.name}</span>
-                          <span className="text-xs text-gray-500">{formatBytes(item.file.size)}</span>
-                        </span>
-                        <span className={`whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold ${cleaned?.remaining === 0 ? "bg-green-100 text-green-800" : item.found ? "bg-amber-100 text-amber-900" : "bg-gray-100 text-gray-600"}`}>
-                          {cleaned?.remaining === 0 ? t.rowCleaned : item.found ? t.rowFound(item.found) : t.none}
-                        </span>
-                      </button>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          )}
-
-          <div className="flex flex-col gap-5 rounded-3xl border border-gray-200 bg-white p-5 shadow-sm md:flex-row">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              key={active.id}
-              src={active.url}
-              alt={t.previewAlt}
-              className="h-40 w-full rounded-2xl bg-gray-100 object-contain md:w-56"
-              onLoad={event => {
-                const image = event.currentTarget;
-                const id = active.id;
-                setItems(current => current.map(item => (item.id === id ? { ...item, width: image.naturalWidth, height: image.naturalHeight } : item)));
-              }}
-            />
-            <div className="min-w-0 flex-1">
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <p className="truncate font-semibold text-black">{active.file.name}</p>
-                  <p className="text-sm text-gray-500">{formatBytes(active.file.size)}{active.width ? ` · ${active.width} × ${active.height}px` : ""}</p>
-                </div>
-                {!multi && !activeCleaned && (
-                  <button type="button" onClick={clear} className="inline-flex flex-shrink-0 items-center gap-1 whitespace-nowrap rounded-xl border border-gray-200 px-3 py-2 text-sm font-semibold text-black hover:bg-gray-50">
-                    <RotateCcw className="h-4 w-4" aria-hidden="true" /> {t.another}
-                  </button>
-                )}
-              </div>
-
-              {activeCleaned && activeCleanFile ? (
-                <DoneCard
-                  ok={activeCleaned.remaining === 0}
-                  t={t}
-                  previews={inApp ? [activeCleaned.url] : null}
-                  actions={
-                    <>
-                      {canShareFiles([activeCleanFile]) && (
-                        <button type="button" onClick={() => shareFiles([activeCleanFile])} className={primaryButton}>
-                          <Share2 className="h-4 w-4" aria-hidden="true" /> {t.share}
-                        </button>
-                      )}
-                      <button type="button" onClick={() => download(activeCleaned.url, activeCleaned.name)} className={secondaryButton}>
-                        <Download className="h-4 w-4" aria-hidden="true" /> {t.downloadAgain}
-                      </button>
-                      <button type="button" onClick={() => setPicking(current => (current === "single" ? null : "single"))} disabled={working !== null} aria-expanded={picking === "single"} aria-controls="clean-format-picker" className={secondaryButton}>
-                        {working?.scope === "single" ? working.label : t.otherFormat}
-                      </button>
-                      {!multi && (
-                        <button type="button" onClick={clear} className={secondaryButton}>
-                          <RotateCcw className="h-4 w-4" aria-hidden="true" /> {t.another}
-                        </button>
-                      )}
-                    </>
-                  }
-                >
-                  {activeCleaned.remaining === null ? t.verifyFailed : activeCleaned.remaining === 0 ? t.cleanedOk : t.cleanedLeft(activeCleaned.remaining)}{" "}
-                  {t.cleanedSaved(activeCleaned.name, formatBytes(activeCleaned.size))}
-                </DoneCard>
-              ) : (
-                <div className={`mt-4 rounded-xl px-4 py-3 ${foundCount ? "bg-amber-50 text-amber-900" : "bg-green-50 text-green-800"}`}>
-                  <div className="flex flex-col gap-3 text-sm font-semibold sm:flex-row sm:items-center">
-                    <span className="flex min-w-0 flex-1 items-start gap-2">
-                      {foundCount ? <ShieldAlert className="h-5 w-5 flex-shrink-0" aria-hidden="true" /> : <CheckCircle2 className="h-5 w-5 flex-shrink-0" aria-hidden="true" />}
-                      <span>{foundCount ? t.foundSummary(foundCount) : t.noneSummary}</span>
-                    </span>
-                    {foundCount > 0 && (
-                      <button
-                        type="button"
-                        onClick={() => { setCleanError(null); setPicking(current => (current === "single" ? null : "single")); }}
-                        disabled={working !== null}
-                        aria-expanded={picking === "single"}
-                        aria-controls="clean-format-picker"
-                        className={`${primaryButton} w-full flex-shrink-0 sm:w-auto`}
-                      >
-                        <Eraser className="h-4 w-4" aria-hidden="true" />
-                        {working?.scope === "single" ? working.label : t.jumpToClean}
-                      </button>
-                    )}
-                    {foundCount === 0 && canShareFiles([active.file]) && (
-                      <button type="button" onClick={() => shareFiles([active.file])} className={`${primaryButton} w-full flex-shrink-0 sm:w-auto`}>
-                        <Share2 className="h-4 w-4" aria-hidden="true" /> {t.share}
-                      </button>
-                    )}
-                  </div>
-                  {foundCount > 0 && picking !== "single" && !cleanError && <p className="mt-2 text-xs font-normal text-amber-800">{t.jumpHint}</p>}
-                  {foundCount === 0 && <p className="mt-2 text-xs font-normal">{t.noneNext}</p>}
-                </div>
-              )}
-              {picking === "single" && picker("single")}
-              {cleanError && <p role="alert" className="mt-3 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">{cleanError}</p>}
-            </div>
-          </div>
-
-          <div className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-black">{t.checkTitle}</h2>
-            <ul className="mt-4 divide-y divide-gray-100">
-              {results.filter(result => result.found).map(result => (
-                <li key={result.id} className="flex items-start gap-3 py-3" data-check={result.id}>
-                  <result.icon className={`mt-0.5 h-5 w-5 flex-shrink-0 ${removedInCopy ? "text-green-600" : "text-amber-600"}`} aria-hidden="true" />
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-semibold text-black">{result.label}</p>
-                    <p className="break-words text-sm text-gray-800">{result.detail}</p>
-                    {result.id === "location" && point && (
-                      <a
-                        href={`https://www.openstreetmap.org/?mlat=${point.lat.toFixed(5)}&mlon=${point.lon.toFixed(5)}#map=16/${point.lat.toFixed(5)}/${point.lon.toFixed(5)}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="mt-1 inline-block text-sm font-medium text-black underline"
-                      >
-                        {t.map}
-                      </a>
-                    )}
-                  </div>
-                  <span className={`whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold ${removedInCopy ? "bg-green-100 text-green-800" : "bg-amber-100 text-amber-900"}`}>
-                    {removedInCopy ? t.removedInCopy : t.found}
-                  </span>
-                </li>
-              ))}
-              {results.some(result => !result.found) && (
-                <li data-none className="flex items-start gap-3 py-3 text-sm">
-                  <CheckCircle2 className="mt-0.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
-                  <p className="min-w-0 flex-1 text-gray-600">
-                    <span className="font-semibold text-gray-800">{t.notFound}: </span>
-                    {results.filter(result => !result.found).map((result, index, missing) => (
-                      <span key={result.id} data-check={result.id}>{result.label}{index < missing.length - 1 ? " · " : ""}</span>
-                    ))}
-                  </p>
-                </li>
-              )}
-            </ul>
-            {point && <p className="mt-2 text-xs text-gray-500">{t.mapNote}</p>}
-          </div>
-
-          {(photosWithInfo > 0 || multi) && (
-            <div className="rounded-3xl border border-gray-200 bg-gray-50 p-5" data-clean>
-              <h2 className="text-base font-bold text-black">{t.cleanTitle}</h2>
-              <p className="mt-1 text-sm leading-6 text-gray-600">
-                {t.cleanMore(
-                  <Link href={converterHref} onClick={event => { event.preventDefault(); handTo(converterHref, items.map(item => item.file)); }} className="font-medium text-black underline">{t.converter}</Link>,
-                  <Link href={editorHref} onClick={event => { event.preventDefault(); handTo(editorHref, [active.file]); }} className="font-medium text-black underline">{t.editor}</Link>,
-                )}
-              </p>
-            </div>
-          )}
-
-          {settings.length > 0 && (
-            <div className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm">
-              <h2 className="text-lg font-bold text-black">{t.settingsTitle}</h2>
-              <dl className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                {settings.map(([label, value]) => (
-                  <div key={label} className="rounded-xl bg-gray-50 px-4 py-3">
-                    <dt className="text-xs font-semibold uppercase tracking-wide text-gray-500">{label}</dt>
-                    <dd className="mt-1 text-sm font-semibold text-black">{value}</dd>
-                  </div>
-                ))}
-              </dl>
-            </div>
-          )}
-
-          {allFields.length > 0 && (
-            <div className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm">
-              <button type="button" onClick={() => setShowAll(value => !value)} aria-expanded={showAll} className="flex w-full items-center justify-between text-left">
-                <h2 className="text-lg font-bold text-black">{t.allFields(allFields.length)}</h2>
-                <ChevronDown className={`h-5 w-5 transition-transform ${showAll ? "rotate-180" : ""}`} aria-hidden="true" />
-              </button>
-              {showAll && (
-                <div className="mt-4 overflow-x-auto">
-                  <table className="w-full min-w-[420px] text-left text-sm">
-                    <tbody>
-                      {allFields.map(([key, value]) => (
-                        <tr key={key} className="border-b border-gray-100 align-top">
-                          <th className="py-2 pr-4 font-medium text-gray-600">{key}</th>
-                          <td className="break-all py-2 text-black">{show(value, t)}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
-          )}
+            }
+            panel={panel}
+            results={resultCards}
+          />
         </div>
       )}
-    </section>
+    </PageContainer>
   );
 }
