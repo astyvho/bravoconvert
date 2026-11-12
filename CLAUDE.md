@@ -61,12 +61,17 @@ Note: ESLint is configured (`eslint.config.mjs`) but has no npm script — run i
 - **Canvas API**: Image format conversion and rendering
 
 ### Design System
-- **Round design**: All components use rounded corners (`rounded-xl`, `rounded-2xl`)
-- **Glassmorphism**: Semi-transparent backgrounds with backdrop blur
-- **Consistent hover states**: `hover:bg-gray-200` throughout
-- **One accent colour**: `brand` in `tailwind.config.js` (blue, `brand-600` = #2563eb, hover `brand-700`). Use it only for the primary action and selected states (main buttons, chosen format, active list row, progress bars, step icons). Status colours stay separate: amber = found, green = removed/clean. The consent banner's Accept button stays neutral on purpose so it does not nudge.
-- **lucide-react icons**: Consistent icon system
-- **Framer Motion**: Smooth animations and transitions
+
+The site is mid-redesign (spec: `docs/superpowers/specs/2026-11-12-site-redesign-design.md`). Phases 0–2 are done: tokens, the site shell, the home pages and the EXIF viewer. Until Phases 3–5 land, `/convert/*`, `/edit/*` and the content pages still use the old styling, and the legacy `brand-*` classes are a temporary alias repointed to the new indigo so those pages do not clash. Phase 5 removes `brand-*`, `CustomDropdown` and the unused i18n packages.
+
+- **Tokens, not colours.** Every colour is a CSS variable in `src/app/globals.css`, written as RGB channels and mapped in `tailwind.config.js` (`bg-primary/80` works). Background is warm cream (`background` 255 248 241), cards are white, text is `foreground` (warm near-black) and `muted-foreground`.
+- **One accent colour.** `primary` is indigo #4f46e5 (hover `primary-hover`, tint `primary-soft`). Use it only for the primary action and selected states. Status colours stay separate: amber `status-found` means found, green `status-clean` means not present or removed, `destructive` is for errors. The consent banner's Accept button stays neutral on purpose so it does not nudge.
+- **Type.** Plus Jakarta Sans via `next/font` (`--font-sans`). Korean pages use Pretendard from jsDelivr first and add `break-keep`. Sizes: `text-display`, `text-h1`, `text-h2`, `text-h3`, `text-caption`.
+- **Shape and depth.** `rounded-card` (24px) for cards, `rounded-field` (16px) for inputs and inner boxes, `rounded-tile` / `rounded-tile-sm` for icon tiles, `rounded-full` for buttons and badges. Only two shadows: `shadow-soft` for cards and `shadow-cta` for the primary button. No borders on cards.
+- **Components.** shadcn/ui primitives (Radix + Tailwind) live in `src/components/ui/` (`button`, `card`, `badge`, `sheet`, `dropdown-menu`, `checkbox`, `tooltip`, `separator`). Site chrome is in `src/components/site/` (header, footer, `PageContainer`, the consent-banner context). Tool screens are built from `src/components/tool/`: `ToolPageHeader`, `DropZone`, `ToolLayout` (main column plus a sticky 400px panel), `FileList`/`FileRow`, `ReportPanel`/`ReportRow`, `StatusBadge`, `IconTile`, `ActionBar`, `AdSlot`, `Prose`. Home-only pieces are in `src/components/home/`.
+- **ActionBar.** On screens under 1024px it pins the panel's primary button to the bottom of the screen, except while the consent banner is open. The banner is reopened from "Privacy choices" in the footer; there is no floating pill.
+- **Motion.** framer-motion, short and small, and always skipped under `prefers-reduced-motion` (check with `useReducedMotion`; render a plain element so no inline style is left behind).
+- **lucide-react icons**, usually inside an `IconTile`.
 
 ### File Structure Patterns
 - Page components in `src/app/(en)/*/page.tsx` (Korean: `src/app/(ko)/ko/*`) — tools at `convert/img`, `convert/pdf`, `edit/image`; content at `guides/*`, `faq`, `how-to-use`, `about`, `contact`, `changelog`, `privacy-policy`, `terms`
@@ -160,9 +165,9 @@ to the custom domain. It does not update production; do not use it to ship.
 
 ### Internationalization Structure
 - `src/app` is split into two route groups with **separate root layouts**: `(en)` holds every English page (`<html lang="en">`), `(ko)` holds the Korean pages under `/ko/` (`<html lang="ko">`). Two root layouts are the only way to put the right `lang` in static HTML. Both layouts share `src/components/site/SiteHead.tsx` (Consent Mode, GA, AdSense, verification tags) and `SiteFooter.tsx` — change tags there, not in a layout.
-- Korean exists only for the privacy core: `/ko/`, `/ko/view/exif/`, `/ko/guides/`, and the EXIF and PDF metadata guides. `KO_PATHS` in `src/lib/locale.ts` is the single list that drives the language switch in `Navigation`, the hreflang `alternates` (`alternatesFor(path, locale)`) and the Korean sitemap entries. Adding a Korean page means adding it there and giving its English twin `alternatesFor` too.
+- Korean exists only for the privacy core: `/ko/`, `/ko/view/exif/`, `/ko/guides/`, and the EXIF and PDF metadata guides. `KO_PATHS` in `src/lib/locale.ts` is the single list that drives the language switch in `SiteHeader` (`src/components/site/site-header.tsx`), the hreflang `alternates` (`alternatesFor(path, locale)`) and the Korean sitemap entries. Adding a Korean page means adding it there and giving its English twin `alternatesFor` too.
 - Korean pages are written for Korean readers (Galaxy/iPhone settings, 중고거래 examples), not translated line by line, and pull every number from the same `src/data/*.json`. Links to tools without a Korean version are marked `(영문)`.
-- `ExifViewer`, `Navigation` and `ConsentManager` take a `locale` prop; English is the default and its strings must stay unchanged (E2E tests match them).
+- `ExifViewer`, `SiteHeader` and `ConsentManager` take a `locale` prop; English is the default and its strings must stay unchanged (E2E tests match them).
 - With no top-level layout there can be no `app/not-found.tsx`, so Next's own 404 would be unstyled. `(en)/page-not-found/` is rendered with the site layout and `scripts/copy-404.mjs` (the `postbuild` script) copies it over `out/404.html`. Cloudflare Pages runs `npm run build`, so postbuild runs there too.
 - `src/i18n` locale JSON files and `next-international` / `next-intl` are unused leftovers.
 - Outside `/ko/`, user-facing strings must be English. A batch of Korean error messages shipped in `PDFConverter.tsx` until 2026-09-02 and had to be translated.
@@ -177,11 +182,10 @@ to the custom domain. It does not update production; do not use it to ship.
 - Implement drag-and-drop with @dnd-kit libraries
 
 ### Styling Conventions
-- Follow the established round design system
-- Use Tailwind utilities with consistent spacing
-- Implement hover states for interactive elements
-- Use backdrop-blur and transparency for glass effects
-- Maintain consistent button and card styling patterns
+- Build new screens from the `ui/`, `site/` and `tool/` components above rather than raw Tailwind cards and buttons
+- Use token classes (`bg-card`, `text-muted-foreground`, `bg-status-found`); never raw palette classes such as `gray-*` or `amber-*` in redesigned screens
+- Keep text at 4.5:1 contrast or better; Lighthouse accessibility on the home and EXIF pages scored 100 after the Phase 2 fixes
+- Keep E2E-matched copy, roles, labels and `data-*` attributes unchanged when restyling
 
 ### Performance Considerations
 - All file processing happens client-side for privacy

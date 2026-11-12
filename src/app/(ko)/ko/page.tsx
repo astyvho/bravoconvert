@@ -129,7 +129,7 @@ export default function KoreanHome() {
         {/* 첫 화면: 왼쪽 글과 버튼, 오른쪽 샘플 사진과 발견 항목 */}
         <section className="grid items-center gap-10 pt-6 lg:grid-cols-[1.05fr_.95fr] lg:gap-12 lg:pt-14">
           <div>
-            <span className="inline-flex items-center gap-2 rounded-full bg-muted px-3.5 py-1.5 text-caption text-status-found-foreground">
+            <span className="inline-flex items-center gap-2 rounded-full bg-status-found px-3.5 py-1.5 text-caption text-status-found-foreground">
               무료 · 업로드 없음 · 브라우저에서 바로
             </span>
             <h1 className="mt-5 text-[34px] font-extrabold leading-[1.15] tracking-tight text-foreground lg:text-[48px] lg:leading-[1.1]">

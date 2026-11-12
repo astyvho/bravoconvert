@@ -82,3 +82,6 @@ Thumbs.db
 
 # Brainstorm mockups (superpowers visual companion)
 .superpowers/
+
+# Review screenshots from the redesign plans (not committed)
+docs/superpowers/plans/screenshots/

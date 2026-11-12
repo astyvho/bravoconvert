@@ -6,6 +6,8 @@ const SAMPLE = path.join(__dirname, "..", "..", "public", "guides", "exif-sample
 const SITE = "https://bravoconvert.com";
 
 test("Korean pages declare their language and link to their English counterparts", async ({ page }) => {
+  // Ten page loads; on the dev server each route compiles on its first visit, which can pass 30 s under parallel workers.
+  test.slow();
   for (const [ko, en] of [
     ["/ko/", "/"],
     ["/ko/view/exif/", "/view/exif/"],
