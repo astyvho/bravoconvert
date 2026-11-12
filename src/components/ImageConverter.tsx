@@ -1,10 +1,17 @@
 "use client";
-import { useRef, useReducer, useCallback, useMemo, useEffect, useState } from "react";
+import { useRef, useReducer, useCallback, useMemo, useEffect, useState, type ReactNode } from "react";
 import JSZip from "jszip";
-import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { UploadCloud, Download, GripVertical, Sparkles } from "lucide-react";
-import CustomDropdown from "@/components/ui/CustomDropdown";
+import { Download, GripVertical, ImageIcon } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import PageContainer from "@/components/site/page-container";
+import ActionBar from "@/components/tool/action-bar";
+import DropZone from "@/components/tool/drop-zone";
+import ToolLayout from "@/components/tool/tool-layout";
+import ToolPageHeader from "@/components/tool/tool-page-header";
 import jsPDF from "jspdf";
 import { arrayMove } from '@dnd-kit/sortable';
 
@@ -146,7 +153,8 @@ function reducer(state: State, action: Action): State {
   }
 }
 
-export default function ImageConverter() {
+export default function ImageConverter({ notice }: { notice?: ReactNode } = {}) {
+  const [dragging, setDragging] = useState(false);
   const [state, dispatch] = useReducer(reducer, initialState);
   const { fileArr, resultArr, isLoading, progress, isReorderMode, originalFileOrder, viewMode, addFormat, toFormat, autorotate, stripMetadata } = state;
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -891,275 +899,231 @@ export default function ImageConverter() {
     return !fileArr.every((file, index) => file.id === originalFileOrder[index].id);
   }, [fileArr, originalFileOrder]);
 
-  return (
-    <div className="w-full max-w-2xl mx-auto py-12 px-2 bg-transparent h-full">
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/*"
-        multiple
-        className="hidden"
-        onChange={e => {
-          try {
-            addFiles(e.target.files);
-          } catch (error) {
-            console.error('Error handling file input:', error);
-            alert('Error processing selected files. Please try again.');
-          }
-        }}
-      />
-      <div className="mb-10 text-center">
-        {/* Stable heading: the selected format pair belongs in the sentence below, not in the h1 */}
-        <h1 className="text-5xl md:text-7xl font-extrabold text-black mb-2 drop-shadow-none">
-          Image Converter
-        </h1>
-        <p className="text-base md:text-xl text-gray-700 font-semibold mb-2">
-          JPG, PNG and WebP in — WebP, JPG, PNG or PDF out.
-        </p>
-        <p className="text-lg md:text-2xl text-black font-bold mb-1">
-          {toFormat.label === "PDF" 
-            ? `Convert multiple ${addFormat.label} images into a single PDF file.`
-            : `Convert your ${addFormat.label} images to ${toFormat.label} quickly and easily.`
-          }
-        </p>
-        <p className="text-sm text-gray-600 mb-2 flex items-center justify-center">
-          <Sparkles className="w-4 h-4 text-gray-600 mr-2" />
-          Drag and drop or paste JPG, PNG or WebP images — the input type is detected automatically.
-        </p>
-      </div>
-      
-      <div className="flex items-center justify-center gap-4 mb-8 rounded-2xl bg-white shadow-lg border border-gray-200 p-6">
-        <div className="w-40">
-          <CustomDropdown
-            options={ADD_FORMATS.map(f => ({ label: f.label, value: f.label }))}
-            value={addFormat.label}
-            onChange={(value) => {
-              const found = ADD_FORMATS.find(f => f.label === value);
-              if (found) dispatch({ type: 'SET_ADD_FORMAT', payload: found });
-            }}
-            size="lg"
-            gridLayout={true}
-          />
-        </div>
-        <span className="text-2xl text-black">→</span>
-        <div className="w-40">
-          <CustomDropdown
-            options={TO_FORMATS.map(f => ({ label: f.label, value: f.label }))}
-            value={toFormat.label}
-            onChange={(value) => {
-              const found = TO_FORMATS.find(f => f.label === value);
-              if (found) dispatch({ type: 'SET_CONVERT_FORMAT', payload: found });
-            }}
-            size="lg"
-            gridLayout={true}
-          />
-        </div>
-      </div>
+  const isPdf = toFormat.label === "PDF";
+  const hasFiles = fileArr.length > 0;
+  const allConverted = hasFiles && resultArr.every(r => r);
 
-      <motion.div
-        className={`border-2 border-dotted border-gray-400 rounded-3xl min-h-[220px] flex flex-col items-center justify-center text-center transition-all mb-8 p-6 ${
-          isLoading ? 'bg-gray-100 opacity-50 cursor-not-allowed' : fileArr.length > 0 ? 'bg-gray-50' : 'bg-gray-100 hover:bg-gray-200 hover:shadow-md hover:border-gray-500 cursor-pointer'
-        }`}
-        whileHover={fileArr.length === 0 && !isLoading ? { scale: 1.01 } : undefined}
-        {...(fileArr.length === 0 && !isLoading ? {
-          onClick: () => fileInputRef.current?.click(),
-          onDrop: handleDrop,
-          onDragOver: (e: React.DragEvent) => {
-            e.preventDefault();
-            e.stopPropagation();
-          },
-          onDragEnter: (e: React.DragEvent) => {
-            e.preventDefault();
-            e.stopPropagation();
-          },
-        } : {})}
-      >
-        {fileArr.length === 0 ? (
-          <>
-            <UploadCloud className="mx-auto mb-4 text-black" size={56} />
-            <div className="text-2xl font-bold mb-1 text-black">
-              Add Images to Convert
-            </div>
-            <div className="text-black text-base mb-2">
-              Drag & drop, paste with Ctrl+V / ⌘V, or {" "}
-              <span className="text-black font-bold cursor-pointer underline hover:text-gray-700" onClick={e => { e.stopPropagation(); fileInputRef.current?.click(); }}>
-                Select Images
-              </span>
-            </div>
-            <div className="text-sm text-gray-600">
-          Supported formats: JPG/JPEG, PNG and WebP (maximum 10MB per file)
-            </div>
-          </>
-        ) : (
-          <div className="w-full flex flex-col items-center">
-            {toFormat.label === "PDF" && fileArr.length > 1 && (
-              <div className="mb-4 p-3 bg-gray-50 border border-gray-300 rounded-lg w-full">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm text-gray-700 flex items-center gap-2">
-                    <GripVertical size={16} />
-                    {isReorderMode ? `Drag to reorder images` : "Images are auto-sorted by name"}
-                  </p>
-                  <div className="flex gap-2 ml-4">
-                    <Button 
-                      size="sm" 
-                      className={`rounded-xl shadow-lg transition-all duration-300 ${
-                        isReorderMode 
-                          ? "bg-black text-white hover:bg-gray-800" 
-                          : "bg-gray-100 text-black hover:bg-gray-200 border border-gray-200 hover:border-gray-400"
-                      }`}
-                      onClick={() => dispatch({ type: 'TOGGLE_REORDER_MODE' })}
-                    >
-                      {isReorderMode ? "Done Reordering" : "Reorder"}
-                    </Button>
-                    {isReorderMode && (
-                      <Button 
-                        size="sm" 
-                        className="rounded-xl bg-gray-100 text-black hover:bg-gray-200 border border-gray-200 hover:border-gray-400 shadow-lg transition-all duration-300" 
-                        onClick={() => dispatch({ type: 'RESET_ORDER' })} 
-                        disabled={!isOrderChanged}
-                      >
-                        Reset Order
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
-            <div className="w-full">
-              <FileList
-                fileArr={fileArr}
-                resultArr={resultArr}
-                onRemove={(idx) => dispatch({ type: 'REMOVE_FILE', payload: idx })}
-                onDownload={handleDownload}
-                isPdfMode={toFormat.label === "PDF"}
-                onReorder={(oldIndex, newIndex) => dispatch({ type: 'REORDER_FILES', payload: { oldIndex, newIndex }})}
-                isReorderMode={isReorderMode}
-                isOrderChanged={isOrderChanged}
-                viewMode={viewMode}
-                onViewModeChange={(mode) => dispatch({ type: 'SET_VIEW_MODE', payload: mode })}
-              />
-            </div>
-            <div className="flex gap-2 mt-4 justify-end w-full">
-              {toFormat.label !== "PDF" && (
-                <Button 
-                  className="rounded-xl bg-gray-100 text-black hover:bg-gray-200 border border-gray-200 hover:border-gray-400 shadow-lg hover:shadow-xl transition-all duration-300" 
-                  onClick={() => fileInputRef.current?.click()} 
-                  disabled={isLoading}
-                >
-                  + Add More
-                </Button>
-              )}
-              {toFormat.label !== "PDF" && resultArr.some(r => !r) && (
-                <Button 
-                  className="rounded-xl bg-brand-600 text-white hover:bg-brand-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5" 
-                  onClick={handleConvertAll} 
-                  disabled={isLoading}
-                >
-                  {isLoading ? `Converting... ${Math.round(progress)}%` : "Convert All"}
-                </Button>
-              )}
-              {toFormat.label !== "PDF" && fileArr.length > 0 && resultArr.every(r => r) && (
-                <Button 
-                  className="rounded-xl bg-brand-600 text-white hover:bg-brand-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5" 
-                  onClick={handleSaveAll} 
-                  disabled={isLoading}
-                >
-                  <Download className="mr-0" size={16} />
-                  Download All
-                </Button>
-              )}
-            </div>
-            {conversionError && (
-              <p
-                role="alert"
-                className="mt-3 w-full rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
-              >
-                {conversionError} Try a smaller image or reload the page and try again.
-              </p>
-            )}
-          </div>
-        )}
-      </motion.div>
-
-      {toFormat.label !== "PDF" && (
-        <section className="mb-6 space-y-4" aria-labelledby="image-optimization-title">
-          <div className="flex items-end justify-between gap-3 px-1">
-            <div>
-              <h2 id="image-optimization-title" className="text-lg font-bold text-black">Image options</h2>
-              <p className="text-sm text-gray-600">Optionally reduce the converted image file size.</p>
-            </div>
-            {compressionEnabled && (
-              <button
-                type="button"
-                className="shrink-0 text-sm font-medium underline text-gray-700 hover:text-black"
-                onClick={() => {
-                  resetConvertedResults();
-                  setCompressionEnabled(false);
-                  setQuality(85);
-                  setTargetSizeKb('');
-                }}
-              >
-                Reset all
-              </button>
-            )}
-          </div>
-
-          <div className={`rounded-2xl bg-white shadow-lg border p-5 transition-colors ${compressionEnabled ? 'border-black' : 'border-gray-200'}`}>
-            <button type="button" aria-expanded={compressionEnabled} disabled={toFormat.label === 'PNG'} className="flex w-full items-center justify-between gap-4 text-left disabled:cursor-not-allowed disabled:opacity-60" onClick={() => { resetConvertedResults(); setCompressionEnabled((enabled) => !enabled); }}>
-              <span>
-                <span className="flex items-center gap-2 text-base font-bold text-black">Compress</span>
-                <span className="mt-1 block text-sm text-gray-600">Balance image quality and file size.{toFormat.label === 'PNG' ? ' Choose JPG or WebP to use compression.' : ''}</span>
-              </span>
-              <span className={`rounded-full px-3 py-1 text-xs font-semibold ${compressionEnabled ? 'bg-black text-white' : 'bg-gray-100 text-gray-600'}`}>{compressionEnabled ? 'On' : 'Optional'}</span>
-            </button>
-
-            {compressionEnabled && toFormat.label !== 'PNG' && (
-              <div className="mt-5 grid gap-5 border-t border-gray-100 pt-5 md:grid-cols-2">
-                <label className="text-sm font-medium text-gray-700">Quality: {quality}%
-                  <input type="range" min="10" max="100" step="1" value={quality} onChange={(event) => { resetConvertedResults(); setQuality(Number(event.target.value)); }} className="mt-4 w-full accent-black" />
-                  <span className="mt-1 flex justify-between text-xs font-normal text-gray-500"><span>Smaller file</span><span>Higher quality</span></span>
-                </label>
-                <label className="text-sm font-medium text-gray-700">Target size (KB) <span className="font-normal text-gray-500">— optional</span>
-                  <input type="number" min="10" inputMode="numeric" value={targetSizeKb} onChange={(event) => { resetConvertedResults(); setTargetSizeKb(event.target.value); }} placeholder="No size limit" className="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2.5 text-black focus:border-black focus:outline-none" />
-                  <span className="mt-1 block text-xs font-normal text-gray-500">We reduce quality only as much as needed to approach this size.</span>
-                </label>
-              </div>
-            )}
-          </div>
-        </section>
-      )}
-
-      {/* Processing description */}
-      <div className="text-center text-sm text-gray-600 mb-6 max-w-2xl mx-auto space-y-2">
-        <p><span className="font-medium text-gray-700">Private by design:</span> Image conversion runs locally in your browser.</p>
-        <p><span className="font-medium text-gray-700">Fresh output:</span> Converted JPG, PNG and WebP files are newly encoded without copying source EXIF metadata.</p>
-      </div>
-
-      {toFormat.label === "PDF" && fileArr.length > 0 && (
-        <div className="flex items-center justify-center gap-4 mb-8 rounded-2xl bg-white shadow-lg border border-gray-200 p-6">
-          <Button 
-            onClick={handleConvertAll} 
-            disabled={isLoading || isReorderMode} 
-            className="px-8 py-3 rounded-xl bg-brand-600 text-white hover:bg-brand-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
-          >
-            {isLoading ? `Converting... ${Math.round(progress)}%` : `Convert to PDF (${fileArr.length} images)`}
-          </Button>
-        </div>
-      )}
-
-      {isLoading && (
-        <div className="mt-4">
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <motion.div
-              className="bg-brand-600 h-2 rounded-full"
-              initial={{ width: 0 }}
-              animate={{ width: `${progress}%` }}
-              transition={{ duration: 0.3 }}
-            />
-          </div>
-        </div>
-      )}
-      
+  const formatSelect = (id: string, label: string, formats: typeof ADD_FORMATS, value: string, onChange: (value: string) => void) => (
+    <div className="min-w-0 flex-1">
+      <label htmlFor={id} className="mb-1.5 block text-sm font-semibold text-foreground">{label}</label>
+      <Select value={value} onValueChange={onChange}>
+        <SelectTrigger id={id}>
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {formats.map(f => (
+            <SelectItem key={f.label} value={f.label}>{f.label}</SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
+  );
+
+  // The reducer starts a new list whenever a format changes, so the formats are also offered in the
+  // empty drop zone: people pick them first, as they did when the dropdowns sat above the drop area.
+  const formatRow = (
+    <div className="mt-4 flex items-end gap-3 text-left">
+      {formatSelect("convert-input-format", "Input format", ADD_FORMATS, addFormat.label, value => {
+        const found = ADD_FORMATS.find(f => f.label === value);
+        if (found) dispatch({ type: 'SET_ADD_FORMAT', payload: found });
+      })}
+      <span className="pb-3 text-muted-foreground" aria-hidden="true">→</span>
+      {formatSelect("convert-output-format", "Output format", TO_FORMATS, toFormat.label, value => {
+        const found = TO_FORMATS.find(f => f.label === value);
+        if (found) dispatch({ type: 'SET_CONVERT_FORMAT', payload: found });
+      })}
+    </div>
+  );
+
+  const fileInput = (
+    <input
+      ref={fileInputRef}
+      type="file"
+      accept="image/*"
+      multiple
+      className="hidden"
+      onChange={e => {
+        try {
+          addFiles(e.target.files);
+        } catch (error) {
+          console.error('Error handling file input:', error);
+          alert('Error processing selected files. Please try again.');
+        }
+      }}
+    />
+  );
+
+  const dropZone = (
+    <DropZone
+      title="Add Images to Convert"
+      note="Drag & drop, or paste with Ctrl+V / ⌘V. Supported formats: JPG/JPEG, PNG and WebP (maximum 10MB per file) — the input type is detected automatically."
+      dragging={dragging}
+      busy={isLoading}
+      onDragEnter={e => { e.preventDefault(); e.stopPropagation(); setDragging(true); }}
+      onDragOver={e => { e.preventDefault(); e.stopPropagation(); }}
+      onDragLeave={e => { if (e.currentTarget === e.target) setDragging(false); }}
+      onDrop={e => { setDragging(false); if (!isLoading) handleDrop(e); }}
+      actions={
+        <Button onClick={() => fileInputRef.current?.click()} disabled={isLoading}>
+          Select Images
+        </Button>
+      }
+    >
+      <div className="mx-auto mt-6 max-w-sm">{formatRow}</div>
+    </DropZone>
+  );
+
+  const main = (
+    <Card data-tool-main className="p-4 sm:p-5">
+      {isPdf && fileArr.length > 1 && (
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-field bg-muted px-4 py-3">
+          <p className="flex items-center gap-2 text-sm text-foreground">
+            <GripVertical size={16} aria-hidden="true" />
+            {isReorderMode ? "Drag to reorder images" : "Images are auto-sorted by name"}
+          </p>
+          <div className="flex gap-2">
+            <Button size="sm" variant={isReorderMode ? "primary" : "secondary"} onClick={() => dispatch({ type: 'TOGGLE_REORDER_MODE' })}>
+              {isReorderMode ? "Done Reordering" : "Reorder"}
+            </Button>
+            {isReorderMode && (
+              <Button size="sm" variant="secondary" onClick={() => dispatch({ type: 'RESET_ORDER' })} disabled={!isOrderChanged}>
+                Reset Order
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
+      <FileList
+        fileArr={fileArr}
+        resultArr={resultArr}
+        onRemove={(idx) => dispatch({ type: 'REMOVE_FILE', payload: idx })}
+        onDownload={handleDownload}
+        isPdfMode={isPdf}
+        onReorder={(oldIndex, newIndex) => dispatch({ type: 'REORDER_FILES', payload: { oldIndex, newIndex }})}
+        isReorderMode={isReorderMode}
+        isOrderChanged={isOrderChanged}
+        viewMode={viewMode}
+        onViewModeChange={(mode) => dispatch({ type: 'SET_VIEW_MODE', payload: mode })}
+      />
+      {!isPdf && (
+        <Button variant="secondary" className="mt-4" onClick={() => fileInputRef.current?.click()} disabled={isLoading}>
+          + Add More
+        </Button>
+      )}
+      {conversionError && (
+        <p role="alert" className="mt-4 rounded-field bg-destructive px-4 py-3 text-sm text-destructive-foreground">
+          {conversionError} Try a smaller image or reload the page and try again.
+        </p>
+      )}
+    </Card>
+  );
+
+  let primary: ReactNode = null;
+  if (isPdf) {
+    primary = (
+      <Button size="lg" className="w-full" onClick={handleConvertAll} disabled={isLoading || isReorderMode}>
+        {isLoading ? `Converting... ${Math.round(progress)}%` : `Convert to PDF (${fileArr.length} images)`}
+      </Button>
+    );
+  } else if (resultArr.some(r => !r)) {
+    primary = (
+      <Button size="lg" className="w-full" onClick={handleConvertAll} disabled={isLoading}>
+        {isLoading ? `Converting... ${Math.round(progress)}%` : "Convert All"}
+      </Button>
+    );
+  } else if (allConverted) {
+    primary = (
+      <Button size="lg" className="w-full" onClick={handleSaveAll} disabled={isLoading}>
+        <Download aria-hidden="true" />
+        Download All
+      </Button>
+    );
+  }
+
+  const panel = (
+    <Card data-tool-panel className="p-5">
+      <h2 className="text-h3">Convert</h2>
+      {formatRow}
+      <p className="mt-3 text-sm text-muted-foreground">
+        {isPdf
+          ? `Convert multiple ${addFormat.label} images into a single PDF file.`
+          : `Convert your ${addFormat.label} images to ${toFormat.label} quickly and easily.`}{" "}
+        Changing a format starts a new list.
+      </p>
+
+      {!isPdf && (
+        <>
+          <Separator className="my-5" />
+          <section aria-labelledby="image-optimization-title">
+            <div className="flex items-end justify-between gap-3">
+              <div>
+                <h2 id="image-optimization-title" className="text-h3">Image options</h2>
+                <p className="text-sm text-muted-foreground">Optionally reduce the converted image file size.</p>
+              </div>
+              {compressionEnabled && (
+                <button
+                  type="button"
+                  className="shrink-0 text-sm font-semibold text-primary underline underline-offset-4"
+                  onClick={() => {
+                    resetConvertedResults();
+                    setCompressionEnabled(false);
+                    setQuality(85);
+                    setTargetSizeKb('');
+                  }}
+                >
+                  Reset all
+                </button>
+              )}
+            </div>
+            <div className={`mt-3 rounded-field p-4 transition-colors ${compressionEnabled ? 'bg-primary-soft' : 'bg-muted'}`}>
+              <button type="button" aria-expanded={compressionEnabled} disabled={toFormat.label === 'PNG'} className="flex w-full items-center justify-between gap-4 text-left disabled:cursor-not-allowed disabled:opacity-60" onClick={() => { resetConvertedResults(); setCompressionEnabled((enabled) => !enabled); }}>
+                <span>
+                  <span className="block text-base font-bold text-foreground">Compress</span>
+                  <span className="mt-1 block text-sm text-muted-foreground">Balance image quality and file size.{toFormat.label === 'PNG' ? ' Choose JPG or WebP to use compression.' : ''}</span>
+                </span>
+                <span className={`rounded-full px-3 py-1 text-caption ${compressionEnabled ? 'bg-primary text-primary-foreground' : 'bg-card text-muted-foreground'}`}>{compressionEnabled ? 'On' : 'Optional'}</span>
+              </button>
+              {compressionEnabled && toFormat.label !== 'PNG' && (
+                <div className="mt-4 space-y-4 border-t border-border pt-4">
+                  <label className="block text-sm font-semibold text-foreground">Quality: {quality}%
+                    <input type="range" min="10" max="100" step="1" value={quality} onChange={(event) => { resetConvertedResults(); setQuality(Number(event.target.value)); }} className="mt-3 w-full accent-primary" />
+                    <span className="mt-1 flex justify-between text-xs font-normal text-muted-foreground"><span>Smaller file</span><span>Higher quality</span></span>
+                  </label>
+                  <label className="block text-sm font-semibold text-foreground">Target size (KB) <span className="font-normal text-muted-foreground">— optional</span>
+                    <input type="number" min="10" inputMode="numeric" value={targetSizeKb} onChange={(event) => { resetConvertedResults(); setTargetSizeKb(event.target.value); }} placeholder="No size limit" className="mt-1.5 h-11 w-full rounded-field border-2 border-border bg-card px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" />
+                    <span className="mt-1 block text-xs font-normal text-muted-foreground">We reduce quality only as much as needed to approach this size.</span>
+                  </label>
+                </div>
+              )}
+            </div>
+          </section>
+        </>
+      )}
+
+      <Separator className="my-5" />
+      <div className="space-y-1.5 text-sm text-muted-foreground">
+        <p><span className="font-semibold text-foreground">Private by design:</span> Image conversion runs locally in your browser.</p>
+        <p><span className="font-semibold text-foreground">Fresh output:</span> Converted JPG, PNG and WebP files are newly encoded without copying source EXIF metadata.</p>
+      </div>
+
+      {isLoading && <Progress className="mt-5" value={progress} label="Conversion progress" />}
+      {primary && <ActionBar className="mt-5">{primary}</ActionBar>}
+    </Card>
+  );
+
+  return (
+    <PageContainer className="pb-6">
+      <ToolPageHeader
+        crumb={["Tools", "Image Converter"]}
+        title="Image Converter"
+        intro="JPG, PNG and WebP in — WebP, JPG, PNG or PDF out."
+        icon={ImageIcon}
+        chips={[{ label: "JPG" }, { label: "PNG" }, { label: "WebP" }, { label: "Up to 10 MB each" }, { label: "Nothing uploaded", ok: true }]}
+      >
+        {notice}
+      </ToolPageHeader>
+      {fileInput}
+      <ToolLayout className="mt-6" main={hasFiles ? main : dropZone} panel={hasFiles ? panel : null} />
+    </PageContainer>
   );
 }

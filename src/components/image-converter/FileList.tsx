@@ -95,35 +95,24 @@ export function FileList({
     <div className="w-full">
       {/* 뷰 모드 전환 버튼 */}
       {!isPdfMode && onViewModeChange && (
-        <div className="flex justify-between items-center mb-4">
-          <div className="text-sm text-gray-600">
+        <div className="mb-4 flex items-center justify-between">
+          <div className="text-sm text-muted-foreground">
             {fileArr.length} file{fileArr.length !== 1 ? 's' : ''} selected
           </div>
-          <div className="flex gap-1 bg-gray-100 rounded-xl p-1 shadow-lg border border-gray-200">
-            <Button
-              size="sm"
-              className={`flex items-center gap-1 rounded-lg transition-all duration-300 ${
-                currentViewMode === 'card' 
-                  ? 'bg-white text-black shadow-lg' 
-                  : 'text-gray-600 hover:text-black hover:bg-gray-50'
-              }`}
-              onClick={() => onViewModeChange('card')}
-            >
-              <Grid3x3 size={14} />
-              Card
-            </Button>
-            <Button
-              size="sm"
-              className={`flex items-center gap-1 rounded-lg transition-all duration-300 ${
-                currentViewMode === 'list' 
-                  ? 'bg-white text-black shadow-lg' 
-                  : 'text-gray-600 hover:text-black hover:bg-gray-50'
-              }`}
-              onClick={() => onViewModeChange('list')}
-            >
-              <List size={14} />
-              List
-            </Button>
+          <div className="flex gap-1 rounded-full bg-muted p-1">
+            {([['card', 'Card', Grid3x3], ['list', 'List', List]] as const).map(([mode, label, Icon]) => (
+              <Button
+                key={mode}
+                size="sm"
+                variant="ghost"
+                aria-pressed={currentViewMode === mode}
+                className={currentViewMode === mode ? 'h-8 bg-card px-3 text-foreground shadow-soft hover:bg-card' : 'h-8 px-3'}
+                onClick={() => onViewModeChange(mode)}
+              >
+                <Icon size={14} aria-hidden="true" />
+                {label}
+              </Button>
+            ))}
           </div>
         </div>
       )}
@@ -139,12 +128,7 @@ export function FileList({
         >
           {currentViewMode === 'card' ? (
             // 카드 뷰
-            <div className={`grid gap-4 ${
-              fileArr.length === 1 ? 'grid-cols-1 max-w-xs mx-auto' :
-              fileArr.length === 2 ? 'grid-cols-2 max-w-md mx-auto' :
-              fileArr.length === 3 ? 'grid-cols-3 max-w-lg mx-auto' :
-              'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5'
-            }`}>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
               {fileArr.map((item, idx) => (
                 <SortableItem
                   key={item.id}

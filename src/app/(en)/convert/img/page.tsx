@@ -1,4 +1,8 @@
 import { Metadata } from "next";
+import PageContainer from "@/components/site/page-container";
+import AdSlot from "@/components/tool/ad-slot";
+import IconTile from "@/components/tool/icon-tile";
+import Prose from "@/components/tool/prose";
 import ImageConverter from "@/components/ImageConverter";
 import MetadataRemovalNotice from "@/components/MetadataRemovalNotice";
 import Link from "next/link";
@@ -49,7 +53,7 @@ export const metadata: Metadata = {
 
 export default function ImageConverterPage() {
   return (
-    <main className="min-h-screen bg-white pb-12 px-4">
+    <main>
       {/* Schema.org structured data for SEO */}
       <script
         type="application/ld+json"
@@ -77,13 +81,14 @@ export default function ImageConverterPage() {
           })
         }}
       />
-      <MetadataRemovalNotice tool="converter" />
-      <ImageConverter />
+      <ImageConverter notice={<MetadataRemovalNotice tool="converter" />} />
 
-      <article className="mx-auto mt-8 max-w-4xl space-y-10 rounded-3xl border border-gray-200 bg-white p-6 text-gray-700 shadow-sm md:p-10">
+      <PageContainer className="pb-16">
+        <AdSlot slot="convert-img-below-tool" />
+        <Prose as="article" className="mt-12 space-y-12">
         <header>
-          <h2 className="flex items-center gap-3 text-3xl font-bold text-black">
-            <SlidersHorizontal className="h-8 w-8 flex-shrink-0 text-gray-700" aria-hidden="true" />
+          <h2>
+            <IconTile icon={SlidersHorizontal} size="sm" tone="blue" className="hidden sm:inline-flex" />
             How to choose the right image conversion settings
           </h2>
           <p className="mt-4 leading-7">
@@ -92,29 +97,29 @@ export default function ImageConverterPage() {
         </header>
 
         <section>
-          <h2 className="flex items-center gap-3 text-2xl font-bold text-black">
-            <Images className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+          <h2>
+            <IconTile icon={Images} size="sm" tone="blue" className="hidden sm:inline-flex" />
             JPG, PNG, and WebP compared
           </h2>
           <div className="mt-5 grid gap-5 md:grid-cols-3">
-            <div className="rounded-2xl bg-gray-50 p-5">
-              <h3 className="text-lg font-semibold text-black">JPG for photographs</h3>
-              <p className="mt-2 leading-7">JPG uses lossy compression and is usually a practical choice for photographs, email attachments, and websites where a smaller file matters. It does not support transparent pixels. Repeatedly converting a JPG can gradually introduce visible compression artifacts, so retain the original whenever possible.</p>
+            <div className="rounded-field bg-muted p-5">
+              <h3 className="!mt-0 text-lg font-semibold text-foreground">JPG for photographs</h3>
+              <p className="!mb-0 !mt-2 leading-7">JPG uses lossy compression and is usually a practical choice for photographs, email attachments, and websites where a smaller file matters. It does not support transparent pixels. Repeatedly converting a JPG can gradually introduce visible compression artifacts, so retain the original whenever possible.</p>
             </div>
-            <div className="rounded-2xl bg-gray-50 p-5">
-              <h3 className="text-lg font-semibold text-black">PNG for detail and transparency</h3>
-              <p className="mt-2 leading-7">PNG uses lossless compression and supports transparency. It is often appropriate for logos, interface captures, diagrams, text-heavy graphics, and images that need a transparent background. A photographic PNG can be much larger than an equivalent JPG or WebP file.</p>
+            <div className="rounded-field bg-muted p-5">
+              <h3 className="!mt-0 text-lg font-semibold text-foreground">PNG for detail and transparency</h3>
+              <p className="!mb-0 !mt-2 leading-7">PNG uses lossless compression and supports transparency. It is often appropriate for logos, interface captures, diagrams, text-heavy graphics, and images that need a transparent background. A photographic PNG can be much larger than an equivalent JPG or WebP file.</p>
             </div>
-            <div className="rounded-2xl bg-gray-50 p-5">
-              <h3 className="text-lg font-semibold text-black">WebP for modern web delivery</h3>
-              <p className="mt-2 leading-7">WebP can produce compact photographs and can also retain transparency. It is useful for modern websites and apps, although an older editor or workflow may not accept it. For maximum compatibility with office software and older devices, JPG or PNG may be safer.</p>
+            <div className="rounded-field bg-muted p-5">
+              <h3 className="!mt-0 text-lg font-semibold text-foreground">WebP for modern web delivery</h3>
+              <p className="!mb-0 !mt-2 leading-7">WebP can produce compact photographs and can also retain transparency. It is useful for modern websites and apps, although an older editor or workflow may not accept it. For maximum compatibility with office software and older devices, JPG or PNG may be safer.</p>
             </div>
           </div>
         </section>
 
         <section>
-          <h2 className="flex items-center gap-3 text-2xl font-bold text-black">
-            <Gauge className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+          <h2>
+            <IconTile icon={Gauge} size="sm" tone="blue" className="hidden sm:inline-flex" />
             Quality and target file size
           </h2>
           <p className="mt-3 leading-7">
@@ -126,8 +131,8 @@ export default function ImageConverterPage() {
         </section>
 
         <section>
-          <h2 className="flex items-center gap-3 text-2xl font-bold text-black">
-            <Blend className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+          <h2>
+            <IconTile icon={Blend} size="sm" tone="blue" className="hidden sm:inline-flex" />
             Transparency and background behavior
           </h2>
           <p className="mt-3 leading-7">
@@ -136,8 +141,8 @@ export default function ImageConverterPage() {
         </section>
 
         <section>
-          <h2 className="flex items-center gap-3 text-2xl font-bold text-black">
-            <ShieldCheck className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+          <h2>
+            <IconTile icon={ShieldCheck} size="sm" tone="blue" className="hidden sm:inline-flex" />
             Local processing and metadata
           </h2>
           <p className="mt-3 leading-7">
@@ -146,8 +151,8 @@ export default function ImageConverterPage() {
         </section>
 
         <section>
-          <h2 className="flex items-center gap-3 text-2xl font-bold text-black">
-            <Smartphone className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+          <h2>
+            <IconTile icon={Smartphone} size="sm" tone="blue" className="hidden sm:inline-flex" />
             WebP conversion on iPhone and iPad
           </h2>
           <p className="mt-3 leading-7">
@@ -156,39 +161,39 @@ export default function ImageConverterPage() {
         </section>
 
         <section>
-          <h2 className="flex items-center gap-3 text-2xl font-bold text-black">
-            <Layers3 className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+          <h2>
+            <IconTile icon={Layers3} size="sm" tone="blue" className="hidden sm:inline-flex" />
             Batch conversion and PDF creation
           </h2>
           <p className="mt-3 leading-7">
-            Files in one image batch must share the detected input type. Each image can be up to 10MB. Converted images can be downloaded individually, while multiple completed results can be collected in a ZIP archive. Selecting PDF as the destination combines the chosen images into one document, with reorder controls available before creation. For a PDF that already contains pages, use the dedicated <Link href="/convert/pdf/" className="font-medium text-black underline">PDF to image converter</Link> instead.
+            Files in one image batch must share the detected input type. Each image can be up to 10MB. Converted images can be downloaded individually, while multiple completed results can be collected in a ZIP archive. Selecting PDF as the destination combines the chosen images into one document, with reorder controls available before creation. For a PDF that already contains pages, use the dedicated <Link href="/convert/pdf/" className="font-medium text-foreground underline">PDF to image converter</Link> instead.
           </p>
         </section>
 
         <section>
-          <h2 className="flex items-center gap-3 text-2xl font-bold text-black">
-            <Images className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+          <h2>
+            <IconTile icon={Images} size="sm" tone="blue" className="hidden sm:inline-flex" />
             Three practical conversion recipes
           </h2>
           <div className="mt-5 grid gap-5 md:grid-cols-3">
-            <div className="rounded-2xl border border-gray-200 p-5">
-              <h3 className="text-lg font-semibold text-black">Prepare camera photos for sharing</h3>
-              <p className="mt-2 leading-7">Keep JPG output, enable compression, and compare the downloaded result at full size. This avoids the much larger files often produced by converting photographs to PNG. Use a separate batch for each detected source format.</p>
+            <div className="rounded-field bg-muted p-5">
+              <h3 className="!mt-0 text-lg font-semibold text-foreground">Prepare camera photos for sharing</h3>
+              <p className="!mb-0 !mt-2 leading-7">Keep JPG output, enable compression, and compare the downloaded result at full size. This avoids the much larger files often produced by converting photographs to PNG. Use a separate batch for each detected source format.</p>
             </div>
-            <div className="rounded-2xl border border-gray-200 p-5">
-              <h3 className="text-lg font-semibold text-black">Publish transparent artwork</h3>
-              <p className="mt-2 leading-7">Choose PNG when compatibility and exact transparent edges matter, or WebP when the destination explicitly supports it and download size matters. Do not choose JPG for a logo or cutout that must remain transparent.</p>
+            <div className="rounded-field bg-muted p-5">
+              <h3 className="!mt-0 text-lg font-semibold text-foreground">Publish transparent artwork</h3>
+              <p className="!mb-0 !mt-2 leading-7">Choose PNG when compatibility and exact transparent edges matter, or WebP when the destination explicitly supports it and download size matters. Do not choose JPG for a logo or cutout that must remain transparent.</p>
             </div>
-            <div className="rounded-2xl border border-gray-200 p-5">
-              <h3 className="text-lg font-semibold text-black">Assemble images into a document</h3>
-              <p className="mt-2 leading-7">Select PDF output, arrange the images in reading order, and review every source before creating the document. This produces one page per image; it does not add searchable text, margins, headers, or page numbers.</p>
+            <div className="rounded-field bg-muted p-5">
+              <h3 className="!mt-0 text-lg font-semibold text-foreground">Assemble images into a document</h3>
+              <p className="!mb-0 !mt-2 leading-7">Select PDF output, arrange the images in reading order, and review every source before creating the document. This produces one page per image; it does not add searchable text, margins, headers, or page numbers.</p>
             </div>
           </div>
         </section>
 
         <section>
-          <h2 className="flex items-center gap-3 text-2xl font-bold text-black">
-            <CircleAlert className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+          <h2>
+            <IconTile icon={CircleAlert} size="sm" tone="blue" className="hidden sm:inline-flex" />
             Troubleshooting a failed image conversion
           </h2>
           <ul className="mt-3 list-disc space-y-2 pl-6 leading-7">
@@ -199,10 +204,11 @@ export default function ImageConverterPage() {
             <li>Try JPG or PNG when another application does not recognize a downloaded WebP file.</li>
           </ul>
           <p className="mt-4 leading-7">
-            For more detail, see the <Link href="/how-to-use/" className="font-medium text-black underline">step-by-step guide</Link> and <Link href="/faq/" className="font-medium text-black underline">image converter FAQ</Link>. If a supported file consistently fails, use the <Link href="/contact/" className="font-medium text-black underline">contact page</Link> and include the browser, device, input format, output format, and displayed error message—but do not send a private source image.
+            For more detail, see the <Link href="/how-to-use/" className="font-medium text-foreground underline">step-by-step guide</Link> and <Link href="/faq/" className="font-medium text-foreground underline">image converter FAQ</Link>. If a supported file consistently fails, use the <Link href="/contact/" className="font-medium text-foreground underline">contact page</Link> and include the browser, device, input format, output format, and displayed error message—but do not send a private source image.
           </p>
         </section>
-      </article>
+        </Prose>
+      </PageContainer>
     </main>
   );
 }

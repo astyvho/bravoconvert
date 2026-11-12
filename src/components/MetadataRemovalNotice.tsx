@@ -3,12 +3,14 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ArrowLeft, ShieldCheck } from "lucide-react";
+import IconTile from "@/components/tool/icon-tile";
 import { HANDOFF_PARAM } from "@/lib/file-handoff";
 
 // EXIF 뷰어·한국어 페이지에서 변환기/편집기로 넘어온 경우, 변환하면 위치·시간·기기 정보가 지워진다는 것을
 // 도구 화면 맨 위에서 바로 알려 준다. 링크에 ?from=exif, ?lang=ko, ?handoff=1(사진을 그대로 넘김)이 붙어 온다.
 // 정적 내보내기라 useSearchParams 대신 마운트 후 location 을 읽는다(검색 엔진용 HTML 에는 나오지 않음).
-// 색은 "완료"로 읽히는 초록 대신 중립적인 파랑을 쓴다 — 할 일을 알려 주는 안내이기 때문이다.
+// 색은 "완료"로 읽히는 초록 대신 살구색 바탕(muted)을 쓴다 — 할 일을 알려 주는 안내이기 때문이다.
+// 도구 화면에서는 ToolPageHeader 의 children 으로 들어가 제목 바로 아래에 놓인다.
 type Tool = "converter" | "editor";
 
 const TEXT = {
@@ -49,13 +51,13 @@ export default function MetadataRemovalNotice({ tool }: { tool: Tool }) {
     <aside
       lang={state.locale}
       data-metadata-notice
-      className="mx-auto mb-6 mt-2 flex max-w-4xl items-start gap-3 rounded-2xl border border-brand-200 bg-brand-50 px-5 py-4 text-brand-900 break-keep"
+      className="mt-5 flex items-start gap-3 rounded-field bg-muted px-5 py-4 text-foreground break-keep"
     >
-      <ShieldCheck className="mt-0.5 h-6 w-6 flex-shrink-0 text-brand-600" aria-hidden="true" />
+      <IconTile icon={ShieldCheck} tone="blue" size="sm" />
       <div className="min-w-0">
         <p className="font-bold">{t.title}</p>
         <p className="mt-1 text-sm leading-6">{t.body} {t.next(tool, state.handed)}</p>
-        <Link href={t.href} className="mt-2 inline-flex items-center gap-1 text-sm font-semibold underline">
+        <Link href={t.href} className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-primary underline underline-offset-4">
           <ArrowLeft className="h-4 w-4" aria-hidden="true" /> {t.back}
         </Link>
       </div>
