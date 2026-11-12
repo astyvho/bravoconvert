@@ -46,6 +46,11 @@
     font-feature-settings: "tnum";
   }
 
+  /* Set by ActionBar while it is pinned to the bottom on phones, so nothing hides under it. */
+  body.has-action-bar {
+    padding-bottom: calc(6rem + env(safe-area-inset-bottom));
+  }
+
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,

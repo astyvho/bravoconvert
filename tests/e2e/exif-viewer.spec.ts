@@ -260,3 +260,59 @@ test("if the ZIP library cannot load, the clean copies still download one by one
   await expect(page.locator("main [role=alert]")).toHaveCount(0);
   await expect.poll(() => names.sort()).toEqual(["garden-clean.jpg", "kitchen-clean.jpg"]);
 });
+
+test("with many photos on a phone the report sits above the list and nothing overflows", async ({ page }, testInfo) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.goto("/view/exif/");
+  await rejectOptionalCookies(page);
+  const files: string[] = [];
+  for (let i = 0; i < 30; i++) {
+    const file = testInfo.outputPath(`p${i}.png`);
+    await page.setContent(`<div style="width:64px;height:48px;background:hsl(${i * 12} 70% 50%)"></div>`);
+    await page.locator("div").screenshot({ path: file });
+    files.push(file);
+  }
+  await page.goto("/view/exif/");
+  await page.getByLabel("Choose a JPG, PNG, or WebP photo").setInputFiles(files);
+  await expect(page.getByText("30 photos · 0 carry identifying information")).toBeVisible();
+  const list = page.getByRole("list", { name: "Photos you added" });
+  await expect(list.getByRole("listitem")).toHaveCount(30);
+  const report = page.getByTestId("exif-report");
+  expect((await report.boundingBox())!.y).toBeLessThan((await list.boundingBox())!.y);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+});
+
+test("on a phone the action bar never sits under the consent banner", async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.goto("/view/exif/");
+  await page.getByRole("button", { name: "Try a sample photo" }).click();
+  await expect(page.getByText("This photo carries 3 kinds of identifying information.")).toBeVisible();
+  const bar = page.locator("[data-action-bar]");
+  await expect(bar).toHaveAttribute("data-fixed", "false");
+  await page.getByRole("button", { name: "Reject", exact: true }).click();
+  await expect(bar).toHaveAttribute("data-fixed", "true");
+  await expect(page.getByRole("button", { name: "Remove it now" })).toBeInViewport();
+});
+
+test("reduced motion disables the result animation", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/view/exif/");
+  await rejectOptionalCookies(page);
+  await page.getByRole("button", { name: "Try a sample photo" }).click();
+  const report = page.getByTestId("exif-report");
+  await expect(report).toBeVisible();
+  await expect(report).toHaveAttribute("data-motion", "off");
+  expect(await report.evaluate(el => el.getAttribute("style") ?? "")).not.toMatch(/opacity|transform/);
+});
+
+test("an in-app browser gets the press-and-hold preview after cleaning", async ({ browser }) => {
+  const context = await browser.newContext({ userAgent: "Mozilla/5.0 (iPhone) KAKAOTALK 10.0", viewport: { width: 375, height: 812 } });
+  const page = await context.newPage();
+  await page.goto("/view/exif/");
+  await page.getByRole("button", { name: "Reject", exact: true }).click();
+  await page.getByRole("button", { name: "Try a sample photo" }).click();
+  await page.getByRole("button", { name: "Remove it now" }).click();
+  await page.getByRole("group", { name: "Save the clean copy as" }).getByRole("button", { name: /Clean copy as JPG/ }).click();
+  await expect(page.getByText("Press and hold an image below to save it.")).toBeVisible();
+  await context.close();
+});
