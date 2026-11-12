@@ -1,6 +1,15 @@
 "use client";
 
-import { ArrowDown, ArrowUp, Combine, Download, FileText, Scissors, Trash2, Upload } from "lucide-react";
+import { ArrowDown, ArrowUp, Check, Combine, Download, FileText, Scissors, Trash2 } from "lucide-react";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import PageContainer from "@/components/site/page-container";
+import ActionBar from "@/components/tool/action-bar";
+import DropZone from "@/components/tool/drop-zone";
+import IconTile from "@/components/tool/icon-tile";
+import ToolLayout from "@/components/tool/tool-layout";
+import ToolPageHeader from "@/components/tool/tool-page-header";
 import JSZip from "jszip";
 import { ChangeEvent, DragEvent, useEffect, useRef, useState } from "react";
 import {
@@ -32,8 +41,6 @@ type Result = {
   detail: string;
 };
 
-const TOOL_BUTTON = "inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm font-semibold text-black transition hover:border-gray-400 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40";
-const PRIMARY_BUTTON = "inline-flex items-center justify-center gap-2 rounded-xl bg-brand-600 px-6 py-3 font-semibold text-white transition hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-40";
 
 const formatBytes = (bytes: number) => {
   if (bytes < 1024) return `${bytes} B`;
@@ -193,23 +200,25 @@ export default function PdfOrganizer() {
     }
   };
 
+  const hasWork = mode === "merge" ? queue.length > 0 : splitSource !== null;
+
   const dropzone = (
-    <div
-      className={`rounded-3xl border-2 border-dashed p-8 text-center transition md:p-12 ${dragging ? "border-black bg-gray-200 shadow-md" : "border-gray-400 bg-gray-100 hover:border-gray-500 hover:bg-gray-200 hover:shadow-md"}`}
+    <DropZone
+      title={mode === "merge" ? (queue.length ? "Add more PDFs" : "Drop PDF files here") : (splitSource ? "Drop a different PDF" : "Drop a PDF here")}
+      note={mode === "merge"
+        ? `PDF only · Up to ${MAX_MERGE_FILES} files · ${formatBytes(MAX_PDF_BYTES)} each, ${formatBytes(MAX_TOTAL_BYTES)} total`
+        : `One PDF · Up to ${formatBytes(MAX_PDF_BYTES)}`}
+      dragging={dragging}
       onDragEnter={event => { event.preventDefault(); setDragging(true); }}
       onDragOver={event => event.preventDefault()}
       onDragLeave={event => { if (event.currentTarget === event.target) setDragging(false); }}
       onDrop={onDrop}
+      actions={
+        <Button variant={hasWork ? "secondary" : "primary"} onClick={() => fileInputRef.current?.click()}>
+          {mode === "merge" ? "Choose PDFs" : "Choose a PDF"}
+        </Button>
+      }
     >
-      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-600 text-white">
-        <Upload className="h-6 w-6" aria-hidden="true" />
-      </div>
-      <h2 className="mt-5 text-xl font-bold text-black">
-        {mode === "merge" ? (queue.length ? "Add more PDFs" : "Drop PDF files here") : (splitSource ? "Drop a different PDF" : "Drop a PDF here")}
-      </h2>
-      <button type="button" onClick={() => fileInputRef.current?.click()} className={`${PRIMARY_BUTTON} mt-5`}>
-        {mode === "merge" ? "Choose PDFs" : "Choose a PDF"}
-      </button>
       <input
         ref={fileInputRef}
         type="file"
@@ -219,136 +228,164 @@ export default function PdfOrganizer() {
         className="sr-only"
         aria-label={mode === "merge" ? "Choose PDF files to merge" : "Choose a PDF to split"}
       />
-      <p className="mt-4 text-sm text-gray-500">
-        {mode === "merge"
-          ? `PDF only · Up to ${MAX_MERGE_FILES} files · ${formatBytes(MAX_PDF_BYTES)} each, ${formatBytes(MAX_TOTAL_BYTES)} total`
-          : `One PDF · Up to ${formatBytes(MAX_PDF_BYTES)}`}
-      </p>
+    </DropZone>
+  );
+
+  const fileMeta = (item: QueuedPdf) =>
+    item.error ?? `${item.pages} page${item.pages === 1 ? "" : "s"} · ${formatBytes(item.file.size)}`;
+
+  const mergeMain = (
+    <div data-tool-main className="space-y-5">
+      <Card className="p-5">
+        <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
+          <h2 className="text-h3">Merge order</h2>
+          <p className="text-sm text-muted-foreground">{ready.length} file{ready.length === 1 ? "" : "s"} · {totalPages} pages · {formatBytes(totalBytes)}</p>
+        </div>
+        <ol className="space-y-2">
+          {queue.map((item, index) => (
+            <li key={item.id} className={`flex items-center gap-3 rounded-field px-3 py-2.5 ${item.error ? "bg-destructive" : "bg-muted"}`}>
+              <span className="w-6 text-center text-sm font-bold text-muted-foreground">{index + 1}</span>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-bold text-foreground">{item.file.name}</p>
+                <p className={`text-xs ${item.error ? "text-destructive-foreground" : "text-muted-foreground"}`}>{fileMeta(item)}</p>
+              </div>
+              <Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => move(index, -1)} disabled={index === 0} aria-label={`Move ${item.file.name} up`}><ArrowUp aria-hidden="true" /></Button>
+              <Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => move(index, 1)} disabled={index === queue.length - 1} aria-label={`Move ${item.file.name} down`}><ArrowDown aria-hidden="true" /></Button>
+              <Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => remove(item.id)} aria-label={`Remove ${item.file.name}`}><Trash2 aria-hidden="true" /></Button>
+            </li>
+          ))}
+        </ol>
+      </Card>
+      {dropzone}
     </div>
   );
 
-  return (
-    <section className="mx-auto w-full max-w-5xl px-4 pb-12">
-      <header className="mx-auto mb-8 max-w-3xl text-center">
-        <span className="inline-flex items-center gap-2 rounded-full bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-700">
-          <FileText className="h-4 w-4" aria-hidden="true" /> Browser-based PDF tool
-        </span>
-        <h1 className="mt-5 text-4xl font-bold tracking-tight text-black md:text-5xl">Merge and split PDF files</h1>
-        <p className="mt-4 text-lg leading-8 text-gray-600">Combine several PDFs into one, or pull pages out of a PDF. Pages are copied as they are, so text stays selectable — and the files never leave your device.</p>
-      </header>
+  const mergePanel = (
+    <Card data-tool-panel className="p-5">
+      <h2 className="text-h3">Merge</h2>
+      <p className="mt-2 text-sm text-muted-foreground">
+        Files are joined in the order shown. Pages are copied as they are, so text stays selectable.
+      </p>
+      {ready.length < 2 && <p className="mt-3 text-sm font-semibold text-foreground">Add at least two readable PDFs.</p>}
+      <ActionBar className="mt-5">
+        <Button size="lg" className="w-full" onClick={runMerge} disabled={busy || ready.length < 2}>
+          <Combine aria-hidden="true" /> {busy ? "Working…" : ready.length >= 2 ? `Merge ${ready.length} PDFs` : "Merge PDFs"}
+        </Button>
+      </ActionBar>
+      <Button variant="secondary" className="mt-2 w-full" onClick={() => { setQueue([]); replaceResults([]); setError(null); }}>Clear list</Button>
+    </Card>
+  );
 
-      <div className="mx-auto mb-6 flex max-w-md rounded-2xl bg-gray-100 p-1" role="tablist" aria-label="PDF tool mode">
-        {([["merge", "Merge PDFs", Combine], ["split", "Split a PDF", Scissors]] as const).map(([value, label, Icon]) => (
-          <button
-            key={value}
-            type="button"
-            role="tab"
-            aria-selected={mode === value}
-            onClick={() => switchMode(value)}
-            className={`flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition ${mode === value ? "bg-white text-black shadow-sm" : "text-gray-600 hover:text-black"}`}
-          >
-            <Icon className="h-4 w-4" aria-hidden="true" /> {label}
-          </button>
-        ))}
-      </div>
-
-      <div className="space-y-6">
-        {dropzone}
-
-        {error && <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">{error}</p>}
-
-        {mode === "merge" && queue.length > 0 && (
-          <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-            <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
-              <h2 className="text-lg font-bold text-black">Merge order</h2>
-              <p className="text-sm text-gray-600">{ready.length} file{ready.length === 1 ? "" : "s"} · {totalPages} pages · {formatBytes(totalBytes)}</p>
-            </div>
-            <ol className="space-y-2">
-              {queue.map((item, index) => (
-                <li key={item.id} className={`flex items-center gap-3 rounded-xl border px-3 py-2.5 ${item.error ? "border-red-200 bg-red-50" : "border-gray-200 bg-gray-50"}`}>
-                  <span className="w-6 text-center text-sm font-semibold text-gray-500">{index + 1}</span>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-semibold text-black">{item.file.name}</p>
-                    <p className={`text-xs ${item.error ? "text-red-700" : "text-gray-500"}`}>
-                      {item.error ?? `${item.pages} page${item.pages === 1 ? "" : "s"} · ${formatBytes(item.file.size)}`}
-                    </p>
-                  </div>
-                  <button type="button" onClick={() => move(index, -1)} disabled={index === 0} className="rounded-lg p-2 hover:bg-white disabled:opacity-30" aria-label={`Move ${item.file.name} up`}><ArrowUp className="h-4 w-4" /></button>
-                  <button type="button" onClick={() => move(index, 1)} disabled={index === queue.length - 1} className="rounded-lg p-2 hover:bg-white disabled:opacity-30" aria-label={`Move ${item.file.name} down`}><ArrowDown className="h-4 w-4" /></button>
-                  <button type="button" onClick={() => remove(item.id)} className="rounded-lg p-2 hover:bg-white" aria-label={`Remove ${item.file.name}`}><Trash2 className="h-4 w-4" /></button>
-                </li>
-              ))}
-            </ol>
-            <div className="mt-5 flex flex-wrap items-center gap-3">
-              <button type="button" onClick={runMerge} disabled={busy || ready.length < 2} className={PRIMARY_BUTTON}>
-                <Combine className="h-4 w-4" aria-hidden="true" /> {busy ? "Working…" : ready.length >= 2 ? `Merge ${ready.length} PDFs` : "Merge PDFs"}
-              </button>
-              <button type="button" onClick={() => { setQueue([]); replaceResults([]); setError(null); }} className={TOOL_BUTTON}>Clear list</button>
-              {ready.length < 2 && <p className="text-sm text-gray-500">Add at least two readable PDFs.</p>}
-            </div>
-          </div>
-        )}
-
-        {mode === "split" && splitSource && (
-          <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-            <p className="truncate text-sm font-semibold text-black">{splitSource.file.name}</p>
-            <p className={`text-xs ${splitSource.error ? "text-red-700" : "text-gray-500"}`}>
-              {splitSource.error ?? `${splitSource.pages} page${splitSource.pages === 1 ? "" : "s"} · ${formatBytes(splitSource.file.size)}`}
-            </p>
-
-            {splitSource.pages && (
-              <>
-                <fieldset className="mt-5 space-y-3">
-                  <legend className="text-sm font-semibold text-black">What do you want to get?</legend>
-                  <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-gray-200 p-3 hover:bg-gray-50">
-                    <input type="radio" name="split-mode" checked={splitMode === "range"} onChange={() => setSplitMode("range")} className="mt-1" />
-                    <span>
-                      <span className="block text-sm font-semibold text-black">Selected pages as one PDF</span>
-                      <span className="block text-xs text-gray-600">Type pages and ranges. The new PDF follows the order you type.</span>
-                    </span>
-                  </label>
-                  {splitMode === "range" && (
-                    <div className="pl-3">
-                      <label htmlFor="page-range" className="block text-sm font-medium text-gray-700">Pages (1–{splitSource.pages})</label>
-                      <input
-                        id="page-range"
-                        value={rangeInput}
-                        onChange={event => setRangeInput(event.target.value)}
-                        placeholder="e.g. 1-3, 5, 8-10"
-                        className="mt-2 w-full max-w-sm rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm text-black outline-none transition focus:border-black focus:ring-1 focus:ring-black"
-                      />
-                    </div>
-                  )}
-                  <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-gray-200 p-3 hover:bg-gray-50">
-                    <input type="radio" name="split-mode" checked={splitMode === "every"} onChange={() => setSplitMode("every")} className="mt-1" />
-                    <span>
-                      <span className="block text-sm font-semibold text-black">Every page as its own PDF</span>
-                      <span className="block text-xs text-gray-600">{splitSource.pages} single-page PDFs, downloaded together as a ZIP.</span>
-                    </span>
-                  </label>
-                </fieldset>
-                <button type="button" onClick={runSplit} disabled={busy} className={`${PRIMARY_BUTTON} mt-5`}>
-                  <Scissors className="h-4 w-4" aria-hidden="true" /> {busy ? "Working…" : splitMode === "range" ? "Extract pages" : `Split into ${splitSource.pages} files`}
-                </button>
-              </>
-            )}
-          </div>
-        )}
-
-        <div aria-live="polite">
-          {results.map(result => (
-            <div key={result.url} className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-green-200 bg-green-50 p-5">
-              <div className="min-w-0">
-                <p className="truncate font-semibold text-black">{result.name}</p>
-                <p className="text-sm text-gray-600">{result.detail} · {formatBytes(result.bytes)}</p>
-              </div>
-              <a href={result.url} download={result.name} className={PRIMARY_BUTTON}>
-                <Download className="h-4 w-4" aria-hidden="true" /> Download
-              </a>
-            </div>
-          ))}
+  const splitMain = splitSource && (
+    <div data-tool-main className="space-y-5">
+      <Card className="flex items-center gap-3 p-5">
+        <IconTile icon={FileText} tone="blue" size="sm" />
+        <div className="min-w-0">
+          <p className="truncate text-sm font-bold text-foreground">{splitSource.file.name}</p>
+          <p className={`text-xs ${splitSource.error ? "text-destructive-foreground" : "text-muted-foreground"}`}>{fileMeta(splitSource)}</p>
         </div>
-      </div>
-    </section>
+      </Card>
+      {dropzone}
+    </div>
+  );
+
+  const choice = (checked: boolean) =>
+    `flex cursor-pointer items-start gap-3 rounded-field p-3 transition-colors ${checked ? "bg-primary-soft" : "bg-muted hover:bg-muted/70"}`;
+
+  const splitPanel = splitSource && (
+    <Card data-tool-panel className="p-5">
+      <h2 className="text-h3">Split</h2>
+      {splitSource.pages ? (
+        <>
+          <fieldset className="mt-4 space-y-3">
+            <legend className="mb-3 text-sm font-semibold text-foreground">What do you want to get?</legend>
+            <label className={choice(splitMode === "range")}>
+              <input type="radio" name="split-mode" checked={splitMode === "range"} onChange={() => setSplitMode("range")} className="mt-1 accent-primary" />
+              <span>
+                <span className="block text-sm font-bold text-foreground">Selected pages as one PDF</span>
+                <span className="block text-xs text-muted-foreground">Type pages and ranges. The new PDF follows the order you type.</span>
+              </span>
+            </label>
+            {splitMode === "range" && (
+              <div className="pl-3">
+                <label htmlFor="page-range" className="block text-sm font-semibold text-foreground">Pages (1–{splitSource.pages})</label>
+                <input
+                  id="page-range"
+                  value={rangeInput}
+                  onChange={event => setRangeInput(event.target.value)}
+                  placeholder="e.g. 1-3, 5, 8-10"
+                  className="mt-2 h-11 w-full rounded-field border-2 border-border bg-card px-3 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                />
+              </div>
+            )}
+            <label className={choice(splitMode === "every")}>
+              <input type="radio" name="split-mode" checked={splitMode === "every"} onChange={() => setSplitMode("every")} className="mt-1 accent-primary" />
+              <span>
+                <span className="block text-sm font-bold text-foreground">Every page as its own PDF</span>
+                <span className="block text-xs text-muted-foreground">{splitSource.pages} single-page PDFs, downloaded together as a ZIP.</span>
+              </span>
+            </label>
+          </fieldset>
+          <ActionBar className="mt-5">
+            <Button size="lg" className="w-full" onClick={runSplit} disabled={busy}>
+              <Scissors aria-hidden="true" /> {busy ? "Working…" : splitMode === "range" ? "Extract pages" : `Split into ${splitSource.pages} files`}
+            </Button>
+          </ActionBar>
+        </>
+      ) : (
+        <p className="mt-2 text-sm text-muted-foreground">Choose a different PDF to split.</p>
+      )}
+    </Card>
+  );
+
+  const resultCards = (
+    <div aria-live="polite" className="space-y-3">
+      {results.map(result => (
+        <Card key={result.url} className="flex flex-wrap items-center justify-between gap-4 p-5">
+          <div className="flex min-w-0 items-center gap-3">
+            <IconTile icon={Check} tone="clean" size="sm" />
+            <div className="min-w-0">
+              <p className="truncate font-bold text-foreground">{result.name}</p>
+              <p className="text-sm text-muted-foreground">{result.detail} · {formatBytes(result.bytes)}</p>
+            </div>
+          </div>
+          <a href={result.url} download={result.name} className={buttonVariants()}>
+            <Download aria-hidden="true" /> Download
+          </a>
+        </Card>
+      ))}
+    </div>
+  );
+
+  const workArea = (
+    <ToolLayout
+      main={hasWork ? (mode === "merge" ? mergeMain : splitMain) : dropzone}
+      panel={hasWork ? (mode === "merge" ? mergePanel : splitPanel) : null}
+      results={resultCards}
+    />
+  );
+
+  return (
+    <PageContainer className="pb-6">
+      <ToolPageHeader
+        crumb={["Tools", "Merge & Split PDF"]}
+        title="Merge and split PDF files"
+        intro="Combine several PDFs into one, or pull pages out of a PDF. Pages are copied as they are, so text stays selectable — and the files never leave your device."
+        icon={FileText}
+        chips={[{ label: "PDF" }, { label: `Up to ${MAX_MERGE_FILES} files` }, { label: `${formatBytes(MAX_PDF_BYTES)} each · ${formatBytes(MAX_TOTAL_BYTES)} total` }, { label: "Nothing uploaded", ok: true }]}
+      />
+      <Tabs value={mode} onValueChange={value => switchMode(value as Mode)} className="mt-6">
+        <TabsList aria-label="PDF tool mode" className="flex w-full max-w-md">
+          <TabsTrigger value="merge"><Combine aria-hidden="true" /> Merge PDFs</TabsTrigger>
+          <TabsTrigger value="split"><Scissors aria-hidden="true" /> Split a PDF</TabsTrigger>
+        </TabsList>
+        {(["merge", "split"] as const).map(value => (
+          <TabsContent key={value} value={value} className="mt-5">
+            {error && <p role="alert" className="mb-4 rounded-field bg-destructive px-4 py-3 text-sm font-semibold text-destructive-foreground">{error}</p>}
+            {workArea}
+          </TabsContent>
+        ))}
+      </Tabs>
+    </PageContainer>
   );
 }

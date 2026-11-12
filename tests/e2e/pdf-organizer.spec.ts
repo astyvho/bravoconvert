@@ -121,3 +121,34 @@ test("rejects encrypted and non-PDF files with a clear message", async ({ page }
   await expect(page.getByText("Add at least two readable PDFs.")).toBeVisible();
   await expect(page.getByRole("button", { name: "Merge PDFs" })).toBeDisabled();
 });
+
+// Redesign (spec 7.3): Radix tabs with arrow-key movement, and the primary action in the side panel.
+
+test("mode tabs move with the arrow keys", async ({ page }) => {
+  await page.goto("/edit/pdf/");
+  await rejectOptionalCookies(page);
+  await page.getByRole("tab", { name: "Merge PDFs" }).focus();
+  await page.keyboard.press("ArrowRight");
+  await expect(page.getByRole("tab", { name: "Split a PDF" })).toHaveAttribute("aria-selected", "true");
+  await expect(page.getByLabel("Choose a PDF to split")).toHaveCount(1);
+});
+
+test("every tab points at a panel that exists", async ({ page }) => {
+  await page.goto("/edit/pdf/");
+  const selected = page.getByRole("tab", { selected: true });
+  const controls = await selected.getAttribute("aria-controls");
+  expect(controls).toBeTruthy();
+  await expect(page.locator(`[id="${controls}"]`)).toHaveCount(1);
+});
+
+test("the primary action lives in the side panel", async ({ page }, testInfo) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  const a = testInfo.outputPath("a.pdf");
+  const b = testInfo.outputPath("b.pdf");
+  await writeFixture(a, WIDTHS_A, "A");
+  await writeFixture(b, WIDTHS_B, "B");
+  await page.goto("/edit/pdf/");
+  await rejectOptionalCookies(page);
+  await page.getByLabel("Choose PDF files to merge").setInputFiles([a, b]);
+  await expect(page.locator("[data-tool-panel]").getByRole("button", { name: "Merge 2 PDFs" })).toBeVisible();
+});

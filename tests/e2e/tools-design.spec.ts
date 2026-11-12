@@ -78,3 +78,12 @@ test("Image Editor uses the redesigned template", async ({ page }, testInfo) => 
     await expect(page.getByText("Output: 64 × 48px")).toBeVisible();
   });
 });
+
+test("Merge & Split uses the redesigned template", async ({ page }, testInfo) => {
+  const a = await pdfFile(testInfo, "a.pdf", 2);
+  const b = await pdfFile(testInfo, "b.pdf", 1);
+  await expectRedesigned(page, "/edit/pdf/", async () => {
+    await page.getByLabel("Choose PDF files to merge").setInputFiles([a, b]);
+    await expect(page.getByText("2 files · 3 pages")).toBeVisible();
+  });
+});
