@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { History } from "lucide-react";
+import ContentHeader from "@/components/content/content-header";
 
 export const metadata: Metadata = {
   title: "Changelog | BravoConvert",
@@ -122,28 +122,22 @@ const entries = [
 
 export default function ChangelogPage() {
   return (
-    <main className="min-h-screen bg-gray-50 py-12 px-4">
-      <div className="max-w-4xl mx-auto">
-        <header className="mb-12 text-center">
-          <h1 className="mb-4 flex items-center justify-center text-4xl font-bold text-black md:text-6xl">
-            <History className="mr-4 h-16 w-16 flex-shrink-0 text-gray-700" aria-hidden="true" />
-            Changelog
-          </h1>
-          <p className="mb-8 text-xl text-black">What's changed in BravoConvert</p>
-          <p className="text-base text-gray-600">A running log of notable updates to the editor, converter, and PDF tools</p>
-        </header>
+    <main>
+      <div className="mx-auto w-full max-w-[1120px] px-4 pb-16 pt-6 sm:px-6">
+        <ContentHeader label="Changelog" title="Changelog">
+          <p className="mt-3 text-lg leading-relaxed text-foreground">What's changed in BravoConvert</p>
+          <p className="mt-2 text-base leading-relaxed text-muted-foreground">A running log of notable updates to the editor, converter, and PDF tools</p>
+        </ContentHeader>
 
-        <article className="rounded-xl border border-gray-200 bg-white p-6 shadow-lg transition-all duration-300 hover:shadow-xl md:p-10">
-          <ol className="space-y-8">
-            {entries.map((entry) => (
-              <li key={entry.title + entry.date} className="border-l-4 border-black pl-6">
-                <div className="mb-1 text-sm font-semibold uppercase tracking-wide text-gray-500">{entry.date}</div>
-                <h2 className="mb-2 text-xl font-bold text-black">{entry.title}</h2>
-                <p className="text-gray-700 leading-7">{entry.body}</p>
-              </li>
-            ))}
-          </ol>
-        </article>
+        <ol className="mt-10 max-w-[720px] space-y-4">
+          {entries.map((entry) => (
+            <li key={entry.title + entry.date} className="rounded-card bg-card p-6 shadow-soft">
+              <div className="text-sm font-semibold text-muted-foreground">{entry.date}</div>
+              <h2 className="mt-1 text-h3 text-foreground">{entry.title}</h2>
+              <p className="mt-2 leading-7 text-muted-foreground">{entry.body}</p>
+            </li>
+          ))}
+        </ol>
       </div>
     </main>
   );

@@ -87,3 +87,9 @@ test("the Korean guides index keeps its English-only links marked", async ({ pag
     await expect(page.locator(`a[href="${url}"]`, { hasText: "가이드 읽기" })).toHaveCount(1);
   }
 });
+
+for (const url of ["/how-to-use/", "/contact/", "/changelog/", "/privacy-policy/", "/terms/"]) {
+  test(`${url} uses the content template`, async ({ page }) => {
+    await expectContentRedesigned(page, url);
+  });
+}

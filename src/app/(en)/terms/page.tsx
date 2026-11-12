@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import ContentHeader from "@/components/content/content-header";
 import { Shield, User, Check, Settings, AlertTriangle, RotateCcw, FileText, Mail, Calendar } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -9,35 +10,33 @@ export const metadata: Metadata = {
 
 export default function TermsPage() {
   return (
-    <main className="min-h-screen bg-gray-50 py-12 px-4">
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-6xl font-bold text-black mb-4 flex items-center justify-center">
-            <Shield className="w-16 h-16 text-gray-700 mr-4" />
-            Terms of Service
-          </h1>
-          <p className="text-xl text-black mb-8">
+    <main>
+      <div className="mx-auto w-full max-w-[1120px] px-4 pb-16 pt-6 sm:px-6">
+        <ContentHeader label="Legal" title="Terms of Service">
+          <p className="mt-3 text-lg leading-relaxed text-foreground">
             Clear and transparent terms for using BravoConvert
           </p>
-          <p className="text-base text-gray-600">
+          <p className="mt-2 text-base leading-relaxed text-muted-foreground">
             Last updated: July 17, 2026
           </p>
-        </div>
+        </ContentHeader>
+
+        <div className="mt-10 max-w-[880px] space-y-8">
 
         {/* Terms of Service Content */}
-        <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300">
+        <div className="bg-card rounded-card p-8 shadow-soft">
           <div className="space-y-8">
             <div>
-              <h2 className="text-2xl font-bold text-black mb-4 flex items-center">
-                <span className="w-8 h-8 bg-gradient-to-br from-black to-gray-800 text-white rounded-full flex items-center justify-center text-sm font-bold mr-4 shadow-md">1</span>
+              <h2 className="mb-6 flex items-center gap-3 text-h2 text-foreground">
+                <span className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold shrink-0">1</span>
                 Service Description
               </h2>
-              <div className="bg-gray-50 rounded-lg p-6 border-l-4 border-black">
-                <p className="text-base text-gray-700 mb-4 flex items-start">
-                  <Settings className="w-6 h-6 text-gray-700 mr-3 mt-0.5 flex-shrink-0" />
-                  <span><strong className="text-black">BravoConvert Services:</strong> We provide free online image editing and file conversion tools with a focus on privacy and security.</span>
+              <div className="bg-muted rounded-field p-6 border-l-4 border-primary">
+                <p className="text-base text-muted-foreground mb-4 flex items-start">
+                  <Settings className="w-6 h-6 text-muted-foreground mr-3 mt-0.5 flex-shrink-0" />
+                  <span><strong className="text-foreground">BravoConvert Services:</strong> We provide free online image editing and file conversion tools with a focus on privacy and security.</span>
                 </p>
-                <ul className="text-base text-gray-700 space-y-2">
+                <ul className="text-base text-muted-foreground space-y-2">
                   <li>• <strong>Image Converter:</strong> Convert between PNG, JPG, JPEG, and WebP formats</li>
                   <li>• <strong>Image Editor:</strong> Resize, rotate, flip, and export supported images</li>
                   <li>• <strong>PDF Creation:</strong> Combine multiple images into a single PDF document</li>
@@ -49,16 +48,16 @@ export default function TermsPage() {
             </div>
 
             <div>
-              <h2 className="text-2xl font-bold text-black mb-4 flex items-center">
-                <span className="w-8 h-8 bg-gradient-to-br from-black to-gray-800 text-white rounded-full flex items-center justify-center text-sm font-bold mr-4 shadow-md">2</span>
+              <h2 className="mb-6 flex items-center gap-3 text-h2 text-foreground">
+                <span className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold shrink-0">2</span>
                 User Rights and Responsibilities
               </h2>
-              <div className="bg-gray-50 rounded-lg p-6 border-l-4 border-black">
-                <p className="text-base text-gray-700 mb-4 flex items-start">
-                  <User className="w-6 h-6 text-gray-700 mr-3 mt-0.5 flex-shrink-0" />
-                  <span><strong className="text-black">Your Files:</strong> You choose the files processed by the browser and remain responsible for keeping backups.</span>
+              <div className="bg-muted rounded-field p-6 border-l-4 border-primary">
+                <p className="text-base text-muted-foreground mb-4 flex items-start">
+                  <User className="w-6 h-6 text-muted-foreground mr-3 mt-0.5 flex-shrink-0" />
+                  <span><strong className="text-foreground">Your Files:</strong> You choose the files processed by the browser and remain responsible for keeping backups.</span>
                 </p>
-                <ul className="text-base text-gray-700 space-y-2">
+                <ul className="text-base text-muted-foreground space-y-2">
                   <li>• <strong>File Ownership:</strong> You retain any rights you already hold in the files you select</li>
                   <li>• <strong>Local File Processing:</strong> Selected file contents are not sent to a BravoConvert processing server</li>
                   <li>• <strong>Website Data:</strong> Analytics and advertising services may process usage and device information as described in our Privacy Policy</li>
@@ -69,16 +68,16 @@ export default function TermsPage() {
             </div>
 
             <div>
-              <h2 className="text-2xl font-bold text-black mb-4 flex items-center">
-                <span className="w-8 h-8 bg-gradient-to-br from-black to-gray-800 text-white rounded-full flex items-center justify-center text-sm font-bold mr-4 shadow-md">3</span>
+              <h2 className="mb-6 flex items-center gap-3 text-h2 text-foreground">
+                <span className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold shrink-0">3</span>
                 Acceptable Use Policy
               </h2>
-              <div className="bg-gray-50 rounded-lg p-6 border-l-4 border-black">
-                <p className="text-base text-gray-700 mb-4 flex items-start">
-                  <Check className="w-6 h-6 text-gray-700 mr-3 mt-0.5 flex-shrink-0" />
-                  <span><strong className="text-black">Responsible Usage:</strong> Please use our services responsibly and legally.</span>
+              <div className="bg-muted rounded-field p-6 border-l-4 border-primary">
+                <p className="text-base text-muted-foreground mb-4 flex items-start">
+                  <Check className="w-6 h-6 text-muted-foreground mr-3 mt-0.5 flex-shrink-0" />
+                  <span><strong className="text-foreground">Responsible Usage:</strong> Please use our services responsibly and legally.</span>
                 </p>
-                <ul className="text-base text-gray-700 space-y-2">
+                <ul className="text-base text-muted-foreground space-y-2">
                   <li>• <strong>Legal Content:</strong> Only upload files that you own or have permission to convert</li>
                   <li>• <strong>No Malicious Files:</strong> Do not upload files containing viruses, malware, or harmful code</li>
                   <li>• <strong>Respectful Use:</strong> Do not attempt to overload or disrupt our services</li>
@@ -89,16 +88,16 @@ export default function TermsPage() {
             </div>
 
             <div>
-              <h2 className="text-2xl font-bold text-black mb-4 flex items-center">
-                <span className="w-8 h-8 bg-gradient-to-br from-black to-gray-800 text-white rounded-full flex items-center justify-center text-sm font-bold mr-4 shadow-md">4</span>
+              <h2 className="mb-6 flex items-center gap-3 text-h2 text-foreground">
+                <span className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold shrink-0">4</span>
                 Technical Limitations
               </h2>
-              <div className="bg-gray-50 rounded-lg p-6 border-l-4 border-black">
-                <p className="text-base text-gray-700 mb-4 flex items-start">
-                  <Settings className="w-6 h-6 text-gray-700 mr-3 mt-0.5 flex-shrink-0" />
-                  <span><strong className="text-black">Service Constraints:</strong> Our services have certain technical limitations for optimal performance.</span>
+              <div className="bg-muted rounded-field p-6 border-l-4 border-primary">
+                <p className="text-base text-muted-foreground mb-4 flex items-start">
+                  <Settings className="w-6 h-6 text-muted-foreground mr-3 mt-0.5 flex-shrink-0" />
+                  <span><strong className="text-foreground">Service Constraints:</strong> Our services have certain technical limitations for optimal performance.</span>
                 </p>
-                <ul className="text-base text-gray-700 space-y-2">
+                <ul className="text-base text-muted-foreground space-y-2">
                   <li>• <strong>File Formats:</strong> Supported formats include:<br/>
                     <span className="ml-4">• <strong>Image input:</strong> JPG/JPEG, PNG, WebP</span><br/>
                     <span className="ml-4">• <strong>Image output:</strong> JPG, PNG, WebP, PDF</span>
@@ -112,16 +111,16 @@ export default function TermsPage() {
             </div>
 
             <div>
-              <h2 className="text-2xl font-bold text-black mb-4 flex items-center">
-                <span className="w-8 h-8 bg-gradient-to-br from-black to-gray-800 text-white rounded-full flex items-center justify-center text-sm font-bold mr-4 shadow-md">5</span>
+              <h2 className="mb-6 flex items-center gap-3 text-h2 text-foreground">
+                <span className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold shrink-0">5</span>
                 Limitation of Liability
               </h2>
-              <div className="bg-gray-50 rounded-lg p-6 border-l-4 border-black">
-                <p className="text-base text-gray-700 mb-4 flex items-start">
-                  <AlertTriangle className="w-6 h-6 text-gray-700 mr-3 mt-0.5 flex-shrink-0" />
-                  <span><strong className="text-black">Service Disclaimer:</strong> BravoConvert is provided "as is" without warranties.</span>
+              <div className="bg-muted rounded-field p-6 border-l-4 border-primary">
+                <p className="text-base text-muted-foreground mb-4 flex items-start">
+                  <AlertTriangle className="w-6 h-6 text-muted-foreground mr-3 mt-0.5 flex-shrink-0" />
+                  <span><strong className="text-foreground">Service Disclaimer:</strong> BravoConvert is provided "as is" without warranties.</span>
                 </p>
-                <ul className="text-base text-gray-700 space-y-2">
+                <ul className="text-base text-muted-foreground space-y-2">
                   <li>• <strong>No Guarantees:</strong> We do not guarantee 100% accuracy in file conversions</li>
                   <li>• <strong>User Responsibility:</strong> You are responsible for backing up your original files</li>
                   <li>• <strong>No Data Loss Claims:</strong> We are not liable for any data loss or file corruption</li>
@@ -131,16 +130,16 @@ export default function TermsPage() {
             </div>
 
             <div>
-              <h2 className="text-2xl font-bold text-black mb-4 flex items-center">
-                <span className="w-8 h-8 bg-gradient-to-br from-black to-gray-800 text-white rounded-full flex items-center justify-center text-sm font-bold mr-4 shadow-md">6</span>
+              <h2 className="mb-6 flex items-center gap-3 text-h2 text-foreground">
+                <span className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold shrink-0">6</span>
                 Service Modifications
               </h2>
-              <div className="bg-gray-50 rounded-lg p-6 border-l-4 border-black">
-                <p className="text-base text-gray-700 mb-4 flex items-start">
-                  <RotateCcw className="w-6 h-6 text-gray-700 mr-3 mt-0.5 flex-shrink-0" />
-                  <span><strong className="text-black">Service Changes:</strong> We may modify or discontinue services as needed.</span>
+              <div className="bg-muted rounded-field p-6 border-l-4 border-primary">
+                <p className="text-base text-muted-foreground mb-4 flex items-start">
+                  <RotateCcw className="w-6 h-6 text-muted-foreground mr-3 mt-0.5 flex-shrink-0" />
+                  <span><strong className="text-foreground">Service Changes:</strong> We may modify or discontinue services as needed.</span>
                 </p>
-                <ul className="text-base text-gray-700 space-y-2">
+                <ul className="text-base text-muted-foreground space-y-2">
                   <li>• <strong>Feature Updates:</strong> We may add, modify, or remove features without notice</li>
                   <li>• <strong>Service Availability:</strong> Services may be temporarily unavailable for maintenance</li>
                   <li>• <strong>Format Support:</strong> Supported file formats may change over time</li>
@@ -150,16 +149,16 @@ export default function TermsPage() {
             </div>
 
             <div>
-              <h2 className="text-2xl font-bold text-black mb-4 flex items-center">
-                <span className="w-8 h-8 bg-gradient-to-br from-black to-gray-800 text-white rounded-full flex items-center justify-center text-sm font-bold mr-4 shadow-md">7</span>
+              <h2 className="mb-6 flex items-center gap-3 text-h2 text-foreground">
+                <span className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold shrink-0">7</span>
                 Terms Updates
               </h2>
-              <div className="bg-gray-50 rounded-lg p-6 border-l-4 border-black">
-                <p className="text-base text-gray-700 mb-4 flex items-start">
-                  <FileText className="w-6 h-6 text-gray-700 mr-3 mt-0.5 flex-shrink-0" />
-                  <span><strong className="text-black">Policy Changes:</strong> These terms may be updated to reflect service changes or legal requirements.</span>
+              <div className="bg-muted rounded-field p-6 border-l-4 border-primary">
+                <p className="text-base text-muted-foreground mb-4 flex items-start">
+                  <FileText className="w-6 h-6 text-muted-foreground mr-3 mt-0.5 flex-shrink-0" />
+                  <span><strong className="text-foreground">Policy Changes:</strong> These terms may be updated to reflect service changes or legal requirements.</span>
                 </p>
-                <ul className="text-base text-gray-700 space-y-2">
+                <ul className="text-base text-muted-foreground space-y-2">
                   <li>• <strong>Notification:</strong> Updated terms will be posted on this page</li>
                   <li>• <strong>Effective Date:</strong> Changes become effective immediately upon posting</li>
                   <li>• <strong>Continued Use:</strong> Continued use of services constitutes acceptance of new terms</li>
@@ -169,16 +168,16 @@ export default function TermsPage() {
             </div>
 
             <div>
-              <h2 className="text-2xl font-bold text-black mb-4 flex items-center">
-                <span className="w-8 h-8 bg-gradient-to-br from-black to-gray-800 text-white rounded-full flex items-center justify-center text-sm font-bold mr-4 shadow-md">8</span>
+              <h2 className="mb-6 flex items-center gap-3 text-h2 text-foreground">
+                <span className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold shrink-0">8</span>
                 Contact Information
               </h2>
-              <div className="bg-gray-50 rounded-lg p-6 border-l-4 border-black">
-                <p className="text-base text-gray-700 mb-4 flex items-start">
-                  <Mail className="w-6 h-6 text-gray-700 mr-3 mt-0.5 flex-shrink-0" />
-                  <span><strong className="text-black">Questions and Support:</strong> We're here to help with any questions about these terms.</span>
+              <div className="bg-muted rounded-field p-6 border-l-4 border-primary">
+                <p className="text-base text-muted-foreground mb-4 flex items-start">
+                  <Mail className="w-6 h-6 text-muted-foreground mr-3 mt-0.5 flex-shrink-0" />
+                  <span><strong className="text-foreground">Questions and Support:</strong> We're here to help with any questions about these terms.</span>
                 </p>
-                <ul className="text-base text-gray-700 space-y-2">
+                <ul className="text-base text-muted-foreground space-y-2">
                   <li>• <strong>Email:</strong> bravoconvert.help@gmail.com</li>
                   <li>• <strong>Response Time:</strong> We typically respond to inquiries within 1-4 weeks</li>
                   <li>• <strong>Legal Questions:</strong> For legal matters, please provide detailed information</li>
@@ -187,16 +186,17 @@ export default function TermsPage() {
             </div>
           </div>
 
-          <hr className="my-12 border-gray-300" />
-          <div className="text-center bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200 shadow-md">
-            <p className="text-base text-gray-700 flex items-center justify-center mb-2">
-              <Calendar className="w-6 h-6 text-gray-700 mr-3" />
-              <span><strong className="text-black">Effective Date:</strong> July 17, 2026</span>
+          <hr className="my-12 border-border" />
+          <div className="text-center bg-primary-soft rounded-field p-6 border border-transparent shadow-soft">
+            <p className="text-base text-muted-foreground flex items-center justify-center mb-2">
+              <Calendar className="w-6 h-6 text-muted-foreground mr-3" />
+              <span><strong className="text-foreground">Effective Date:</strong> July 17, 2026</span>
             </p>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-muted-foreground">
               These terms apply to all BravoConvert services and may be updated as needed.
             </p>
           </div>
+        </div>
         </div>
       </div>
     </main>

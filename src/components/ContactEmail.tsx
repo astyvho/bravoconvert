@@ -16,7 +16,7 @@ export const CONTACT_EMAIL = "bravoconvert.help@gmail.com";
  * the address is escaped for the attribute context regardless.
  */
 export default function ContactEmail({
-  className = "text-blue-700 underline font-medium",
+  className = "font-semibold text-primary underline underline-offset-4",
   asLink = true,
 }: {
   className?: string;

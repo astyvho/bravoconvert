@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+import ContentHeader from "@/components/content/content-header";
+import IconTile from "@/components/tool/icon-tile";
+import Prose from "@/components/tool/prose";
 import Link from "next/link";
 import ContactEmail from "@/components/ContactEmail";
 import {
@@ -54,20 +57,16 @@ const sectionIcons = [Lock, BarChart3, Cookie, SlidersHorizontal, Globe, Databas
 
 export default function PrivacyPolicyPage() {
   return (
-    <main className="min-h-screen bg-gray-50 py-12 px-4">
-      <div className="max-w-4xl mx-auto">
-        <header className="mb-12 text-center">
-          <h1 className="mb-4 flex items-center justify-center text-4xl font-bold text-black md:text-6xl">
-            <ShieldCheck className="mr-4 h-16 w-16 flex-shrink-0 text-gray-700" aria-hidden="true" />
-            Privacy Policy
-          </h1>
-          <p className="mb-8 text-xl text-black">How BravoConvert handles files, analytics, and advertising data</p>
-          <p className="text-base text-gray-600">Effective and last updated: October 13, 2026</p>
-        </header>
+    <main>
+      <div className="mx-auto w-full max-w-[1120px] px-4 pb-16 pt-6 sm:px-6">
+        <ContentHeader label="Legal" title="Privacy Policy">
+          <p className="mt-3 text-lg leading-relaxed text-foreground">How BravoConvert handles files, analytics, and advertising data</p>
+          <p className="mt-2 text-base leading-relaxed text-muted-foreground">Effective and last updated: October 13, 2026</p>
+        </ContentHeader>
 
-        <article className="rounded-xl border border-gray-200 bg-white p-6 shadow-lg transition-all duration-300 hover:shadow-xl md:p-10">
+        <Prose as="article" className="mt-10 max-w-[720px] space-y-10">
 
-        <div className="mb-8 rounded-xl bg-blue-50 border border-blue-200 p-5 text-gray-800">
+        <div className="mb-8 rounded-field bg-primary-soft border border-transparent p-5 text-foreground">
           <strong>Important distinction:</strong> files are converted locally and are not uploaded to BravoConvert, while normal website analytics and advertising technologies may process usage and device information.
         </div>
 
@@ -77,28 +76,28 @@ export default function PrivacyPolicyPage() {
 
             return (
             <section key={section.title}>
-              <h2 className="mb-3 flex items-center gap-3 text-2xl font-bold text-black">
-                <SectionIcon className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+              <h2>
+                <IconTile icon={SectionIcon} size="sm" tone="blue" className="hidden sm:inline-flex" />
                 {index + 1}. {section.title}
               </h2>
-              <p className="text-gray-700 leading-7">{section.body}</p>
+              <p className="text-muted-foreground leading-7">{section.body}</p>
               {section.title === "Consent and your choices" && (
-                <p className="mt-3 text-gray-700">
+                <p className="mt-3 text-muted-foreground">
                   Visit <a className="underline font-medium" href="https://myadcenter.google.com/" rel="noopener noreferrer" target="_blank">Google My Ad Center</a> to manage Google advertising preferences.
                 </p>
               )}
               {section.title === "Your rights and contact" && (
-                <p className="mt-3 text-gray-700">
-                  For privacy questions, email <ContactEmail className="underline font-medium text-gray-700" />.
+                <p className="mt-3 text-muted-foreground">
+                  For privacy questions, email <ContactEmail className="underline font-medium text-muted-foreground" />.
                 </p>
               )}
               {section.title === "Advertising and cookies" && (
-                <p className="mt-3 text-gray-700">
+                <p className="mt-3 text-muted-foreground">
                   You can opt out of personalized advertising by Google at <a className="underline font-medium" href="https://www.google.com/settings/ads" rel="noopener noreferrer" target="_blank">Google Ads Settings</a>, and opt out of personalized advertising by other participating vendors and ad networks at <a className="underline font-medium" href="https://www.aboutads.info/choices/" rel="noopener noreferrer" target="_blank">www.aboutads.info</a>.
                 </p>
               )}
               {section.title === "Third-party services" && (
-                <p className="mt-3 text-gray-700">
+                <p className="mt-3 text-muted-foreground">
                   Learn <a className="underline font-medium" href="https://policies.google.com/technologies/partner-sites" rel="noopener noreferrer" target="_blank">how Google uses information from partner sites</a>, review the vendors listed at <a className="underline font-medium" href="https://www.aboutads.info/choices/" rel="noopener noreferrer" target="_blank">www.aboutads.info</a>, or opt out through the <a className="underline font-medium" href="https://optout.networkadvertising.org/" rel="noopener noreferrer" target="_blank">Network Advertising Initiative</a>.
                 </p>
               )}
@@ -107,15 +106,15 @@ export default function PrivacyPolicyPage() {
           })}
         </div>
 
-        <section className="mt-10 pt-8 border-t border-gray-200">
-          <h2 className="mb-3 flex items-center gap-3 text-2xl font-bold text-black">
-            <RefreshCw className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+        <section className="mt-10 pt-8 border-t border-border">
+          <h2>
+            <IconTile icon={RefreshCw} size="sm" tone="blue" className="hidden sm:inline-flex" />
             8. Changes to this policy
           </h2>
-          <p className="text-gray-700 leading-7">We may update this policy when the service or applicable requirements change. The current effective date will be shown at the top of this page.</p>
-          <p className="mt-4 text-gray-700">Questions? See our <Link className="underline font-medium" href="/contact/">contact page</Link>.</p>
+          <p className="text-muted-foreground leading-7">We may update this policy when the service or applicable requirements change. The current effective date will be shown at the top of this page.</p>
+          <p className="mt-4 text-muted-foreground">Questions? See our <Link className="underline font-medium" href="/contact/">contact page</Link>.</p>
         </section>
-        </article>
+        </Prose>
       </div>
     </main>
   );
