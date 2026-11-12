@@ -53,6 +53,7 @@ test("editor supports resizing, rotation, flips, history, replacement, and all e
 
   const beforeFlip = await page.getByLabel("Edited image preview").screenshot();
   await page.getByRole("button", { name: "Flip horizontally" }).click();
+  await page.mouse.move(0, 0);
   const afterHorizontal = await page.getByLabel("Edited image preview").screenshot();
   expect(afterHorizontal.equals(beforeFlip)).toBeFalsy();
   await page.getByRole("button", { name: "Flip vertically" }).click();
@@ -123,4 +124,43 @@ test("all tools and consent layout render at desktop and iPhone widths", async (
     await expect(page.getByRole("link", { name: /pdf-metadata-sample\.pdf/ })).toHaveAttribute("href", "/guides/pdf-metadata-sample.pdf");
     await page.evaluate(() => localStorage.removeItem("bravoconvert-consent-v1"));
   }
+});
+
+// Redesign (spec 7.3): icon buttons with tooltips above the preview, three panel groups split by
+// separators, and flip buttons that keep the rotate buttons' look (AGENTS.md).
+
+async function openEditor(page: Page, testInfo: { outputPath: (name: string) => string }) {
+  const source = testInfo.outputPath("source.png");
+  await createFixture(page, source, 400, 300);
+  await page.goto("/edit/image/");
+  await rejectOptionalCookies(page);
+  await page.getByLabel("Choose a JPG, PNG, or WebP image").setInputFiles(source);
+  await expect(page.getByText("Output: 400 × 300px")).toBeVisible();
+}
+
+test("history and replace are icon buttons with tooltips above the preview", async ({ page }, testInfo) => {
+  await openEditor(page, testInfo);
+  const undo = page.getByRole("button", { name: "Undo" });
+  expect((await undo.boundingBox())!.y).toBeLessThan((await page.getByLabel("Edited image preview").boundingBox())!.y);
+  // Undo is disabled until there is history, and disabled buttons get no hover, so check Reset.
+  await page.getByRole("button", { name: "Reset", exact: true }).hover();
+  await expect(page.getByRole("tooltip", { name: "Reset" })).toBeVisible();
+  await expect(page.getByLabel("Replace image")).toHaveCount(1);
+  // the file input itself also has role button in Chromium, so count real <button>s
+  await expect(page.locator("button", { hasText: "Replace image" })).toHaveCount(1);
+});
+
+test("flip buttons look like the rotate buttons after toggling", async ({ page }, testInfo) => {
+  await openEditor(page, testInfo);
+  await page.getByRole("button", { name: "Flip horizontally" }).click();
+  await page.mouse.move(0, 0);
+  const look = (name: string) => page.getByRole("button", { name }).evaluate(el => [getComputedStyle(el).backgroundColor, getComputedStyle(el).color, getComputedStyle(el).borderRadius]);
+  await expect.poll(async () => JSON.stringify(await look("Flip horizontally"))).toBe(JSON.stringify(await look("Right 90°")));
+});
+
+test("the panel groups are separated", async ({ page }, testInfo) => {
+  await openEditor(page, testInfo);
+  const panel = page.locator("[data-tool-panel]");
+  await expect(panel.getByRole("heading", { level: 2 })).toHaveText(["Resize", "Rotate & flip", "Export"]);
+  expect(await panel.getByRole("separator").count()).toBeGreaterThanOrEqual(2);
 });

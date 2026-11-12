@@ -1,4 +1,8 @@
 import type { Metadata } from "next";
+import PageContainer from "@/components/site/page-container";
+import AdSlot from "@/components/tool/ad-slot";
+import IconTile from "@/components/tool/icon-tile";
+import Prose from "@/components/tool/prose";
 import ImageEditor from "@/components/ImageEditor";
 import MetadataRemovalNotice from "@/components/MetadataRemovalNotice";
 import Link from "next/link";
@@ -26,7 +30,7 @@ export const metadata: Metadata = {
 
 export default function ImageEditorPage() {
   return (
-    <main className="min-h-screen bg-white pt-2">
+    <main>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -42,13 +46,14 @@ export default function ImageEditorPage() {
           }),
         }}
       />
-      <MetadataRemovalNotice tool="editor" />
-      <ImageEditor />
+      <ImageEditor notice={<MetadataRemovalNotice tool="editor" />} />
 
-      <article className="mx-auto mt-8 max-w-4xl space-y-10 rounded-3xl border border-gray-200 bg-white p-6 text-gray-700 shadow-sm md:p-10">
+      <PageContainer className="pb-16">
+        <AdSlot slot="edit-image-below-tool" />
+        <Prose as="article" className="mt-12 space-y-12">
         <header>
-          <h2 className="flex items-center gap-3 text-3xl font-bold text-black">
-            <ImageIcon className="h-8 w-8 flex-shrink-0 text-gray-700" aria-hidden="true" />
+          <h2>
+            <IconTile icon={ImageIcon} size="sm" tone="blue" className="hidden sm:inline-flex" />
             Edit images without uploading them
           </h2>
           <p className="mt-4 leading-7">
@@ -57,8 +62,8 @@ export default function ImageEditorPage() {
         </header>
 
         <section>
-          <h2 className="flex items-center gap-3 text-2xl font-bold text-black">
-            <Maximize2 className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+          <h2>
+            <IconTile icon={Maximize2} size="sm" tone="blue" className="hidden sm:inline-flex" />
             Resize while preserving proportions
           </h2>
           <p className="mt-3 leading-7">
@@ -70,8 +75,8 @@ export default function ImageEditorPage() {
         </section>
 
         <section>
-          <h2 className="flex items-center gap-3 text-2xl font-bold text-black">
-            <RotateCw className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+          <h2>
+            <IconTile icon={RotateCw} size="sm" tone="blue" className="hidden sm:inline-flex" />
             Rotate and correct image orientation
           </h2>
           <p className="mt-3 leading-7">
@@ -80,8 +85,8 @@ export default function ImageEditorPage() {
         </section>
 
         <section>
-          <h2 className="flex items-center gap-3 text-2xl font-bold text-black">
-            <FlipHorizontal2 className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+          <h2>
+            <IconTile icon={FlipHorizontal2} size="sm" tone="blue" className="hidden sm:inline-flex" />
             Flip horizontally or vertically
           </h2>
           <p className="mt-3 leading-7">
@@ -90,32 +95,32 @@ export default function ImageEditorPage() {
         </section>
 
         <section>
-          <h2 className="flex items-center gap-3 text-2xl font-bold text-black">
-            <Download className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+          <h2>
+            <IconTile icon={Download} size="sm" tone="blue" className="hidden sm:inline-flex" />
             Choose JPG, PNG, or WebP output
           </h2>
           <div className="mt-5 grid gap-5 md:grid-cols-3">
-            <div className="rounded-2xl bg-gray-50 p-5">
-              <h3 className="text-lg font-semibold text-black">JPG for photographs</h3>
-              <p className="mt-2 leading-7">JPG usually creates compact photographic files and works with a wide range of apps. It does not support transparency, so transparent areas receive the background color selected in the export settings.</p>
+            <div className="rounded-field bg-muted p-5">
+              <h3 className="!mt-0 text-lg font-semibold text-foreground">JPG for photographs</h3>
+              <p className="!mb-0 !mt-2 leading-7">JPG usually creates compact photographic files and works with a wide range of apps. It does not support transparency, so transparent areas receive the background color selected in the export settings.</p>
             </div>
-            <div className="rounded-2xl bg-gray-50 p-5">
-              <h3 className="text-lg font-semibold text-black">PNG for transparency</h3>
-              <p className="mt-2 leading-7">PNG preserves transparent pixels and sharp edges without a lossy quality setting. It is a practical choice for logos, screenshots, diagrams, and interface graphics.</p>
+            <div className="rounded-field bg-muted p-5">
+              <h3 className="!mt-0 text-lg font-semibold text-foreground">PNG for transparency</h3>
+              <p className="!mb-0 !mt-2 leading-7">PNG preserves transparent pixels and sharp edges without a lossy quality setting. It is a practical choice for logos, screenshots, diagrams, and interface graphics.</p>
             </div>
-            <div className="rounded-2xl bg-gray-50 p-5">
-              <h3 className="text-lg font-semibold text-black">WebP for the web</h3>
-              <p className="mt-2 leading-7">WebP supports transparency and adjustable quality while often producing smaller files for modern websites and apps. Use JPG or PNG if an older application does not accept WebP.</p>
+            <div className="rounded-field bg-muted p-5">
+              <h3 className="!mt-0 text-lg font-semibold text-foreground">WebP for the web</h3>
+              <p className="!mb-0 !mt-2 leading-7">WebP supports transparency and adjustable quality while often producing smaller files for modern websites and apps. Use JPG or PNG if an older application does not accept WebP.</p>
             </div>
           </div>
           <p className="mt-5 leading-7">
-            The quality control applies to JPG and WebP. Higher values normally retain more visual detail and produce larger files. For batch format conversion, image compression controls, ZIP downloads, or combining several images into a PDF, use the <Link href="/convert/img/" className="font-medium text-black underline">image converter</Link> instead.
+            The quality control applies to JPG and WebP. Higher values normally retain more visual detail and produce larger files. For batch format conversion, image compression controls, ZIP downloads, or combining several images into a PDF, use the <Link href="/convert/img/" className="font-medium text-foreground underline">image converter</Link> instead.
           </p>
         </section>
 
         <section>
-          <h2 className="flex items-center gap-3 text-2xl font-bold text-black">
-            <ShieldCheck className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+          <h2>
+            <IconTile icon={ShieldCheck} size="sm" tone="blue" className="hidden sm:inline-flex" />
             Private browser-based processing
           </h2>
           <p className="mt-3 leading-7">
@@ -124,8 +129,8 @@ export default function ImageEditorPage() {
         </section>
 
         <section>
-          <h2 className="flex items-center gap-3 text-2xl font-bold text-black">
-            <RotateCw className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+          <h2>
+            <IconTile icon={RotateCw} size="sm" tone="blue" className="hidden sm:inline-flex" />
             A repeatable editing workflow
           </h2>
           <ol className="mt-3 list-decimal space-y-2 pl-6 leading-7">
@@ -141,8 +146,8 @@ export default function ImageEditorPage() {
         </section>
 
         <section>
-          <h2 className="flex items-center gap-3 text-2xl font-bold text-black">
-            <Maximize2 className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+          <h2>
+            <IconTile icon={Maximize2} size="sm" tone="blue" className="hidden sm:inline-flex" />
             File and canvas limits explained
           </h2>
           <p className="mt-3 leading-7">
@@ -154,8 +159,8 @@ export default function ImageEditorPage() {
         </section>
 
         <section>
-          <h2 className="flex items-center gap-3 text-2xl font-bold text-black">
-            <CircleAlert className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+          <h2>
+            <IconTile icon={CircleAlert} size="sm" tone="blue" className="hidden sm:inline-flex" />
             Troubleshooting image editing
           </h2>
           <ul className="mt-3 list-disc space-y-2 pl-6 leading-7">
@@ -166,10 +171,11 @@ export default function ImageEditorPage() {
             <li>Try JPG or PNG if another application cannot open the exported WebP file.</li>
           </ul>
           <p className="mt-4 leading-7">
-            If a supported image consistently fails, see the <Link href="/faq/" className="font-medium text-black underline">FAQ</Link> or use the <Link href="/contact/" className="font-medium text-black underline">contact page</Link> and include the browser, device, source format, and displayed error message—but do not send a private source image.
+            If a supported image consistently fails, see the <Link href="/faq/" className="font-medium text-foreground underline">FAQ</Link> or use the <Link href="/contact/" className="font-medium text-foreground underline">contact page</Link> and include the browser, device, source format, and displayed error message—but do not send a private source image.
           </p>
         </section>
-      </article>
+        </Prose>
+      </PageContainer>
     </main>
   );
 }

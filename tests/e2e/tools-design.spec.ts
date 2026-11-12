@@ -70,3 +70,11 @@ test("PDF to Image uses the redesigned template", async ({ page }, testInfo) => 
     await expect(page.getByText("Converted Pages (2)")).toBeVisible();
   });
 });
+
+test("Image Editor uses the redesigned template", async ({ page }, testInfo) => {
+  const [png] = await pngFiles(page, testInfo, 1);
+  await expectRedesigned(page, "/edit/image/", async () => {
+    await page.getByLabel("Choose a JPG, PNG, or WebP image").setInputFiles(png);
+    await expect(page.getByText("Output: 64 × 48px")).toBeVisible();
+  });
+});
