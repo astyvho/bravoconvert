@@ -43,3 +43,26 @@ test("renders each page of a PDF and downloads them all", async ({ page }, testI
   const [one] = await Promise.all([page.waitForEvent("download"), page.getByRole("button", { name: "Download", exact: true }).first().click()]);
   expect(one.suggestedFilename()).toBe("two-pages_page_1.png");
 });
+
+// Redesign (spec 7.3): PNG/JPG is a two-option radio group in the side panel.
+
+test("output format is a two-option radio group", async ({ page }, testInfo) => {
+  test.slow();
+  const pdf = testInfo.outputPath("two-pages.pdf");
+  await writeTwoPagePdf(pdf);
+  await openPdf(page, pdf);
+  const group = page.getByRole("radiogroup", { name: "Output format" });
+  await expect(group.getByRole("radio", { name: "PNG" })).toHaveAttribute("aria-checked", "true");
+  await group.getByRole("radio", { name: "JPG" }).click();
+  await expect(group.getByRole("radio", { name: "JPG" })).toHaveAttribute("aria-checked", "true");
+  await page.getByRole("button", { name: "Convert to Images" }).click();
+  await expect(page.getByText("Converted Pages (2)")).toBeVisible();
+  const [one] = await Promise.all([page.waitForEvent("download"), page.getByRole("button", { name: "Download", exact: true }).first().click()]);
+  expect(one.suggestedFilename()).toBe("two-pages_page_1.jpg");
+});
+
+test("the heading is in the static HTML before the engine loads", async ({ page }) => {
+  const html = await (await page.request.get("/convert/pdf/")).text();
+  expect(html).toContain("PDF to Image Converter");
+  expect(html).toMatch(/<h1[^>]*>[^<]*PDF to Image Converter/);
+});

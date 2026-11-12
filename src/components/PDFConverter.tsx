@@ -1,18 +1,16 @@
 "use client";
 import { useRef, useState, useEffect, useCallback } from "react";
-import { motion } from "framer-motion";
-import { 
-  UploadCloud, 
-  Download, 
-  FileText, 
-  Settings, 
-  CheckCircle, 
-  AlertCircle,
-  Image,
-  Loader2
-} from "lucide-react";
+import { AlertCircle, Download, FileImage, FileText, ImageIcon, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import CustomDropdown from "@/components/ui/CustomDropdown";
+import { Card } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import PageContainer from "@/components/site/page-container";
+import ActionBar from "@/components/tool/action-bar";
+import DropZone from "@/components/tool/drop-zone";
+import IconTile from "@/components/tool/icon-tile";
+import StatusBadge from "@/components/tool/status-badge";
+import ToolLayout from "@/components/tool/tool-layout";
+import ToolPageHeader from "@/components/tool/tool-page-header";
 import JSZip from "jszip";
 import { GlobalWorkerOptions } from "pdfjs-dist";
 
@@ -31,6 +29,7 @@ interface ConvertedPage {
 }
 
 export default function PDFConverter() {
+  const [dragging, setDragging] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const convertedPagesRef = useRef<ConvertedPage[]>([]);
   
@@ -423,282 +422,197 @@ export default function PDFConverter() {
   // 이 컴포넌트가 로딩 게이트 뒤에 전부 숨어 있으면 정적 HTML에 h1이 사라지고
   // 크롤러에게는 "Initializing..." 화면만 남는다.
   const pageHeader = (
-    <div className="mb-10 text-center">
-      <h1 className="text-5xl md:text-7xl font-extrabold text-black mb-2 drop-shadow-none">
-        PDF to Image Converter
-      </h1>
-      <p className="text-lg md:text-2xl text-black font-bold mb-1">
-        Convert your PDF files to high-quality images quickly and easily
-      </p>
-      <p className="text-black font-extrabold">
-        Free to use, no installation required
-      </p>
-    </div>
+    <ToolPageHeader
+      crumb={["Tools", "PDF to Image"]}
+      title="PDF to Image Converter"
+      intro="Convert your PDF files to high-quality images quickly and easily"
+      icon={FileImage}
+      chips={[{ label: "PDF" }, { label: "Up to 50 MB" }, { label: "PNG or JPG" }, { label: "Nothing uploaded", ok: true }]}
+    />
   );
 
   // 🎯 조건부 렌더링 - early return 제거하고 여기서 처리
   if (!isReady) {
     return (
-      <div className="w-full max-w-2xl mx-auto py-12 px-2 bg-transparent h-full">
+      <PageContainer className="pb-6">
         {pageHeader}
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-gray-200 bg-gray-50 py-16 text-center">
-          <Loader2 className="mb-4 h-10 w-10 animate-spin text-gray-500" />
-          <p className="text-base font-medium text-gray-700">Loading the converter…</p>
-          <p className="mt-1 text-sm text-gray-500">
+        <Card className="mt-6 flex flex-col items-center justify-center px-6 py-16 text-center">
+          <Loader2 className="mb-4 h-10 w-10 animate-spin text-muted-foreground" aria-hidden="true" />
+          <p className="text-base font-semibold text-foreground">Loading the converter…</p>
+          <p className="mt-1 text-sm text-muted-foreground">
             This takes a moment on first visit. Your files stay on your device.
           </p>
-        </div>
-      </div>
+        </Card>
+      </PageContainer>
     );
   }
 
-  // 🎯 메인 렌더링 (PDF.js 준비 완료 후)
-  return (
-    <div className="w-full max-w-2xl mx-auto py-12 px-2 bg-transparent h-full">
-      {/* 숨겨진 캔버스 */}
-      <canvas ref={canvasRef} style={{ display: 'none' }} />
+  const errorAlert = error && (
+    <p role="alert" className="mb-4 flex items-center gap-2 rounded-field bg-destructive px-4 py-3 text-sm font-semibold text-destructive-foreground">
+      <AlertCircle className="h-5 w-5 shrink-0" aria-hidden="true" />
+      {error}
+    </p>
+  );
 
-      {/* 페이지 헤더 */}
-      {pageHeader}
+  const dropZone = (
+    <DropZone
+      title="Add PDF Files"
+      note="Drag & drop or choose a file. Supported format: PDF (Max 50MB)"
+      dragging={dragging}
+      onDragEnter={e => { e.preventDefault(); setDragging(true); }}
+      onDragOver={handleDragOver}
+      onDragLeave={e => { if (e.currentTarget === e.target) setDragging(false); }}
+      onDrop={e => { setDragging(false); handleDrop(e); }}
+      actions={<Button onClick={handleAddFileClick}>Select PDF Files</Button>}
+    >
+      <div className="mt-5">
+        <StatusBadge status="clean">PDF Engine Ready - Upload to Start Converting!</StatusBadge>
+      </div>
+    </DropZone>
+  );
 
-      {/* 에러 메시지 */}
-      {error && (
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-6 p-4 bg-gray-100 border border-gray-300 rounded-xl"
-        >
-          <div className="flex items-center gap-2 justify-center">
-            <AlertCircle className="w-5 h-5 text-gray-700" />
-            <p className="text-gray-700 font-medium">{error}</p>
+  const main = selectedFile && (
+    <Card data-tool-main className="p-5">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-3">
+          <IconTile icon={FileText} tone="blue" size="sm" />
+          <div className="min-w-0">
+            <h2 className="text-h3">Selected PDF</h2>
+            <p className="truncate text-sm text-muted-foreground">
+              File: {selectedFile.name} ({Math.round(selectedFile.size / 1024)} KB)
+            </p>
           </div>
-        </motion.div>
-      )}
+        </div>
+        <div className="flex gap-2">
+          <Button variant="secondary" size="sm" onClick={handleAddFileClick} disabled={!isReady}>
+            Change File
+          </Button>
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => {
+              setSelectedFile(null);
+              setPreviewUrl(null);
+              clearConvertedPages();
+            }}
+          >
+            Remove
+          </Button>
+        </div>
+      </div>
 
-      {/* 파일 업로드 영역 */}
-      <motion.div
-        className={`border-2 border-dotted border-gray-400 rounded-3xl min-h-[220px] flex flex-col items-center justify-center text-center transition-all mb-8 p-6 ${
-          selectedFile ? 'bg-gray-50' : 'bg-gray-100 hover:bg-gray-200 hover:shadow-md hover:border-gray-500 cursor-pointer'
-        }`}
-        whileHover={!selectedFile ? { scale: 1.01 } : undefined}
-        {...(!selectedFile ? {
-          onClick: handleAddFileClick,
-          onDrop: handleDrop,
-          onDragOver: handleDragOver,
-        } : {})}
-      >
-        {!selectedFile ? (
-          <>
-            <UploadCloud className="mx-auto mb-4 text-black" size={56} />
-            <div className="text-2xl font-bold mb-1 text-black">Add PDF Files</div>
-            <div className="text-black text-base">
-              Drag & drop or{" "}
-              <span 
-                className="text-black font-bold cursor-pointer underline hover:text-gray-700"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleAddFileClick(e);
-                }}
-              >
-                Select PDF Files
+      {isLoading ? (
+        <div className="py-10 text-center">
+          <Loader2 className="mx-auto mb-2 h-8 w-8 animate-spin text-muted-foreground" aria-hidden="true" />
+          <p className="text-muted-foreground">Generating preview...</p>
+        </div>
+      ) : previewUrl ? (
+        <div className="mt-5">
+          <p className="mb-2 flex items-center gap-2 text-sm text-muted-foreground">
+            <ImageIcon className="h-4 w-4" aria-hidden="true" />
+            Preview (First Page):
+          </p>
+          <div className="overflow-hidden rounded-field bg-muted p-3">
+            <img src={previewUrl} alt="PDF Preview" className="mx-auto h-auto max-h-80 w-auto max-w-full rounded-[12px] object-contain" />
+          </div>
+        </div>
+      ) : null}
+    </Card>
+  );
+
+  const panel = selectedFile && (
+    <Card data-tool-panel className="p-5">
+      <h2 id="pdf-output-format" className="text-h3">Output format</h2>
+      <div role="radiogroup" aria-labelledby="pdf-output-format" className="mt-3 grid grid-cols-2 gap-2">
+        {CONVERT_OPTIONS.map(option => {
+          const checked = convertOption.value === option.value;
+          return (
+            <button
+              key={option.value}
+              type="button"
+              role="radio"
+              aria-checked={checked}
+              onClick={() => setConvertOption(option)}
+              className={`flex min-h-[44px] flex-col items-start rounded-field px-4 py-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${checked ? "bg-primary text-primary-foreground shadow-cta" : "border-2 border-border bg-card text-foreground hover:bg-muted"}`}
+            >
+              <span className="text-sm font-bold">{option.label}</span>
+              <span className={`text-xs ${checked ? "text-primary-foreground/90" : "text-muted-foreground"}`}>
+                {option.value === "png" ? "Text and diagrams" : "Photos and scans"}
               </span>
-            </div>
-            <div className="text-gray-600 text-sm mt-2">
-              Supported format: PDF (Max 50MB)
-            </div>
-            
-            <div className="bg-white rounded-xl px-6 py-3 shadow-sm border border-gray-200 mt-4">
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-gray-900" />
-                <p className="text-gray-900 font-medium text-sm">
-                  PDF Engine Ready - Upload to Start Converting!
-                </p>
-              </div>
-            </div>
-          </>
-        ) : (
-          <div className="w-full flex flex-col items-center">
-            {/* 파일 미리보기 */}
-            <div className="bg-white rounded-3xl p-6 shadow-lg border border-gray-200 w-full">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <FileText className="w-5 h-5 text-gray-900" />
-                  <h3 className="text-xl font-bold text-gray-900">Selected PDF</h3>
-                </div>
-                <div className="flex gap-2">
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    onClick={handleAddFileClick}
-                    disabled={!isReady}
-                    className="rounded-xl bg-gray-100 text-black hover:bg-gray-200 border border-gray-200 hover:border-gray-400 shadow-lg transition-all duration-300"
-                  >
-                    Change File
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    onClick={() => {
-                      setSelectedFile(null);
-                      setPreviewUrl(null);
-                      clearConvertedPages();
-                    }}
-                    className="rounded-xl bg-gray-100 text-black hover:bg-gray-200 border border-gray-200 hover:border-gray-400 shadow-lg transition-all duration-300"
-                  >
-                    Remove
-                  </Button>
-                </div>
-              </div>
-              
-              {isLoading ? (
-                <div className="text-center py-8">
-                  <Loader2 className="w-8 h-8 text-gray-600 animate-spin mx-auto mb-2" />
-                  <p className="text-gray-600">Generating preview...</p>
-                </div>
-              ) : previewUrl ? (
-                <div className="mb-4">
-                  <div className="text-sm text-gray-600 mb-2 flex items-center gap-2">
-                    <Image className="w-4 h-4" />
-                    Preview (First Page):
-                  </div>
-                  <div className="border border-gray-300 rounded-lg overflow-hidden max-w-full">
-                    <img 
-                      src={previewUrl} 
-                      alt="PDF Preview" 
-                      className="w-full h-auto max-h-64 object-contain"
-                    />
-                  </div>
-                </div>
-              ) : null}
-              
-              <div className="text-sm text-gray-600">
-                File: {selectedFile.name} ({Math.round(selectedFile.size / 1024)} KB)
-              </div>
-            </div>
+            </button>
+          );
+        })}
+      </div>
+      <p className="mt-3 text-sm text-muted-foreground">
+        Pages are rendered at 144 DPI in your browser. Nothing is uploaded.
+      </p>
+      {isConverting && <Progress className="mt-5" value={progress} label="Conversion progress" />}
+      <ActionBar className="mt-5">
+        <Button size="lg" className="w-full" onClick={convertPdfToImages} disabled={isConverting || isLoading || !isReady}>
+          {isConverting ? (
+            <>
+              <Loader2 className="animate-spin" aria-hidden="true" />
+              Converting... {progress}%
+            </>
+          ) : (
+            <>
+              <Download aria-hidden="true" />
+              Convert to Images
+            </>
+          )}
+        </Button>
+      </ActionBar>
+    </Card>
+  );
 
-            {/* 변환 버튼 */}
-            <div className="flex gap-2 mt-4 justify-end w-full">
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2">
-                  <Settings className="w-4 h-4 text-gray-700" />
-                  <span className="text-gray-900 font-medium">Output Format:</span>
-                </div>
-                <div className="w-32">
-                  <CustomDropdown
-                    options={CONVERT_OPTIONS}
-                    value={convertOption.value}
-                    onChange={(value: string) => {
-                      const found = CONVERT_OPTIONS.find(option => option.value === value);
-                      if (found) setConvertOption(found);
-                    }}
-                    size="lg"
-                  />
-                </div>
-              </div>
-              <Button
-                onClick={convertPdfToImages}
-                disabled={isConverting || !isReady}
-                className="px-8 py-3 rounded-xl bg-brand-600 text-white hover:bg-brand-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 disabled:opacity-50 disabled:transform-none"
-              >
-                {isConverting ? (
-                  <div className="flex items-center gap-2">
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    Converting... {progress}%
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2">
-                    <Download size={20} />
-                    Convert to Images
-                  </div>
-                )}
+  const results = convertedPages.length > 0 && (
+    <Card className="p-5">
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+        <h2 className="flex items-center gap-2 text-h3">
+          <ImageIcon className="h-5 w-5 text-primary" aria-hidden="true" />
+          Converted Pages ({convertedPages.length})
+        </h2>
+        <div className="flex flex-wrap gap-2">
+          <Button variant="secondary" onClick={handleAddFileClick} disabled={!isReady}>
+            Convert Another PDF
+          </Button>
+          <Button onClick={downloadAllPages}>
+            <Download aria-hidden="true" />
+            Download All
+          </Button>
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+        {convertedPages.map(page => (
+          <div key={page.pageNumber} className="rounded-field bg-muted p-3">
+            <img
+              src={page.thumbnailUrl}
+              alt={`Page ${page.pageNumber}`}
+              className="mb-3 h-32 w-full rounded-[12px] bg-card object-contain"
+            />
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <span className="text-sm font-semibold text-foreground">Page {page.pageNumber}</span>
+              <Button size="sm" variant="secondary" onClick={() => downloadPage(page)}>
+                <Download aria-hidden="true" />
+                Download
               </Button>
             </div>
           </div>
-        )}
-      </motion.div>
+        ))}
+      </div>
+    </Card>
+  );
 
-      {/* 변환 결과 */}
-      {convertedPages.length > 0 && isReady && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
-        >
-          <div className="bg-white rounded-3xl p-6 shadow-lg border border-gray-200">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-2">
-                <Image className="w-6 h-6 text-gray-900" />
-                <h3 className="text-2xl font-bold text-gray-900">
-                  Converted Pages ({convertedPages.length})
-                </h3>
-              </div>
-              <div className="flex gap-2">
-                <Button
-                  onClick={handleAddFileClick}
-                  disabled={!isReady}
-                  className="rounded-xl bg-gray-100 text-black hover:bg-gray-200 border border-gray-200 hover:border-gray-400 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 px-4 py-2"
-                >
-                  Convert Another PDF
-                </Button>
-                <Button
-                  onClick={downloadAllPages}
-                  className="rounded-xl bg-brand-600 text-white hover:bg-brand-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 px-6 py-2"
-                >
-                  <Download size={16} className="mr-2" />
-                  Download All
-                </Button>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {convertedPages.map((page) => (
-                <motion.div
-                  key={page.pageNumber}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="bg-gray-50 rounded-xl p-4 border border-gray-200 hover:shadow-md transition-shadow"
-                >
-                  <div className="mb-3">
-                    <img 
-                      src={page.thumbnailUrl} 
-                      alt={`Page ${page.pageNumber}`}
-                      className="w-full h-32 object-cover rounded-lg border border-gray-300"
-                    />
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-gray-700">
-                      Page {page.pageNumber}
-                    </span>
-                    <Button
-                      onClick={() => downloadPage(page)}
-                      size="sm"
-                      className="rounded-xl bg-brand-600 text-white hover:bg-brand-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 px-3 py-1 text-xs"
-                    >
-                      <Download size={12} className="mr-1" />
-                      Download
-                    </Button>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </motion.div>
-      )}
-
-      {/* 프로그레스 바 */}
-      {isConverting && (
-        <div className="mt-4">
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <motion.div
-              className="bg-brand-600 h-2 rounded-full"
-              initial={{ width: 0 }}
-              animate={{ width: `${progress}%` }}
-              transition={{ duration: 0.3 }}
-            />
-          </div>
-        </div>
-      )}
-    </div>
+  // 🎯 메인 렌더링 (PDF.js 준비 완료 후)
+  return (
+    <PageContainer className="pb-6">
+      {/* 숨겨진 캔버스 */}
+      <canvas ref={canvasRef} style={{ display: 'none' }} />
+      {pageHeader}
+      <div className="mt-6">
+        {errorAlert}
+        <ToolLayout main={selectedFile ? main : dropZone} panel={selectedFile ? panel : null} results={results || undefined} />
+      </div>
+    </PageContainer>
   );
 }
