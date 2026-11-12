@@ -79,3 +79,6 @@ dist/
 
 # OS files
 Thumbs.db
+
+# Brainstorm mockups (superpowers visual companion)
+.superpowers/
