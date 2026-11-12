@@ -160,7 +160,7 @@ export default function PdfUseCasesGuide() {
                 </tbody>
               </table>
             </div>
-            <div className="mt-4 rounded-field border border-transparent bg-status-found p-4 text-sm text-muted-foreground">
+            <div className="mt-4 rounded-field bg-muted p-4 text-sm text-muted-foreground">
               <strong>{pdf.dpi} DPI is a screen resolution, not a print one.</strong> It is comfortably
               sharp on any display and fine for slides, chat, and web use. Commercial print generally
               wants 300 DPI, so a converted page is not a substitute for sending the original PDF to a
@@ -202,7 +202,7 @@ export default function PdfUseCasesGuide() {
                   </tr>
                 </thead>
                 <tbody className="text-muted-foreground">
-                  <tr className="border-t border-border bg-status-clean">
+                  <tr className="border-t border-border bg-muted font-semibold">
                     <td className="p-3 font-medium text-foreground">PNG</td>
                     <td className="p-3 font-medium text-foreground">{kb(pdf.png)}</td>
                     <td className="p-3">Lossless — text edges stay crisp</td>

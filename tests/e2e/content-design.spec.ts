@@ -102,3 +102,36 @@ test("the 404 page offers the four tools as cards", async ({ page }) => {
   }
   await expect(page.getByRole("link", { name: "Go to the home page" })).toBeVisible();
 });
+
+// Phase 4 review fixes.
+const CARD_LIST_GUIDES = [
+  "/guides/exif-metadata-privacy/",
+  "/guides/pdf-metadata-privacy/",
+  "/guides/pdf-to-image-use-cases/",
+  "/ko/guides/exif-metadata-privacy/",
+  "/ko/guides/pdf-metadata-privacy/",
+];
+for (const url of CARD_LIST_GUIDES) {
+  test(`${url} card lists have no bullets and status cells use status colours`, async ({ page }) => {
+    await page.goto(url);
+    const styles = await page.locator("ul:has(> li.rounded-field)").evaluateAll(lists =>
+      lists.map(list => getComputedStyle(list).listStyleType));
+    expect(styles.length).toBeGreaterThan(0);
+    expect(styles.every(style => style === "none")).toBe(true);
+    // "kept / still there" is a found state, never the error colour
+    await expect(page.locator('main [class*="destructive"]')).toHaveCount(0);
+  });
+}
+
+test("Korean guide headings use icon tiles like the English ones", async ({ page }) => {
+  for (const url of ["/ko/guides/exif-metadata-privacy/", "/ko/guides/pdf-metadata-privacy/"]) {
+    await page.goto(url);
+    await expect(page.locator("article h2 > svg")).toHaveCount(0);
+    await expect(page.locator("article h2 > span svg").first()).toBeAttached();
+  }
+});
+
+test("status colours are not used as decoration on the PDF to image guide", async ({ page }) => {
+  await page.goto("/guides/pdf-to-image-use-cases/");
+  await expect(page.locator('main [class*="bg-status-"]')).toHaveCount(0);
+});

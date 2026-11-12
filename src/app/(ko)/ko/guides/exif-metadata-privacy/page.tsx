@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import ContentHeader from "@/components/content/content-header";
+import IconTile from "@/components/tool/icon-tile";
 import Prose from "@/components/tool/prose";
 import Link from "next/link";
 import { Camera, Check, Download, Fingerprint, FlaskConical, MapPin, RefreshCw, ShieldAlert, X } from "lucide-react";
@@ -55,8 +56,6 @@ const articleSchema = {
   mainEntityOfPage: { "@type": "WebPage", "@id": "https://bravoconvert.com/ko/guides/exif-metadata-privacy/" },
 };
 
-const H2 = "mb-3 flex items-center gap-3 text-2xl font-bold text-foreground";
-const H2_ICON = "h-7 w-7 flex-shrink-0 text-muted-foreground";
 
 export default function KoreanExifPrivacyGuide() {
   const share = Math.round((demo.exifBlockBytes / demo.sourceBytes) * 100);
@@ -75,8 +74,8 @@ export default function KoreanExifPrivacyGuide() {
 
         <Prose as="article" className="mt-10 max-w-[720px] space-y-10">
           <section>
-            <h2 className={H2}>
-              <Camera className={H2_ICON} aria-hidden="true" />
+            <h2>
+              <IconTile icon={Camera} size="sm" tone="blue" className="hidden sm:inline-flex" />
               EXIF란
             </h2>
             <p className="text-muted-foreground leading-7">
@@ -87,8 +86,8 @@ export default function KoreanExifPrivacyGuide() {
           </section>
 
           <section>
-            <h2 className={H2}>
-              <FlaskConical className={H2_ICON} aria-hidden="true" />
+            <h2>
+              <IconTile icon={FlaskConical} size="sm" tone="blue" className="hidden sm:inline-flex" />
               짐작하지 않고 실험했습니다
             </h2>
             <p className="text-muted-foreground leading-7 mb-4">
@@ -118,7 +117,7 @@ export default function KoreanExifPrivacyGuide() {
                             <Check className="h-4 w-4" aria-hidden="true" /> 사라짐
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1.5 font-medium text-destructive-foreground">
+                          <span className="inline-flex items-center gap-1.5 font-medium text-status-found-foreground">
                             <X className="h-4 w-4" aria-hidden="true" /> {String(row.after)}
                           </span>
                         )}
@@ -166,8 +165,8 @@ export default function KoreanExifPrivacyGuide() {
           </section>
 
           <section>
-            <h2 className={H2}>
-              <MapPin className={H2_ICON} aria-hidden="true" />
+            <h2>
+              <IconTile icon={MapPin} size="sm" tone="blue" className="hidden sm:inline-flex" />
               왜 중요한가
             </h2>
             <p className="text-muted-foreground leading-7 mb-4">
@@ -193,8 +192,8 @@ export default function KoreanExifPrivacyGuide() {
           </section>
 
           <section>
-            <h2 className={H2}>
-              <ShieldAlert className={H2_ICON} aria-hidden="true" />
+            <h2>
+              <IconTile icon={ShieldAlert} size="sm" tone="blue" className="hidden sm:inline-flex" />
               EXIF를 지워도 막을 수 없는 것
             </h2>
             <p className="text-muted-foreground leading-7 mb-4">
@@ -234,8 +233,8 @@ export default function KoreanExifPrivacyGuide() {
           </section>
 
           <section>
-            <h2 className={H2}>
-              <RefreshCw className={H2_ICON} aria-hidden="true" />
+            <h2>
+              <IconTile icon={RefreshCw} size="sm" tone="blue" className="hidden sm:inline-flex" />
               회전 정보는 특별한 경우입니다
             </h2>
             <p className="text-muted-foreground leading-7">

@@ -140,7 +140,7 @@ export default function ExifPrivacyGuide() {
                             <Check className="h-4 w-4" aria-hidden="true" /> gone
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1.5 font-medium text-destructive-foreground">
+                          <span className="inline-flex items-center gap-1.5 font-medium text-status-found-foreground">
                             <X className="h-4 w-4" aria-hidden="true" /> {String(row.after)}
                           </span>
                         )}

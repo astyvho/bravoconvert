@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import ContentHeader from "@/components/content/content-header";
+import IconTile from "@/components/tool/icon-tile";
 import Prose from "@/components/tool/prose";
 import Link from "next/link";
 import { Check, Download, FileImage, FileText, FlaskConical, MessageSquare, ShieldAlert, SquareStack, X } from "lucide-react";
@@ -61,8 +62,6 @@ const articleSchema = {
   mainEntityOfPage: { "@type": "WebPage", "@id": "https://bravoconvert.com/ko/guides/pdf-metadata-privacy/" },
 };
 
-const H2 = "mb-3 flex items-center gap-3 text-2xl font-bold text-foreground";
-const H2_ICON = "h-7 w-7 flex-shrink-0 text-muted-foreground";
 const CODE = "rounded bg-muted px-1.5 py-0.5 text-sm";
 
 function Gone() {
@@ -75,7 +74,7 @@ function Gone() {
 
 function Kept({ children }: { children: React.ReactNode }) {
   return (
-    <span className="inline-flex items-center gap-1.5 font-medium text-destructive-foreground">
+    <span className="inline-flex items-center gap-1.5 font-medium text-status-found-foreground">
       <X className="h-4 w-4 flex-shrink-0" aria-hidden="true" /> {children}
     </span>
   );
@@ -100,8 +99,8 @@ export default function KoreanPdfMetadataGuide() {
 
         <Prose as="article" className="mt-10 max-w-[720px] space-y-10">
           <section>
-            <h2 className={H2}>
-              <FileText className={H2_ICON} aria-hidden="true" />
+            <h2>
+              <IconTile icon={FileText} size="sm" tone="blue" className="hidden sm:inline-flex" />
               PDF 안에는 &lsquo;문서에 대한 문서&rsquo;가 하나 더 있습니다
             </h2>
             <p className="text-muted-foreground leading-7 mb-4">
@@ -119,8 +118,8 @@ export default function KoreanPdfMetadataGuide() {
           </section>
 
           <section>
-            <h2 className={H2}>
-              <FlaskConical className={H2_ICON} aria-hidden="true" />
+            <h2>
+              <IconTile icon={FlaskConical} size="sm" tone="blue" className="hidden sm:inline-flex" />
               실험 방법
             </h2>
             <p className="text-muted-foreground leading-7 mb-4">
@@ -138,8 +137,8 @@ export default function KoreanPdfMetadataGuide() {
           </section>
 
           <section>
-            <h2 className={H2}>
-              <SquareStack className={H2_ICON} aria-hidden="true" />
+            <h2>
+              <IconTile icon={SquareStack} size="sm" tone="blue" className="hidden sm:inline-flex" />
               병합·추출·분할: 문서 속성은 사라졌습니다
             </h2>
             <div className="prose-wide">
@@ -200,8 +199,8 @@ export default function KoreanPdfMetadataGuide() {
           </section>
 
           <section>
-            <h2 className={H2}>
-              <MessageSquare className={H2_ICON} aria-hidden="true" />
+            <h2>
+              <IconTile icon={MessageSquare} size="sm" tone="blue" className="hidden sm:inline-flex" />
               메모는 매번 살아남았습니다
             </h2>
             <p className="text-muted-foreground leading-7 mb-4">
@@ -243,8 +242,8 @@ export default function KoreanPdfMetadataGuide() {
           </section>
 
           <section>
-            <h2 className={H2}>
-              <ShieldAlert className={H2_ICON} aria-hidden="true" />
+            <h2>
+              <IconTile icon={ShieldAlert} size="sm" tone="blue" className="hidden sm:inline-flex" />
               검은 상자로 덮는 것은 가리기가 아닙니다
             </h2>
             <p className="text-muted-foreground leading-7">
@@ -258,8 +257,8 @@ export default function KoreanPdfMetadataGuide() {
           </section>
 
           <section>
-            <h2 className={H2}>
-              <FileImage className={H2_ICON} aria-hidden="true" />
+            <h2>
+              <IconTile icon={FileImage} size="sm" tone="blue" className="hidden sm:inline-flex" />
               페이지를 이미지로 바꾸면: 픽셀만 남습니다
             </h2>
             <p className="text-muted-foreground leading-7 mb-4">

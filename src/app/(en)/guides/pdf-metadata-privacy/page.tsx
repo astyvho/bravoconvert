@@ -72,7 +72,7 @@ function Gone() {
 
 function Kept({ children }: { children: React.ReactNode }) {
   return (
-    <span className="inline-flex items-center gap-1.5 font-medium text-destructive-foreground">
+    <span className="inline-flex items-center gap-1.5 font-medium text-status-found-foreground">
       <X className="h-4 w-4 flex-shrink-0" aria-hidden="true" /> {children}
     </span>
   );
