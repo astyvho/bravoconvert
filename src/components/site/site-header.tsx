@@ -38,14 +38,15 @@ export default function SiteHeader({ locale = "en" }: { locale?: Locale }) {
       lang={locale === "ko" ? "en" : "ko"}
       className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "gap-1.5 bg-card shadow-soft")}
     >
-      <Languages size={16} aria-hidden="true" />
+      {/* The icon is dropped under 360px so logo + switch + menu fit a 320px screen without overflow. */}
+      <Languages size={16} aria-hidden="true" className="hidden min-[360px]:block" />
       {t.switchLabel}
     </Link>
   );
 
   return (
     <header className="sticky top-0 z-50 bg-background">
-      <PageContainer className="flex h-[72px] items-center justify-between gap-3">
+      <PageContainer className="flex h-[72px] items-center justify-between gap-2 sm:gap-3">
         <Link href={home} className="flex shrink-0 items-center gap-2.5 text-[17px] font-extrabold tracking-tight text-foreground">
           <span aria-hidden="true" className="inline-block h-7 w-7 rounded-[9px] bg-primary shadow-cta" />
           BravoConvert

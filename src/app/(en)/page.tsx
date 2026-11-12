@@ -2,7 +2,20 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { alternatesFor } from "@/lib/locale";
 import HomePhotoDrop from "@/components/HomePhotoDrop";
-import { ArrowRight, Camera, CircleAlert, Clock, Combine, Eraser, FileSearch, FileText, Fingerprint, Gauge, Image, ListChecks, MapPin, PencilRuler, PenLine, Share2, ShieldCheck, User } from "lucide-react";
+import { Camera, Check, CircleAlert, Clock, Combine, Eraser, FileSearch, FileText, Fingerprint, Gauge, Image, ListChecks, MapPin, PencilRuler, PenLine, Share2, ShieldCheck, User } from "lucide-react";
+import { buttonVariants } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import PageContainer from "@/components/site/page-container";
+import IconTile from "@/components/tool/icon-tile";
+import StatusBadge from "@/components/tool/status-badge";
+import ReportPanel from "@/components/tool/report-panel";
+import HeroStage from "@/components/home/hero-stage";
+import StepCard from "@/components/home/step-card";
+import ToolCard from "@/components/home/tool-card";
+import TaskCard from "@/components/home/task-card";
+import RevealItem from "@/components/home/reveal-item";
+import { demoReport, demoReportCounts } from "@/lib/demo-report";
+import { cn } from "@/lib/utils";
 import benchmarks from "@/data/format-benchmarks.json";
 import exifDemo from "@/data/exif-demo.json";
 
@@ -131,9 +144,19 @@ export const metadata: Metadata = {
   alternates: alternatesFor("/", "en"),
 };
 
+const STEP_TONES = ["blue", "yellow", "green"] as const;
+const TOOL_TONES = ["blue", "pink", "yellow", "green"] as const;
+const TH = "p-3 text-left text-sm font-bold text-foreground";
+const TD = "p-3 text-sm tabular-nums";
+const INLINE_LINK = "font-semibold text-primary underline-offset-4 hover:underline";
+
 export default function Home() {
+  const report = demoReport("en");
+  const counts = demoReportCounts("en");
+  const survived = exifDemo.after.filter((f) => f.value !== null).length;
+
   return (
-    <main className="min-h-screen bg-white flex flex-col items-center px-4">
+    <main>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -159,234 +182,242 @@ export default function Home() {
           }),
         }}
       />
-      <div className="w-full max-w-5xl">
-        {/* Hero Section */}
-        <div className="text-center mb-12">
-          <p className="mb-3 text-sm font-semibold uppercase tracking-wide text-brand-600">BravoConvert</p>
-          <h1 className="text-4xl md:text-6xl font-bold text-black mb-6">
-            Check what a photo reveals before you share it
-          </h1>
-          <p className="text-lg md:text-xl text-black max-w-3xl mx-auto mb-8">
-            Photos often carry the place they were taken, the time, and the phone that took them. Check yours and share only the picture.
-          </p>
+      <PageContainer>
+        {/* Hero: copy and actions left, the sample "photo" with its findings right. */}
+        <section className="grid items-center gap-10 pt-6 lg:grid-cols-[1.05fr_.95fr] lg:gap-12 lg:pt-14">
+          <div>
+            <span className="inline-flex items-center gap-2 rounded-full bg-muted px-3.5 py-1.5 text-caption text-status-found-foreground">
+              Free · private · right in your browser
+            </span>
+            <h1 className="mt-5 text-[36px] font-extrabold leading-[1.1] tracking-tight text-foreground lg:text-display">
+              Check what a photo reveals before you share it
+            </h1>
+            <p className="mt-5 max-w-[520px] text-lg leading-relaxed text-muted-foreground">
+              Photos often carry the place they were taken, the time, and the phone that took them. Check yours and share only the picture.
+            </p>
+            <div className="mt-7 flex flex-wrap gap-3">
+              <Link href="/view/exif/" className={buttonVariants({ size: "lg" })}>Check a photo</Link>
+              <Link href="/view/exif/?sample=1" className={buttonVariants({ variant: "secondary", size: "lg" })}>Try the sample</Link>
+            </div>
+            <ul className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-[13px] font-semibold text-muted-foreground">
+              {["Nothing is uploaded", "No sign-up", "Clean copy in one tap"].map((item) => (
+                <li key={item} className="inline-flex items-center gap-1.5"><Check className="h-4 w-4 text-status-clean-foreground" aria-hidden="true" />{item}</li>
+              ))}
+            </ul>
+          </div>
+          <HeroStage locale="en" />
+        </section>
+
+        <section className="mt-12 lg:mt-16">
           <HomePhotoDrop locale="en" />
-        </div>
+        </section>
+
+        {/* What a report looks like: the real sample photo and its measured findings. */}
+        <section className="mt-20">
+          <div className="mx-auto max-w-[560px] text-center">
+            <h2 className="text-h2 text-foreground">Here&apos;s what we check</h2>
+            <p className="mt-3 text-base leading-relaxed text-muted-foreground">
+              Six things a photo can quietly say about you. The viewer checks each one and tells you in plain words what it found.
+            </p>
+          </div>
+          <div className="mt-8 grid gap-5 lg:grid-cols-[300px_1fr]">
+            <Card className="relative min-h-[220px] overflow-hidden bg-tile-peach lg:min-h-0">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={exifDemo.sourceFile} alt="The sample photo used for this report" className="absolute inset-0 h-full w-full object-cover" />
+              <span className="absolute bottom-4 left-4 rounded-full bg-card px-3 py-1.5 text-caption text-foreground shadow-soft">sample photo · {kb(exifDemo.sourceBytes)}</span>
+            </Card>
+            <ReportPanel
+              data-testid="sample-report"
+              title={`We found ${counts.found} things`}
+              summary={<StatusBadge status="found">{counts.found} of {counts.total} found</StatusBadge>}
+              items={report}
+              rowBadge={(item) => <StatusBadge status={item.found ? "found" : "clean"}>{item.found ? "Found" : "Not present"}</StatusBadge>}
+              footer={
+                <>
+                  <Link href="/view/exif/?sample=1" className={buttonVariants()}>Remove it now</Link>
+                  <Link href="/view/exif/" className={buttonVariants({ variant: "secondary" })}>Check another</Link>
+                  <span className="basis-full text-[13px] text-muted-foreground sm:ml-auto sm:basis-auto">We check the clean copy again for you.</span>
+                </>
+              }
+            />
+          </div>
+        </section>
 
         {/* Check, clean, share */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl mx-auto">
-          {steps.map((step) => {
-            const Icon = step.icon;
-            return (
-              <div key={step.title} className="flex flex-col rounded-2xl border border-gray-200 bg-white p-5">
-                <div className="flex items-center gap-3">
-                  <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
-                    <Icon className="h-5 w-5" aria-hidden="true" />
-                  </span>
-                  <h2 className="text-lg font-bold text-black">{step.title}</h2>
-                </div>
-                <p className="mt-3 text-sm leading-6 text-gray-700">{step.body}</p>
-                <Link href={step.href} className="mt-auto inline-flex items-center gap-1 pt-3 text-sm font-semibold text-brand-700 hover:text-brand-800">
-                  {step.cta} <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                </Link>
-              </div>
-            );
-          })}
-        </div>
+        <section className="mt-20">
+          <h2 className="text-center text-h2 text-foreground">Three easy steps</h2>
+          <div className="mt-8 grid gap-5 md:grid-cols-3">
+            {steps.map((step, index) => (
+              <StepCard
+                key={step.title}
+                index={`0${index + 1}`}
+                icon={step.icon}
+                tone={STEP_TONES[index]}
+                title={step.title.replace(/^\d+\.\s*/, "")}
+                body={step.body}
+                href={step.href}
+                cta={step.cta}
+              />
+            ))}
+          </div>
+        </section>
 
-        <section className="max-w-5xl mx-auto mt-16 space-y-12 text-gray-800">
+        <section className="mt-20 space-y-16">
           <div>
-            <h2 className="mb-4 flex items-center gap-3 text-3xl font-bold text-black">
-              <ShieldCheck className="hidden h-8 w-8 flex-shrink-0 text-brand-600 sm:block" aria-hidden="true" />
+            <h2 className="flex items-center gap-3 text-h2 text-foreground">
+              <IconTile icon={ShieldCheck} size="sm" tone="blue" className="hidden sm:inline-flex" />
               Tested, not assumed: what survives a conversion
             </h2>
-            <p className="leading-7 mb-5">
+            <p className="mt-4 max-w-[760px] leading-7 text-muted-foreground">
               We built a sample photo carrying {exifDemo.before.length} metadata fields — {exifDemo.exifBlockBytes} bytes that
               no one sees when looking at the picture — then put it through the same decode-and-redraw path the converter
               uses and read the result back with an EXIF parser.
             </p>
-            <div className="overflow-x-auto rounded-xl border border-gray-200">
-              <table className="w-full text-left text-sm">
-                <caption className="caption-top border-b border-gray-200 p-3 text-left">
-                  <span className={`rounded-full px-3 py-1 text-xs font-semibold ${exifDemo.anyFieldSurvived ? "bg-amber-100 text-amber-900" : "bg-green-100 text-green-800"}`}>
-                    {exifDemo.anyFieldSurvived
-                      ? `After conversion: ${exifDemo.after.filter((f) => f.value !== null).length} left`
-                      : `After conversion: all ${exifDemo.before.length} gone`}
-                  </span>
-                </caption>
-                <thead className="bg-gray-100 text-black">
-                  <tr>
-                    <th className="p-3 font-bold">Field</th>
-                    <th className="p-3 font-bold">Value in the original</th>
-                  </tr>
-                </thead>
-                <tbody className="text-gray-700">
-                  {exifDemo.before.map((row, index) => (
-                    <tr key={row.field} className="border-t border-gray-200">
-                      <td className="p-3 font-medium text-black">{demoLabels[row.field] ?? row.field}</td>
-                      <td className="p-3 font-mono">
-                        {exifDemo.after[index].value === null ? (
-                          <s className="text-gray-400">{String(row.value)}</s>
-                        ) : (
-                          <>
-                            {String(row.value)} <span className="ml-1 rounded-full bg-amber-100 px-2 py-0.5 font-sans text-xs font-semibold text-amber-900">kept</span>
-                          </>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <p className="mt-4 leading-7">
+            <Card className="mt-6 overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <caption className="caption-top border-b border-border p-4 text-left">
+                    <StatusBadge status={exifDemo.anyFieldSurvived ? "found" : "clean"}>
+                      {exifDemo.anyFieldSurvived ? `After conversion: ${survived} left` : `After conversion: all ${exifDemo.before.length} gone`}
+                    </StatusBadge>
+                  </caption>
+                  <thead className="bg-muted/60">
+                    <tr><th className={TH}>Field</th><th className={TH}>Value in the original</th></tr>
+                  </thead>
+                  <tbody>
+                    {exifDemo.before.map((row, index) => (
+                      <tr key={row.field} className="border-t border-border">
+                        <td className={cn(TD, "font-semibold text-foreground")}>{demoLabels[row.field] ?? row.field}</td>
+                        <td className={cn(TD, "text-muted-foreground")}>
+                          {exifDemo.after[index].value === null ? (
+                            <s>{String(row.value)}</s>
+                          ) : (
+                            <>{String(row.value)} <StatusBadge status="found" className="ml-1">kept</StatusBadge></>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </Card>
+            <p className="mt-4 max-w-[760px] leading-7 text-muted-foreground">
               {exifDemo.anyFieldSurvived ? "Some fields survived." : "None of the fields survived."} The sample is a real file
               with made-up details, and you can{" "}
-              <Link href="/view/exif/" className="underline font-medium">open it in the viewer</Link> yourself. The{" "}
-              <Link href="/guides/exif-metadata-privacy/" className="underline font-medium">EXIF privacy guide</Link>{" "}
+              <Link href="/view/exif/" className={INLINE_LINK}>open it in the viewer</Link> yourself. The{" "}
+              <Link href="/guides/exif-metadata-privacy/" className={INLINE_LINK}>EXIF privacy guide</Link>{" "}
               covers the full test and what removing metadata does not protect you from.
             </p>
           </div>
 
           <div>
-            <h2 className="mb-4 text-3xl font-bold text-black">What a photo can say about you</h2>
-            <p className="mb-5 leading-7">
+            <h2 className="text-h2 text-foreground">What a photo can say about you</h2>
+            <p className="mt-4 max-w-[760px] leading-7 text-muted-foreground">
               These are the six things the EXIF Viewer looks for. A photo rarely carries all of them, and which ones appear
               depends on the device and its settings rather than on the picture.
             </p>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {revealed.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <div key={item.label} className="rounded-xl border border-gray-200 bg-gray-50 p-5">
-                    <div className="mb-1 flex items-center gap-2 font-bold text-black">
-                      <Icon className="h-5 w-5 flex-shrink-0 text-gray-700" aria-hidden="true" />
-                      {item.label}
-                    </div>
-                    <p className="text-sm leading-6 text-gray-700">{item.body}</p>
-                  </div>
-                );
-              })}
+            <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {revealed.map((item) => <RevealItem key={item.label} icon={item.icon} label={item.label} body={item.body} />)}
             </div>
           </div>
 
           <div>
-            <h2 className="mb-2 text-3xl font-bold text-black">Tools that keep files on your device</h2>
-            <p className="mb-6 leading-7">
+            <h2 className="text-h2 text-foreground">Tools that keep files on your device</h2>
+            <p className="mt-4 max-w-[760px] leading-7 text-muted-foreground">
               The other tools do everyday image and PDF work the same way: the file is opened by your browser and the result
               is handed back as a download, so there is never a copy on someone else&apos;s server.
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {otherTools.map((tool) => {
-                const Icon = tool.icon;
-                return (
-                  <Link key={tool.href} href={tool.href} className="group block rounded-xl border border-gray-200 bg-white p-6 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-gray-400 hover:shadow-xl">
-                    <div className="mb-3 flex items-center gap-3">
-                      <Icon className="h-8 w-8 flex-shrink-0 text-gray-600" aria-hidden="true" />
-                      <h3 className="text-2xl font-bold text-black group-hover:underline">{tool.title}</h3>
-                    </div>
-                    <ul className="mb-3 space-y-1 text-base text-black">
-                      {tool.points.map((point) => (
-                        <li key={point}>• {point}</li>
-                      ))}
-                    </ul>
-                    <p className="text-sm text-gray-500">{tool.use}</p>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-
-          <div>
-            <h2 className="mb-4 flex items-center gap-3 text-3xl font-bold text-black">
-              <ListChecks className="hidden h-8 w-8 flex-shrink-0 text-brand-600 sm:block" aria-hidden="true" />
-              Common tasks, and where to start
-            </h2>
-            <div className="grid gap-4 md:grid-cols-2">
-              {commonTasks.map((task) => (
-                <div key={task.task} className="rounded-xl border border-gray-200 bg-gray-50 p-5">
-                  <div className="mb-1 font-bold text-black">{task.task}</div>
-                  <p className="text-sm leading-6 text-gray-700">
-                    {task.how}{" "}
-                    <Link href={task.href} className="underline font-medium">
-                      {task.tool}
-                    </Link>
-                  </p>
-                </div>
+            <div data-testid="tool-cards" className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {otherTools.map((tool, index) => (
+                <ToolCard key={tool.href} icon={tool.icon} tone={TOOL_TONES[index]} title={tool.title} points={tool.points} body={tool.use} href={tool.href} cta="Open" />
               ))}
             </div>
           </div>
 
           <div>
-            <h2 className="mb-3 flex items-center gap-3 text-2xl font-bold text-black">
-              <CircleAlert className="hidden h-7 w-7 flex-shrink-0 text-brand-600 sm:block" aria-hidden="true" />
+            <h2 className="flex items-center gap-3 text-h2 text-foreground">
+              <IconTile icon={ListChecks} size="sm" tone="blue" className="hidden sm:inline-flex" />
+              Common tasks, and where to start
+            </h2>
+            <div className="mt-6 grid gap-4 md:grid-cols-2">
+              {commonTasks.map((task) => <TaskCard key={task.task} task={task.task} how={task.how} tool={task.tool} href={task.href} />)}
+            </div>
+          </div>
+
+          <div className="max-w-[760px]">
+            <h2 className="flex items-center gap-3 text-h2 text-foreground">
+              <IconTile icon={CircleAlert} size="sm" tone="yellow" className="hidden sm:inline-flex" />
               What removing metadata does not do
             </h2>
-            <p className="leading-7 mb-3">
+            <p className="mt-4 leading-7 text-muted-foreground">
               Converting removes the information stored alongside the picture. It does nothing about the picture itself: a
               street sign, a house number, a face, a reflection in a window or a screen in the background can identify a
               place or a person just as well as GPS coordinates. Look at the image before you share it.
             </p>
-            <p className="leading-7">
+            <p className="mt-3 leading-7 text-muted-foreground">
               The tools accept JPG, PNG and WebP images and PDF documents. HEIC photos from an iPhone, RAW, TIFF, GIF and BMP are not
               accepted. Keep your
               originals: converting makes a copy and nothing is stored here after you close the tab. If something fails,{" "}
-              <Link href="/guides/troubleshooting/" className="underline font-medium">troubleshooting</Link> lists the usual causes.
+              <Link href="/guides/troubleshooting/" className={INLINE_LINK}>troubleshooting</Link> lists the usual causes.
             </p>
           </div>
 
           <div>
-            <h2 className="mb-4 flex items-center gap-3 text-2xl font-bold text-black">
-              <Gauge className="hidden h-7 w-7 flex-shrink-0 text-brand-600 sm:block" aria-hidden="true" />
+            <h2 className="flex items-center gap-3 text-h2 text-foreground">
+              <IconTile icon={Gauge} size="sm" tone="green" className="hidden sm:inline-flex" />
               Also measured: what conversion does to file size
             </h2>
-            <div className="overflow-x-auto rounded-xl border border-gray-200">
-              <table className="w-full text-left text-sm">
-                <thead className="bg-gray-100 text-black">
-                  <tr>
-                    <th className="p-3 font-bold">Same 900×600 photo, saved as</th>
-                    <th className="p-3 font-bold">Size</th>
-                    <th className="p-3 font-bold">Against the PNG</th>
-                  </tr>
-                </thead>
-                <tbody className="text-gray-700">
-                  <tr className="border-t border-gray-200">
-                    <td className="p-3 font-medium text-black">PNG (lossless)</td>
-                    <td className="p-3">{kb(homePhoto.png)}</td>
-                    <td className="p-3 text-gray-400">—</td>
-                  </tr>
-                  <tr className="border-t border-gray-200">
-                    <td className="p-3 font-medium text-black">JPG, quality 0.8</td>
-                    <td className="p-3">{kb(homeJpg80)}</td>
-                    <td className="p-3">{Math.round((1 - homeJpg80 / homePhoto.png) * 100)}% smaller</td>
-                  </tr>
-                  <tr className="border-t border-gray-200">
-                    <td className="p-3 font-medium text-black">WebP, quality 0.8</td>
-                    <td className="p-3">{kb(homeWebp80)}</td>
-                    <td className="p-3">{Math.round((1 - homeWebp80 / homePhoto.png) * 100)}% smaller</td>
-                  </tr>
-                  <tr className="border-t border-gray-200 bg-gray-50">
-                    <td className="p-3 font-medium text-black">WebP at half the dimensions</td>
-                    <td className="p-3 font-medium text-black">{kb(homeHalf.webp)}</td>
-                    <td className="p-3 font-medium text-black">{Math.round((1 - homeHalf.webp / homePhoto.png) * 100)}% smaller</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <p className="mt-4 leading-7">
-              The <Link href="/guides/jpg-png-webp-comparison/" className="underline font-medium">format comparison guide</Link>{" "}
+            <Card className="mt-6 overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-muted/60">
+                    <tr>
+                      <th className={TH}>Same 900×600 photo, saved as</th>
+                      <th className={TH}>Size</th>
+                      <th className={TH}>Against the PNG</th>
+                    </tr>
+                  </thead>
+                  <tbody className="text-muted-foreground">
+                    <tr className="border-t border-border">
+                      <td className={cn(TD, "font-semibold text-foreground")}>PNG (lossless)</td>
+                      <td className={TD}>{kb(homePhoto.png)}</td>
+                      <td className={cn(TD, "text-muted-foreground/60")}>—</td>
+                    </tr>
+                    <tr className="border-t border-border">
+                      <td className={cn(TD, "font-semibold text-foreground")}>JPG, quality 0.8</td>
+                      <td className={TD}>{kb(homeJpg80)}</td>
+                      <td className={TD}>{Math.round((1 - homeJpg80 / homePhoto.png) * 100)}% smaller</td>
+                    </tr>
+                    <tr className="border-t border-border">
+                      <td className={cn(TD, "font-semibold text-foreground")}>WebP, quality 0.8</td>
+                      <td className={TD}>{kb(homeWebp80)}</td>
+                      <td className={TD}>{Math.round((1 - homeWebp80 / homePhoto.png) * 100)}% smaller</td>
+                    </tr>
+                    <tr className="border-t border-border bg-muted/40">
+                      <td className={cn(TD, "font-semibold text-foreground")}>WebP at half the dimensions</td>
+                      <td className={cn(TD, "font-semibold text-foreground")}>{kb(homeHalf.webp)}</td>
+                      <td className={cn(TD, "font-semibold text-foreground")}>{Math.round((1 - homeHalf.webp / homePhoto.png) * 100)}% smaller</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </Card>
+            <p className="mt-4 max-w-[760px] leading-7 text-muted-foreground">
+              The <Link href="/guides/jpg-png-webp-comparison/" className={INLINE_LINK}>format comparison guide</Link>{" "}
               publishes every measurement and the test images themselves, including the case where JPG beats WebP.
             </p>
           </div>
 
-          <div className="rounded-xl border border-gray-200 bg-gray-50 p-6">
-            <h2 className="mb-2 text-xl font-bold text-black">More in the guides</h2>
-            <p className="leading-7">
-              The <Link href="/guides/" className="underline font-medium">guides section</Link> starts with what EXIF metadata
+          <Card className="p-6">
+            <h2 className="text-h3 text-foreground">More in the guides</h2>
+            <p className="mt-2 leading-7 text-muted-foreground">
+              The <Link href="/guides/" className={INLINE_LINK}>guides section</Link> starts with what EXIF metadata
               reveals and how we tested its removal, what a PDF says about who made it, and also covers choosing between JPG, PNG and WebP, reducing file size,
               PDF output resolution, and fixes for common problems.
             </p>
-          </div>
+          </Card>
         </section>
-      </div>
+      </PageContainer>
     </main>
   );
 }
