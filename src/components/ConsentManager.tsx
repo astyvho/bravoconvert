@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import type { Locale } from "@/lib/locale";
+import { Button } from "@/components/ui/button";
+import { useConsentBanner } from "@/components/site/consent-context";
 
 export const CONSENT_STORAGE_KEY = "bravoconvert-consent-v1";
 export const CONSENT_EVENT = "bravoconvert:consent";
@@ -56,54 +58,41 @@ const TEXT = {
 
 export default function ConsentManager({ locale = "en" }: { locale?: Locale }) {
   const t = TEXT[locale];
-  const [choice, setChoice] = useState<ConsentChoice | null>(null);
-  const [isOpen, setIsOpen] = useState(false);
+  // Open/closed lives in ConsentBannerContext so the footer can reopen it and tool pages can keep
+  // their fixed action bar out from under it. The choice itself is persisted in localStorage.
+  const { open, setOpen } = useConsentBanner();
 
   useEffect(() => {
     const saved = readConsent();
-    setChoice(saved);
-    setIsOpen(saved === null);
+    setOpen(saved === null);
     if (saved) applyConsent(saved);
-  }, []);
+  }, [setOpen]);
 
   const saveChoice = (nextChoice: ConsentChoice) => {
     window.localStorage.setItem(CONSENT_STORAGE_KEY, nextChoice);
-    setChoice(nextChoice);
-    setIsOpen(false);
+    setOpen(false);
     applyConsent(nextChoice);
   };
 
+  if (!open) return null;
   return (
-    <>
-      {isOpen && (
-        <section
-          className="fixed inset-x-2 bottom-2 z-[100] mx-auto flex max-w-4xl flex-col gap-2 rounded-xl border border-gray-300 bg-white px-4 py-3 shadow-xl sm:flex-row sm:items-center sm:gap-4"
-          role="region"
-          aria-label={t.region}
-        >
-          <p className="flex-1 text-xs leading-5 text-gray-700">
-            {t.body} <Link href="/privacy-policy/" className="font-medium underline">{t.policy}</Link>
-          </p>
-          <div className="flex shrink-0 gap-2">
-            <button type="button" onClick={() => saveChoice("denied")} className="flex-1 whitespace-nowrap rounded-lg border border-black bg-white px-3 py-2 text-xs font-semibold text-black hover:bg-gray-100 sm:flex-none">
-              {t.reject}
-            </button>
-            <button type="button" onClick={() => saveChoice("granted")} className="flex-1 whitespace-nowrap rounded-lg bg-black px-3 py-2 text-xs font-semibold text-white hover:bg-gray-800 sm:flex-none">
-              {t.accept}
-            </button>
-          </div>
-        </section>
-      )}
-
-      {!isOpen && choice !== null && (
-        <button
-          type="button"
-          onClick={() => setIsOpen(true)}
-          className="fixed bottom-3 left-3 z-[90] rounded-full border border-gray-300 bg-white px-3 py-2 text-xs font-medium text-black shadow-md hover:bg-gray-100"
-        >
-          {t.reopen}
-        </button>
-      )}
-    </>
+    <section
+      className="fixed inset-x-4 bottom-4 z-[100] mx-auto max-w-3xl rounded-card bg-card p-4 shadow-soft sm:flex sm:items-center sm:gap-4"
+      role="region"
+      aria-label={t.region}
+    >
+      <p className="flex-1 text-[13px] leading-5 text-muted-foreground">
+        {t.body} <Link href="/privacy-policy/" className="font-semibold text-foreground underline underline-offset-4">{t.policy}</Link>
+      </p>
+      <div className="mt-3 flex shrink-0 gap-2 sm:mt-0">
+        <Button type="button" variant="secondary" size="sm" className="flex-1 sm:flex-none" onClick={() => saveChoice("denied")}>
+          {t.reject}
+        </Button>
+        {/* Accept stays neutral (ink, not the point colour) on purpose so the banner does not nudge. */}
+        <Button type="button" size="sm" className="flex-1 bg-foreground text-background shadow-none hover:bg-foreground/90 sm:flex-none" onClick={() => saveChoice("granted")}>
+          {t.accept}
+        </Button>
+      </div>
+    </section>
   );
 }

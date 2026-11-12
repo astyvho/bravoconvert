@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "../globals.css";
-import Navigation from "@/components/Navigation";
+import SiteHeader from "@/components/site/site-header";
+import { ConsentBannerProvider } from "@/components/site/consent-context";
 import ConsentManager from "@/components/ConsentManager";
 import SiteHead from "@/components/site/SiteHead";
 import SiteFooter from "@/components/site/SiteFooter";
@@ -48,12 +49,14 @@ export default function KoreanRootLayout({
         <link rel="stylesheet" href={PRETENDARD_CSS} />
       </head>
       <body className="break-keep" style={{ fontFamily: '"Pretendard Variable", Pretendard, var(--font-sans), system-ui, sans-serif' }}>
-        <ConsentManager locale="ko" />
-        <Navigation locale="ko" />
-        <div className="pt-8">
-          {children}
-        </div>
-        <SiteFooter locale="ko" />
+        <ConsentBannerProvider>
+          <ConsentManager locale="ko" />
+          <SiteHeader locale="ko" />
+          <div className="pt-6">
+            {children}
+          </div>
+          <SiteFooter locale="ko" />
+        </ConsentBannerProvider>
       </body>
     </html>
   );

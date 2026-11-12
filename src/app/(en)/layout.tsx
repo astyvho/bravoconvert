@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "../globals.css";
-import Navigation from "@/components/Navigation";
+import SiteHeader from "@/components/site/site-header";
+import { ConsentBannerProvider } from "@/components/site/consent-context";
 import ConsentManager from "@/components/ConsentManager";
 import SiteHead from "@/components/site/SiteHead";
 import SiteFooter from "@/components/site/SiteFooter";
@@ -60,12 +61,14 @@ export default function RootLayout({
         <SiteHead />
       </head>
       <body>
-        <ConsentManager locale="en" />
-        <Navigation locale="en" />
-        <div className="pt-8">
-          {children}
-        </div>
-        <SiteFooter locale="en" />
+        <ConsentBannerProvider>
+          <ConsentManager locale="en" />
+          <SiteHeader locale="en" />
+          <div className="pt-6">
+            {children}
+          </div>
+          <SiteFooter locale="en" />
+        </ConsentBannerProvider>
       </body>
     </html>
   );
