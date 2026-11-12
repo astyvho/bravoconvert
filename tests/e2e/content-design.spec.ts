@@ -70,3 +70,20 @@ test("the guides index lists every guide as a card", async ({ page }) => {
     await expect(page.locator(`a[href="${url}"]`, { hasText: "Read the guide" })).toHaveCount(1);
   }
 });
+
+const KO_GUIDES = ["/ko/guides/", "/ko/guides/exif-metadata-privacy/", "/ko/guides/pdf-metadata-privacy/"];
+for (const url of KO_GUIDES) {
+  test(`${url} uses the content template`, async ({ page }) => {
+    await expectContentRedesigned(page, url);
+    await expect(page.locator("main .break-keep").first()).toBeVisible();
+  });
+}
+
+test("the Korean guides index keeps its English-only links marked", async ({ page }) => {
+  const html = await (await page.request.get("/ko/guides/")).text();
+  expect(html).toMatch(/hreflang="en"/i);
+  await page.goto("/ko/guides/");
+  for (const url of KO_GUIDES.slice(1)) {
+    await expect(page.locator(`a[href="${url}"]`, { hasText: "가이드 읽기" })).toHaveCount(1);
+  }
+});

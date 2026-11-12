@@ -4,12 +4,12 @@ import { ArrowRight, type LucideIcon } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import IconTile, { type IconTileTone } from "@/components/tool/icon-tile";
 
-export default function ToolCard({ icon, tone, title, points, body, note, href, cta }: { icon: LucideIcon; tone: IconTileTone; title: string; points?: string[]; body: string; note?: ReactNode; href: string; cta: string }) {
+export default function ToolCard({ icon, tone, title, points, body, note, href, cta, headingLevel = "h3" }: { headingLevel?: "h2" | "h3"; icon: LucideIcon; tone: IconTileTone; title: string; points?: string[]; body: string; note?: ReactNode; href: string; cta: string }) {
   return (
     <Link href={href} className="group block h-full rounded-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background">
       <Card className="flex h-full flex-col p-6 transition-colors group-hover:bg-muted/60">
         <IconTile icon={icon} tone={tone} size="md" />
-        <h3 className="mt-4 text-h3 text-foreground">{title}</h3>
+        {headingLevel === "h2" ? <h2 className="mt-4 text-h3 text-foreground">{title}</h2> : <h3 className="mt-4 text-h3 text-foreground">{title}</h3>}
         {points && (
           <ul className="mt-2 space-y-1 text-sm text-foreground">
             {points.map((point) => <li key={point}>· {point}</li>)}

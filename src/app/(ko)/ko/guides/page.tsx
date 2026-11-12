@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { BookOpen, Fingerprint, FileText } from "lucide-react";
+import { Fingerprint, FileText } from "lucide-react";
+import ContentHeader from "@/components/content/content-header";
+import ToolCard from "@/components/home/tool-card";
 import exifDemo from "@/data/exif-demo.json";
 import pdfMetaDemo from "@/data/pdf-metadata-demo.json";
 import { alternatesFor } from "@/lib/locale";
@@ -47,47 +49,39 @@ const english = [
 
 export default function KoreanGuidesIndex() {
   return (
-    <main className="min-h-screen bg-gray-50 py-12 px-4">
-      <div className="max-w-4xl mx-auto">
-        <header className="mb-12 text-center">
-          <h1 className="mb-4 flex items-center justify-center text-4xl font-bold text-black md:text-6xl">
-            <BookOpen className="mr-4 h-14 w-14 flex-shrink-0 text-gray-700" aria-hidden="true" />
-            가이드
-          </h1>
-          <p className="text-lg text-gray-700">
+    <main>
+      <div className="mx-auto w-full max-w-[1120px] px-4 pb-16 pt-6 break-keep sm:px-6">
+        <ContentHeader label="가이드" title="가이드">
+          <p className="mt-3 text-lg leading-relaxed text-foreground">
             &ldquo;변환하면 지워진다&rdquo;를 짐작으로 쓰지 않고 직접 측정했습니다. 시험에 쓴 파일도 공개해 두었습니다.
           </p>
-        </header>
+        </ContentHeader>
 
-        <div className="space-y-6">
-          {guides.map((guide) => {
-            const Icon = guide.icon;
-            return (
-              <Link
-                key={guide.href}
-                href={guide.href}
-                className="group block rounded-xl border border-gray-200 bg-white p-6 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-gray-400 hover:shadow-xl"
-              >
-                <div className="mb-2 flex items-center gap-3">
-                  <Icon className="h-8 w-8 flex-shrink-0 text-gray-700" aria-hidden="true" />
-                  <h2 className="text-2xl font-bold text-black group-hover:underline">{guide.title}</h2>
-                </div>
-                <p className="leading-7 text-gray-700">{guide.summary}</p>
-                <p className="mt-3 inline-block rounded-lg bg-gray-100 px-3 py-1.5 text-sm font-medium text-black">{guide.finding}</p>
-              </Link>
-            );
-          })}
+        <div className="mt-10 grid gap-5 md:grid-cols-2">
+          {guides.map((guide, index) => (
+            <ToolCard
+              key={guide.href}
+              headingLevel="h2"
+              icon={guide.icon}
+              tone={index === 0 ? "blue" : "yellow"}
+              title={guide.title}
+              body={guide.summary}
+              note={<strong className="font-semibold text-foreground">{guide.finding}</strong>}
+              href={guide.href}
+              cta="가이드 읽기"
+            />
+          ))}
         </div>
 
-        <section className="mt-12 rounded-xl border border-gray-200 bg-white p-6">
-          <h2 className="mb-2 text-xl font-bold text-black">영어로만 있는 가이드</h2>
-          <p className="mb-4 text-sm leading-6 text-gray-600">
+        <section className="mt-12 max-w-[880px] rounded-card bg-card p-6 shadow-soft">
+          <h2 className="text-h3 text-foreground">영어로만 있는 가이드</h2>
+          <p className="mt-2 text-sm leading-6 text-muted-foreground">
             형식 비교와 용량에 관한 측정은 아직 영어로만 제공됩니다. 표와 수치는 언어와 관계없이 읽을 수 있습니다.
           </p>
-          <ul className="grid gap-2 sm:grid-cols-2">
+          <ul className="mt-4 grid gap-2 sm:grid-cols-2">
             {english.map((item) => (
               <li key={item.href}>
-                <Link href={item.href} hrefLang="en" className="underline font-medium text-black">
+                <Link href={item.href} hrefLang="en" className="font-semibold text-primary underline underline-offset-4">
                   {item.title}
                 </Link>
               </li>
