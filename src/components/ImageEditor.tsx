@@ -24,6 +24,7 @@ import { Separator } from "@/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import PageContainer from "@/components/site/page-container";
 import ActionBar from "@/components/tool/action-bar";
+import useFocusWhenReady from "@/components/tool/use-focus-when-ready";
 import DropZone from "@/components/tool/drop-zone";
 import ToolLayout from "@/components/tool/tool-layout";
 import ToolPageHeader from "@/components/tool/tool-page-header";
@@ -352,6 +353,8 @@ export default function ImageEditor({ notice }: { notice?: ReactNode } = {}) {
     if (file) loadFile(file);
   };
 
+  const mainRef = useFocusWhenReady<HTMLDivElement>(!!loaded && !!edit);
+
   const header = (
     <ToolPageHeader
       crumb={["Tools", "Image Editor"]}
@@ -411,7 +414,7 @@ export default function ImageEditor({ notice }: { notice?: ReactNode } = {}) {
   );
 
   const main = (
-    <Card data-tool-main className="overflow-hidden p-0">
+    <Card ref={mainRef} tabIndex={-1} data-tool-main className="overflow-hidden p-0 outline-none">
       <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
         <div className="min-w-0">
           <p className="truncate text-sm font-bold text-foreground">{loaded.file.name}</p>

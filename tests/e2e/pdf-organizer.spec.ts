@@ -129,6 +129,7 @@ test("mode tabs move with the arrow keys", async ({ page }) => {
   await rejectOptionalCookies(page);
   await page.getByRole("tab", { name: "Merge PDFs" }).focus();
   await page.keyboard.press("ArrowRight");
+  await page.keyboard.press("Enter");
   await expect(page.getByRole("tab", { name: "Split a PDF" })).toHaveAttribute("aria-selected", "true");
   await expect(page.getByLabel("Choose a PDF to split")).toHaveCount(1);
 });
@@ -151,4 +152,33 @@ test("the primary action lives in the side panel", async ({ page }, testInfo) =>
   await rejectOptionalCookies(page);
   await page.getByLabel("Choose PDF files to merge").setInputFiles([a, b]);
   await expect(page.locator("[data-tool-panel]").getByRole("button", { name: "Merge 2 PDFs" })).toBeVisible();
+});
+
+// Phase 3 review: arrow keys only move focus between the tabs; Enter switches, so exploring with
+// the keyboard never throws away a result the visitor has not downloaded yet.
+test("arrow keys on the mode tabs keep the merged result", async ({ page }, testInfo) => {
+  const a = testInfo.outputPath("a.pdf");
+  const b = testInfo.outputPath("b.pdf");
+  await writeFixture(a, WIDTHS_A, "A");
+  await writeFixture(b, WIDTHS_B, "B");
+  await page.goto("/edit/pdf/");
+  await rejectOptionalCookies(page);
+  await page.getByLabel("Choose PDF files to merge").setInputFiles([a, b]);
+  await page.getByRole("button", { name: "Merge 2 PDFs" }).click();
+  await expect(page.getByRole("link", { name: "Download" })).toBeVisible();
+  await page.getByRole("tab", { name: "Merge PDFs" }).focus();
+  await page.keyboard.press("ArrowRight");
+  await expect(page.getByRole("tab", { name: "Split a PDF" })).toBeFocused();
+  await expect(page.getByRole("tab", { name: "Merge PDFs" })).toHaveAttribute("aria-selected", "true");
+  await expect(page.getByRole("link", { name: "Download" })).toBeVisible();
+});
+
+test("focus moves to the work area once PDFs are added", async ({ page }, testInfo) => {
+  const a = testInfo.outputPath("a.pdf");
+  await writeFixture(a, WIDTHS_A, "A");
+  await page.goto("/edit/pdf/");
+  await rejectOptionalCookies(page);
+  await page.getByLabel("Choose PDF files to merge").setInputFiles([a]);
+  await expect(page.getByText("1 file · 3 pages")).toBeVisible();
+  await expect.poll(() => page.evaluate(() => !!document.activeElement?.closest("[data-tool-main]"))).toBe(true);
 });

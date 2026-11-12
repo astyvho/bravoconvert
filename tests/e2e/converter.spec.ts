@@ -91,3 +91,13 @@ test("on a phone with the consent banner open the action bar is not pinned", asy
   await page.getByRole("button", { name: "Reject", exact: true }).click();
   await expect(bar).toHaveAttribute("data-fixed", "true");
 });
+
+// Phase 3 review: the drop zone that had focus unmounts once files arrive; focus must land on the list.
+test("focus moves to the file list once images are added", async ({ page }, testInfo) => {
+  const files = await pngFiles(page, testInfo, 2);
+  await page.goto("/convert/img/");
+  await rejectOptionalCookies(page);
+  await addImages(page, files);
+  await expect(page.locator("[data-tool-main]")).toBeVisible();
+  await expect.poll(() => page.evaluate(() => !!document.activeElement?.closest("[data-tool-main]"))).toBe(true);
+});

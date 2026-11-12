@@ -165,3 +165,9 @@ test("the panel groups are separated", async ({ page }, testInfo) => {
   await expect(panel.getByRole("heading", { level: 2 })).toHaveText(["Resize", "Rotate & flip", "Export"]);
   expect(await panel.getByRole("separator").count()).toBeGreaterThanOrEqual(2);
 });
+
+// Phase 3 review: "Choose image" unmounts once an image loads; focus must land on the preview card.
+test("focus moves to the preview once an image is loaded", async ({ page }, testInfo) => {
+  await openEditor(page, testInfo);
+  await expect.poll(() => page.evaluate(() => !!document.activeElement?.closest("[data-tool-main]"))).toBe(true);
+});

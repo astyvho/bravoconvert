@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator";
 import PageContainer from "@/components/site/page-container";
 import ActionBar from "@/components/tool/action-bar";
+import useFocusWhenReady from "@/components/tool/use-focus-when-ready";
 import DropZone from "@/components/tool/drop-zone";
 import ToolLayout from "@/components/tool/tool-layout";
 import ToolPageHeader from "@/components/tool/tool-page-header";
@@ -901,6 +902,7 @@ export default function ImageConverter({ notice }: { notice?: ReactNode } = {}) 
 
   const isPdf = toFormat.label === "PDF";
   const hasFiles = fileArr.length > 0;
+  const mainRef = useFocusWhenReady<HTMLDivElement>(hasFiles);
   const allConverted = hasFiles && resultArr.every(r => r);
 
   const formatSelect = (id: string, label: string, formats: typeof ADD_FORMATS, value: string, onChange: (value: string) => void) => (
@@ -974,7 +976,7 @@ export default function ImageConverter({ notice }: { notice?: ReactNode } = {}) 
   );
 
   const main = (
-    <Card data-tool-main className="p-4 sm:p-5">
+    <Card ref={mainRef} tabIndex={-1} data-tool-main className="p-4 outline-none sm:p-5">
       {isPdf && fileArr.length > 1 && (
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-field bg-muted px-4 py-3">
           <p className="flex items-center gap-2 text-sm text-foreground">

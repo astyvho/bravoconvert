@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import PageContainer from "@/components/site/page-container";
 import ActionBar from "@/components/tool/action-bar";
+import useFocusWhenReady from "@/components/tool/use-focus-when-ready";
 import DropZone from "@/components/tool/drop-zone";
 import IconTile from "@/components/tool/icon-tile";
 import ToolLayout from "@/components/tool/tool-layout";
@@ -201,6 +202,7 @@ export default function PdfOrganizer() {
   };
 
   const hasWork = mode === "merge" ? queue.length > 0 : splitSource !== null;
+  const mainRef = useFocusWhenReady<HTMLDivElement>(hasWork);
 
   const dropzone = (
     <DropZone
@@ -235,7 +237,7 @@ export default function PdfOrganizer() {
     item.error ?? `${item.pages} page${item.pages === 1 ? "" : "s"} · ${formatBytes(item.file.size)}`;
 
   const mergeMain = (
-    <div data-tool-main className="space-y-5">
+    <div ref={mainRef} tabIndex={-1} data-tool-main className="space-y-5 outline-none">
       <Card className="p-5">
         <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
           <h2 className="text-h3">Merge order</h2>
@@ -277,7 +279,7 @@ export default function PdfOrganizer() {
   );
 
   const splitMain = splitSource && (
-    <div data-tool-main className="space-y-5">
+    <div ref={mainRef} tabIndex={-1} data-tool-main className="space-y-5 outline-none">
       <Card className="flex items-center gap-3 p-5">
         <IconTile icon={FileText} tone="blue" size="sm" />
         <div className="min-w-0">
@@ -374,7 +376,7 @@ export default function PdfOrganizer() {
         icon={FileText}
         chips={[{ label: "PDF" }, { label: `Up to ${MAX_MERGE_FILES} files` }, { label: `${formatBytes(MAX_PDF_BYTES)} each · ${formatBytes(MAX_TOTAL_BYTES)} total` }, { label: "Nothing uploaded", ok: true }]}
       />
-      <Tabs value={mode} onValueChange={value => switchMode(value as Mode)} className="mt-6">
+      <Tabs value={mode} onValueChange={value => switchMode(value as Mode)} activationMode="manual" className="mt-6">
         <TabsList aria-label="PDF tool mode" className="flex w-full max-w-md">
           <TabsTrigger value="merge"><Combine aria-hidden="true" /> Merge PDFs</TabsTrigger>
           <TabsTrigger value="split"><Scissors aria-hidden="true" /> Split a PDF</TabsTrigger>
