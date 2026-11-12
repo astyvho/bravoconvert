@@ -93,3 +93,12 @@ for (const url of ["/how-to-use/", "/contact/", "/changelog/", "/privacy-policy/
     await expectContentRedesigned(page, url);
   });
 }
+
+test("the 404 page offers the four tools as cards", async ({ page }) => {
+  await expectContentRedesigned(page, "/page-not-found/");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Page not found");
+  for (const href of ["/convert/img/", "/convert/pdf/", "/edit/image/", "/edit/pdf/"]) {
+    await expect(page.locator(`a[href="${href}"]`, { hasText: "Open" })).toHaveCount(1);
+  }
+  await expect(page.getByRole("link", { name: "Go to the home page" })).toBeVisible();
+});

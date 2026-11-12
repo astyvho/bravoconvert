@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { alternatesFor } from "@/lib/locale";
 import HomePhotoDrop from "@/components/HomePhotoDrop";
-import { Camera, Check, CircleAlert, Clock, Combine, Eraser, FileSearch, FileText, Fingerprint, Gauge, Image, ListChecks, MapPin, PencilRuler, PenLine, Share2, ShieldCheck, User } from "lucide-react";
+import { Camera, Check, CircleAlert, Clock, Eraser, FileSearch, Fingerprint, Gauge, Image, ListChecks, MapPin, PenLine, Share2, ShieldCheck, User } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import PageContainer from "@/components/site/page-container";
@@ -12,6 +12,7 @@ import ReportPanel from "@/components/tool/report-panel";
 import HeroStage from "@/components/home/hero-stage";
 import StepCard from "@/components/home/step-card";
 import ToolCard from "@/components/home/tool-card";
+import { OTHER_TOOLS as otherTools, OTHER_TOOL_TONES } from "@/components/home/other-tools";
 import TaskCard from "@/components/home/task-card";
 import RevealItem from "@/components/home/reveal-item";
 import { demoReport, demoReportCounts } from "@/lib/demo-report";
@@ -109,43 +110,12 @@ const commonTasks = [
   },
 ];
 
-const otherTools = [
-  {
-    href: "/convert/img/",
-    icon: Image,
-    title: "Image Converter",
-    points: ["JPG, PNG, WebP and PDF", "Batch conversion with ZIP download", "Output carries no source EXIF"],
-    use: "Use this to clean a batch of photos, switch formats, or combine photos into one PDF",
-  },
-  {
-    href: "/convert/pdf/",
-    icon: FileText,
-    title: "PDF to Image",
-    points: ["Convert PDF to JPG or PNG", "One image per page", "The PDF never leaves your device"],
-    use: "Use this to share a single page as a picture instead of sending the whole document",
-  },
-  {
-    href: "/edit/image/",
-    icon: PencilRuler,
-    title: "Image Editor",
-    points: ["Resize with aspect ratio lock", "Rotate and flip", "Export JPG, PNG, or WebP"],
-    use: "Use this to fix or resize one photo — the export does not copy the original's EXIF block",
-  },
-  {
-    href: "/edit/pdf/",
-    icon: Combine,
-    title: "Merge & Split PDF",
-    points: ["Combine several PDFs into one", "Extract pages or split every page", "No upload, text stays selectable"],
-    use: "Use this to send only the pages someone needs, without uploading the document to a service",
-  },
-];
 
 export const metadata: Metadata = {
   alternates: alternatesFor("/", "en"),
 };
 
 const STEP_TONES = ["blue", "yellow", "green"] as const;
-const TOOL_TONES = ["blue", "pink", "yellow", "green"] as const;
 const TH = "p-3 text-left text-sm font-bold text-foreground";
 const TD = "p-3 text-sm tabular-nums";
 const INLINE_LINK = "font-semibold text-primary underline-offset-4 hover:underline";
@@ -329,7 +299,7 @@ export default function Home() {
             </p>
             <div data-testid="tool-cards" className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {otherTools.map((tool, index) => (
-                <ToolCard key={tool.href} icon={tool.icon} tone={TOOL_TONES[index]} title={tool.title} points={tool.points} body={tool.use} href={tool.href} cta="Open" />
+                <ToolCard key={tool.href} icon={tool.icon} tone={OTHER_TOOL_TONES[index]} title={tool.title} points={tool.points} body={tool.use} href={tool.href} cta="Open" />
               ))}
             </div>
           </div>
