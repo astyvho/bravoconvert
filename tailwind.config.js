@@ -39,17 +39,6 @@ module.exports = {
           pink: token("tile-pink"),
           peach: token("tile-peach"),
         },
-        // Legacy accent palette, repointed to indigo so screens not yet redesigned pick up the new
-        // point colour. Removed in redesign Phase 5.
-        brand: {
-          50: "#eef2ff",
-          100: "#e0e7ff",
-          200: "#c7d2fe",
-          600: "#4f46e5",
-          700: "#4338ca",
-          800: "#3730a3",
-          900: "#312e81",
-        },
       },
       fontFamily: {
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],
