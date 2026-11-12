@@ -10,9 +10,14 @@ const PROSE =
   "[&_a]:font-semibold [&_a]:text-primary [&_a]:underline-offset-4 hover:[&_a]:underline " +
   "[&_strong]:font-bold [&_strong]:text-foreground " +
   "[&_table]:w-full [&_table]:text-sm [&_th]:p-3 [&_th]:text-left [&_th]:font-bold [&_td]:p-3 [&_td]:align-top " +
-  "[&_blockquote]:border-l-4 [&_blockquote]:border-border [&_blockquote]:pl-4 [&_blockquote]:text-muted-foreground";
+  "[&_blockquote]:border-l-4 [&_blockquote]:border-border [&_blockquote]:pl-4 [&_blockquote]:text-muted-foreground " +
+  // Tables and figures may run wider than the text column, up to 880px (spec 7.4); a wrapper with
+  // .prose-wide scrolls sideways on its own instead of widening the page.
+  "[&_.prose-wide]:my-6 [&_.prose-wide]:overflow-x-auto [&_.prose-wide]:rounded-field [&_.prose-wide]:bg-card [&_.prose-wide]:shadow-soft lg:[&_.prose-wide]:w-[880px] lg:[&_.prose-wide]:max-w-[880px] " +
+  "[&_thead_tr]:border-b-2 [&_thead_tr]:border-border [&_tbody_tr]:border-b [&_tbody_tr]:border-border [&_tbody_tr:last-child]:border-0 " +
+  "[&_code]:rounded [&_code]:bg-muted [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:text-sm [&_code]:text-foreground";
 
-/** Body-copy styling for explanatory articles. Minimal in Phase 2; Phase 4 extends it for the guides. */
+/** Body-copy styling for explanatory articles and content pages. */
 export default function Prose({
   as = "div",
   className,

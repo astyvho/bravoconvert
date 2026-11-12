@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+import ContentHeader from "@/components/content/content-header";
+import IconTile from "@/components/tool/icon-tile";
+import Prose from "@/components/tool/prose";
 import Link from "next/link";
 import {
   Compass,
@@ -58,28 +61,24 @@ const limits = [
 
 export default function AboutPage() {
   return (
-    <main className="min-h-screen bg-gray-50 py-12 px-4">
-      <div className="max-w-4xl mx-auto">
-        <header className="mb-12 text-center">
-          <h1 className="mb-4 flex items-center justify-center text-4xl font-bold text-black md:text-6xl">
-            <Info className="mr-4 h-16 w-16 flex-shrink-0 text-gray-700" aria-hidden="true" />
-            About BravoConvert
-          </h1>
-          <p className="mb-4 text-xl text-black">
+    <main>
+      <div className="mx-auto w-full max-w-[1120px] px-4 pb-16 pt-6 sm:px-6">
+        <ContentHeader label="About" title="About BravoConvert">
+          <p className="mt-3 text-lg leading-relaxed text-foreground">
             Know what your files reveal before you share them, and handle them without uploading anything
           </p>
-          <p className="text-base text-gray-600">
+          <p className="mt-2 text-base leading-relaxed text-muted-foreground">
             What the site does, how it works, what it will not do, and how it pays for itself
           </p>
-        </header>
+        </ContentHeader>
 
-        <article className="space-y-8 rounded-xl border border-gray-200 bg-white p-6 shadow-lg transition-all duration-300 hover:shadow-xl md:p-10">
+        <Prose as="article" className="mt-10 max-w-[720px] space-y-10">
           <section>
-            <h2 className="mb-3 flex items-center gap-3 text-2xl font-bold">
-              <Compass className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+            <h2>
+              <IconTile icon={Compass} size="sm" tone="blue" className="hidden sm:inline-flex" />
               Why BravoConvert exists
             </h2>
-            <p className="text-gray-700 leading-7">
+            <p className="text-muted-foreground leading-7">
               BravoConvert started from a simple frustration: most online image and PDF tools ask you
               to upload a file to a server before doing something as basic as changing its format or
               resizing it. That means waiting for an upload, trusting a stranger with the contents of
@@ -87,7 +86,7 @@ export default function AboutPage() {
               finish in a second. This site does those everyday jobs entirely inside your browser
               instead.
             </p>
-            <p className="mt-4 text-gray-700 leading-7">
+            <p className="mt-4 text-muted-foreground leading-7">
               Building it made a second problem obvious. The files people share carry information they
               never see: a phone photo can hold the coordinates of the room it was taken in, the minute
               it was taken and the model of the phone. So the site&apos;s focus is now the step before
@@ -97,11 +96,11 @@ export default function AboutPage() {
           </section>
 
           <section>
-            <h2 className="mb-3 flex items-center gap-3 text-2xl font-bold">
-              <Wrench className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+            <h2>
+              <IconTile icon={Wrench} size="sm" tone="blue" className="hidden sm:inline-flex" />
               What it does
             </h2>
-            <p className="mb-4 text-gray-700 leading-7">
+            <p className="mb-4 text-muted-foreground leading-7">
               Five tools, each doing one thing:{" "}
               <Link className="underline font-medium" href="/view/exif/">
                 EXIF Viewer
@@ -124,7 +123,7 @@ export default function AboutPage() {
               </Link>{" "}
               for combining PDFs or pulling pages out of one while keeping them as real PDF pages.
             </p>
-            <ul className="list-disc space-y-2 pl-6 text-gray-700">
+            <ul className="list-disc space-y-2 pl-6 text-muted-foreground">
               {workflows.map((item) => (
                 <li key={item}>{item}</li>
               ))}
@@ -132,18 +131,18 @@ export default function AboutPage() {
           </section>
 
           <section>
-            <h2 className="mb-3 flex items-center gap-3 text-2xl font-bold">
-              <Cpu className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+            <h2>
+              <IconTile icon={Cpu} size="sm" tone="blue" className="hidden sm:inline-flex" />
               How &ldquo;in your browser&rdquo; actually works
             </h2>
-            <p className="text-gray-700 leading-7 mb-4">
+            <p className="text-muted-foreground leading-7 mb-4">
               When you pick a file, the browser reads it from your disk into memory. Image conversion
               is handed to a Web Worker so the page stays responsive, where the image is decoded,
               drawn onto an off-screen canvas, and re-encoded in the format you asked for. PDF pages
               are rendered to a canvas by PDF.js and captured the same way. The result is handed back
               as a download.
             </p>
-            <p className="text-gray-700 leading-7">
+            <p className="text-muted-foreground leading-7">
               At no point does the file travel anywhere. There is no upload endpoint to send it to —
               the site is a set of static files, and the conversion code runs on your machine. A
               useful side effect: because output is rebuilt from decoded pixels rather than copied
@@ -157,29 +156,29 @@ export default function AboutPage() {
           </section>
 
           <section>
-            <h2 className="mb-3 flex items-center gap-3 text-2xl font-bold">
-              <TriangleAlert className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+            <h2>
+              <IconTile icon={TriangleAlert} size="sm" tone="blue" className="hidden sm:inline-flex" />
               What it deliberately does not do
             </h2>
-            <p className="mb-4 text-gray-700 leading-7">
+            <p className="mb-4 text-muted-foreground leading-7">
               A tool is more useful when its limits are stated plainly rather than discovered.
             </p>
             <div className="space-y-4">
               {limits.map((limit) => (
-                <div key={limit.title} className="rounded-lg border-l-4 border-black bg-gray-50 p-5">
-                  <div className="mb-1 font-bold text-black">{limit.title}</div>
-                  <p className="text-sm leading-6 text-gray-700">{limit.body}</p>
+                <div key={limit.title} className="rounded-field border-l-4 border-primary bg-muted p-5">
+                  <div className="mb-1 font-bold text-foreground">{limit.title}</div>
+                  <p className="text-sm leading-6 text-muted-foreground">{limit.body}</p>
                 </div>
               ))}
             </div>
           </section>
 
           <section>
-            <h2 className="mb-3 flex items-center gap-3 text-2xl font-bold">
-              <FlaskConical className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+            <h2>
+              <IconTile icon={FlaskConical} size="sm" tone="blue" className="hidden sm:inline-flex" />
               How the guides are written
             </h2>
-            <p className="text-gray-700 leading-7">
+            <p className="text-muted-foreground leading-7">
               The{" "}
               <Link className="underline font-medium" href="/guides/">
                 guides
@@ -194,15 +193,15 @@ export default function AboutPage() {
           </section>
 
           <section>
-            <h2 className="mb-3 flex items-center gap-3 text-2xl font-bold">
-              <Megaphone className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+            <h2>
+              <IconTile icon={Megaphone} size="sm" tone="blue" className="hidden sm:inline-flex" />
               Who runs it, and how it is paid for
             </h2>
-            <p className="text-gray-700 leading-7 mb-4">
+            <p className="text-muted-foreground leading-7 mb-4">
               BravoConvert is an independently operated site, not a company product. The tools are
               free to use, there is nothing to sign up for, and there is no paid tier.
             </p>
-            <p className="text-gray-700 leading-7">
+            <p className="text-muted-foreground leading-7">
               Running costs are covered by advertising. That is the only revenue involved: the site
               does not sell data, and the contents of the files you convert are never transmitted
               anywhere, so there is nothing about them to sell. What advertising does mean is that
@@ -216,24 +215,24 @@ export default function AboutPage() {
           </section>
 
           <section>
-            <h2 className="mb-3 flex items-center gap-3 text-2xl font-bold">
-              <ListChecks className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+            <h2>
+              <IconTile icon={ListChecks} size="sm" tone="blue" className="hidden sm:inline-flex" />
               Corrections welcome
             </h2>
-            <p className="text-gray-700 leading-7">
+            <p className="text-muted-foreground leading-7">
               If something here is wrong, or a guide claims a behaviour the site does not actually
               have, that is worth knowing — several claims have already been corrected after being
-              checked against the code. Email <ContactEmail className="underline font-medium text-gray-700" />{" "}
+              checked against the code. Email <ContactEmail className="underline font-medium text-muted-foreground" />{" "}
               and say what you saw.
             </p>
           </section>
 
           <section>
-            <h2 className="mb-3 flex items-center gap-3 text-2xl font-bold">
-              <Map className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+            <h2>
+              <IconTile icon={Map} size="sm" tone="blue" className="hidden sm:inline-flex" />
               What is next
             </h2>
-            <p className="text-gray-700 leading-7">
+            <p className="text-muted-foreground leading-7">
               More measured guides on what files reveal — including what the major sharing apps do
               and do not strip from a photo — are planned, and will be added one at a time. Checking
               the hidden properties of a PDF, such as its author and the software that made it, is under
@@ -247,11 +246,11 @@ export default function AboutPage() {
           </section>
 
           <section>
-            <h2 className="mb-3 flex items-center gap-3 text-2xl font-bold">
-              <ShieldCheck className="h-7 w-7 flex-shrink-0 text-gray-700" aria-hidden="true" />
+            <h2>
+              <IconTile icon={ShieldCheck} size="sm" tone="blue" className="hidden sm:inline-flex" />
               Elsewhere on the site
             </h2>
-            <p className="text-gray-700 leading-7">
+            <p className="text-muted-foreground leading-7">
               The{" "}
               <Link className="underline font-medium" href="/how-to-use/">
                 usage guide
@@ -271,7 +270,7 @@ export default function AboutPage() {
               .
             </p>
           </section>
-        </article>
+        </Prose>
       </div>
     </main>
   );
