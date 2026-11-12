@@ -527,7 +527,7 @@ export default function PDFConverter() {
                 </div>
                 <div className="flex gap-2">
                   <Button
-                    variant="outline"
+                    variant="secondary"
                     size="sm"
                     onClick={handleAddFileClick}
                     disabled={!isReady}
@@ -536,7 +536,7 @@ export default function PDFConverter() {
                     Change File
                   </Button>
                   <Button
-                    variant="outline"
+                    variant="secondary"
                     size="sm"
                     onClick={() => {
                       setSelectedFile(null);

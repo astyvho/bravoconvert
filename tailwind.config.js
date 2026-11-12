@@ -25,6 +25,9 @@ module.exports = {
           soft: token("primary-soft"),
         },
         destructive: { DEFAULT: token("destructive"), foreground: token("destructive-foreground") },
+        // shadcn-generated primitives reference `accent`/`secondary`; both are the warm muted surface.
+        accent: { DEFAULT: token("muted"), foreground: token("foreground") },
+        secondary: { DEFAULT: token("muted"), foreground: token("foreground") },
         status: {
           found: { DEFAULT: token("status-found"), foreground: token("status-found-foreground") },
           clean: { DEFAULT: token("status-clean"), foreground: token("status-clean-foreground") },
@@ -72,5 +75,5 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [require("tailwindcss-animate")],
 };
