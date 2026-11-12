@@ -129,6 +129,7 @@ test("mode tabs move with the arrow keys", async ({ page }) => {
   await rejectOptionalCookies(page);
   await page.getByRole("tab", { name: "Merge PDFs" }).focus();
   await page.keyboard.press("ArrowRight");
+  await expect(page.getByRole("tab", { name: "Split a PDF" })).toBeFocused();
   await page.keyboard.press("Enter");
   await expect(page.getByRole("tab", { name: "Split a PDF" })).toHaveAttribute("aria-selected", "true");
   await expect(page.getByLabel("Choose a PDF to split")).toHaveCount(1);
