@@ -6,6 +6,8 @@ import { ChangeEvent, DragEvent, useRef, useState } from "react";
 import { FileSearch } from "lucide-react";
 import type { Locale } from "@/lib/locale";
 import { putHandoff, withHandoff } from "@/lib/file-handoff";
+import { Button, buttonVariants } from "@/components/ui/button";
+import DropZone from "@/components/tool/drop-zone";
 
 // 홈 첫 화면에서 바로 사진을 놓으면 EXIF 뷰어로 넘겨 곧장 결과를 보여 준다. 파일 선택은 이 한 번뿐이다.
 const TEXT = {
@@ -49,32 +51,30 @@ export default function HomePhotoDrop({ locale = "en" }: { locale?: Locale }) {
   };
 
   return (
-    <div
+    <DropZone
       data-home-drop
-      className={`mx-auto max-w-2xl rounded-3xl border-2 border-dashed px-6 py-8 transition ${dragging ? "border-black bg-gray-200" : "border-gray-300 bg-gray-50"}`}
+      className="mx-auto max-w-[760px]"
+      title={t.drop}
+      note={t.note}
+      icon={FileSearch}
+      dragging={dragging}
+      busy={busy}
       onDragEnter={event => { event.preventDefault(); setDragging(true); }}
       onDragOver={event => event.preventDefault()}
       onDragLeave={event => { if (event.currentTarget === event.target) setDragging(false); }}
       onDrop={onDrop}
+      actions={
+        <>
+          <Button type="button" size="lg" onClick={() => inputRef.current?.click()} disabled={busy}>
+            <FileSearch aria-hidden="true" />
+            {t.choose}
+          </Button>
+          <Link href={`${t.viewer}?sample=1`} className={buttonVariants({ variant: "secondary", size: "lg" })}>
+            {t.sample}
+          </Link>
+        </>
+      }
     >
-      <p className="hidden text-lg font-bold text-black sm:block">{t.drop}</p>
-      <div className="flex flex-col items-stretch justify-center gap-3 sm:mt-4 sm:flex-row sm:items-center">
-        <button
-          type="button"
-          onClick={() => inputRef.current?.click()}
-          disabled={busy}
-          className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-brand-600 px-6 font-bold text-white shadow-lg transition hover:bg-brand-700 disabled:opacity-50"
-        >
-          <FileSearch className="h-5 w-5" aria-hidden="true" />
-          {t.choose}
-        </button>
-        <Link
-          href={`${t.viewer}?sample=1`}
-          className="inline-flex h-12 items-center justify-center rounded-xl border border-gray-300 bg-white px-6 font-bold text-black transition hover:bg-gray-200"
-        >
-          {t.sample}
-        </Link>
-      </div>
       <input
         ref={inputRef}
         type="file"
@@ -84,7 +84,6 @@ export default function HomePhotoDrop({ locale = "en" }: { locale?: Locale }) {
         aria-label={t.inputLabel}
         onChange={(event: ChangeEvent<HTMLInputElement>) => { go(event.target.files); event.target.value = ""; }}
       />
-      <p className="mt-4 text-sm text-gray-500">{t.note}</p>
-    </div>
+    </DropZone>
   );
 }
