@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import "../globals.css";
 import Navigation from "@/components/Navigation";
 import ConsentManager from "@/components/ConsentManager";
@@ -24,11 +25,15 @@ export const metadata: Metadata = {
   },
 };
 
+// No maximumScale: pinch-zoom must stay available (accessibility audit `meta-viewport`).
 export const viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
 };
+
+const sans = Plus_Jakarta_Sans({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"], variable: "--font-sans", display: "swap" });
+// 한국어 글꼴은 Pretendard. 파일을 저장소에 두지 않고 jsDelivr 의 dynamic-subset CSS 를 쓴다.
+const PRETENDARD_CSS = "https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css";
 
 export default function KoreanRootLayout({
   children,
@@ -36,11 +41,13 @@ export default function KoreanRootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko">
+    <html lang="ko" className={sans.variable}>
       <head>
         <SiteHead />
+        <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="anonymous" />
+        <link rel="stylesheet" href={PRETENDARD_CSS} />
       </head>
-      <body className="antialiased text-black break-keep">
+      <body className="break-keep" style={{ fontFamily: '"Pretendard Variable", Pretendard, var(--font-sans), system-ui, sans-serif' }}>
         <ConsentManager locale="ko" />
         <Navigation locale="ko" />
         <div className="pt-8">

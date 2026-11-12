@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import "../globals.css";
 import Navigation from "@/components/Navigation";
 import ConsentManager from "@/components/ConsentManager";
@@ -40,11 +41,13 @@ export const metadata: Metadata = {
   },
 };
 
+// No maximumScale: pinch-zoom must stay available (accessibility audit `meta-viewport`).
 export const viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
 };
+
+const sans = Plus_Jakarta_Sans({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"], variable: "--font-sans", display: "swap" });
 
 export default function RootLayout({
   children,
@@ -52,11 +55,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={sans.variable}>
       <head>
         <SiteHead />
       </head>
-      <body className="antialiased text-black">
+      <body>
         <ConsentManager locale="en" />
         <Navigation locale="en" />
         <div className="pt-8">

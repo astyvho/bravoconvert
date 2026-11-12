@@ -2,13 +2,58 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+  Design tokens. Every colour on the site is one of these variables, written as
+  RGB channels so Tailwind can add opacity (`bg-primary/80`). See
+  docs/superpowers/specs/2026-11-12-site-redesign-design.md §5.
+  Point colour (indigo) is for primary actions and selected state only; amber
+  means "found", green means "not present / removed".
+*/
 @layer base {
-  html {
-    @apply bg-white;
+  :root {
+    --background: 255 248 241;
+    --foreground: 42 36 32;
+    --card: 255 255 255;
+    --card-foreground: 42 36 32;
+    --popover: 255 255 255;
+    --popover-foreground: 42 36 32;
+    --muted: 254 240 224;
+    --muted-foreground: 107 95 85;
+    --border: 241 226 210;
+    --input: 241 226 210;
+    --primary: 79 70 229;
+    --primary-foreground: 255 255 255;
+    --primary-hover: 67 56 202;
+    --primary-soft: 238 242 255;
+    --ring: 199 210 254;
+    --status-found: 254 243 199;
+    --status-found-foreground: 180 83 9;
+    --status-clean: 220 252 231;
+    --status-clean-foreground: 21 128 61;
+    --destructive: 254 226 226;
+    --destructive-foreground: 185 28 28;
+    --tile-blue: 219 234 254;
+    --tile-yellow: 254 243 199;
+    --tile-green: 220 252 231;
+    --tile-pink: 254 226 226;
+    --tile-peach: 254 240 224;
+    --radius: 1rem;
   }
-  
+
   body {
-    @apply bg-white text-black;
-    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-feature-settings: "tnum";
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
