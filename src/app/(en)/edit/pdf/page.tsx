@@ -3,6 +3,7 @@ import PageContainer from "@/components/site/page-container";
 import AdSlot from "@/components/tool/ad-slot";
 import IconTile from "@/components/tool/icon-tile";
 import Prose from "@/components/tool/prose";
+import { Accordion, AccordionItem } from "@/components/ui/accordion";
 import Link from "next/link";
 import { BookmarkX, CircleAlert, Combine, FileStack, Gauge, ListOrdered, Scissors, ShieldCheck } from "lucide-react";
 import PdfOrganizer from "@/components/PdfOrganizer";
@@ -50,8 +51,9 @@ export default function PdfOrganizerPage() {
 
       <PageContainer className="pb-16">
         <AdSlot slot="edit-pdf-below-tool" />
-        <Prose as="article" className="mt-12 space-y-12">
-        <header>
+        <article data-fold className="mt-12">
+          <Prose>
+          <header>
           <h2>
             <IconTile icon={Combine} size="sm" tone="blue" className="hidden sm:inline-flex" />
             Combine and split PDFs without uploading them
@@ -60,25 +62,21 @@ export default function PdfOrganizerPage() {
             This tool joins several PDF files into one document, pulls chosen pages out of a PDF, or breaks a PDF into one file per page. It runs entirely in your browser: the documents are read from your device, rebuilt in memory, and handed back as a download. Nothing is sent to a BravoConvert server, which matters for the kinds of files people usually combine — contracts, invoices, medical forms, scanned IDs.
           </p>
         </header>
-
-        <section>
-          <h2>
-            <IconTile icon={FileStack} size="sm" tone="blue" className="hidden sm:inline-flex" />
-            Pages are copied, not re-rendered
-          </h2>
+          </Prose>
+          <Accordion className="mt-8 max-w-[880px]">
+            <AccordionItem heading="h2" icon={FileStack} tone="blue" question="Pages are copied, not re-rendered">
+              <Prose className="max-w-none [&>*:first-child]:!mt-0">
           <p className="mt-3 leading-7">
             A PDF page is a set of drawing instructions — place this text in this font here, draw this line, show this image — rather than a picture. Merging and splitting here copy those instructions from the source file into a new one without redrawing anything. Text stays as text you can select, search, and copy; vector drawings stay sharp at any zoom; embedded images keep their original data.
           </p>
           <p className="mt-3 leading-7">
             We checked this rather than assuming it. After merging two test documents, the text on the first page of each was extracted back out of the merged file: both came back as real, selectable text ({merge.textSelectableFromA && merge.textSelectableFromB ? "confirmed for both documents" : "not confirmed"}). That is the difference from the <Link href="/convert/pdf/" className="font-medium text-foreground underline">PDF to image converter</Link>, which deliberately turns each page into a 144 DPI picture — useful for slides and previews, but the text is no longer text.
           </p>
-        </section>
-
-        <section>
-          <h2>
-            <IconTile icon={Gauge} size="sm" tone="blue" className="hidden sm:inline-flex" />
-            What happened to file size when we measured it
-          </h2>
+        
+              </Prose>
+            </AccordionItem>
+            <AccordionItem heading="h2" icon={Gauge} tone="blue" question="What happened to file size when we measured it">
+              <Prose className="max-w-none [&>*:first-child]:!mt-0">
           <p className="mt-3 leading-7">
             We printed two report-style documents from Chromium — {sources.a.pages} and {sources.b.pages} pages, with headings, tables, embedded fonts, bookmarks, and accessibility tags — then ran them through the same merge and split code this page uses.
           </p>
@@ -112,13 +110,11 @@ export default function PdfOrganizerPage() {
           <p className="mt-3 text-sm leading-6 text-muted-foreground">
             Measured on {data.measuredOn} with {data.browser} and {data.library}. Your documents will produce different absolute numbers; the direction of each effect is what transfers.
           </p>
-        </section>
-
-        <section>
-          <h2>
-            <IconTile icon={BookmarkX} size="sm" tone="blue" className="hidden sm:inline-flex" />
-            What does not carry over
-          </h2>
+        
+              </Prose>
+            </AccordionItem>
+            <AccordionItem heading="h2" icon={BookmarkX} tone="blue" question="What does not carry over">
+              <Prose className="max-w-none [&>*:first-child]:!mt-0">
           <p className="mt-3 leading-7">
             Some parts of a PDF belong to the document as a whole rather than to any page. The new file is built from pages only, so these are left behind:
           </p>
@@ -130,13 +126,11 @@ export default function PdfOrganizerPage() {
           <p className="mt-3 leading-7">
             Document title and author fields are also not copied from the sources. Comments and sticky notes are different: they are attached to pages, so they do travel with them — our <Link href="/guides/pdf-metadata-privacy/" className="font-medium text-foreground underline">PDF metadata test</Link> shows a reviewer&apos;s name and remark surviving a merge, an extraction and a split. For fillable forms, open the result and check the fields still behave as expected before relying on it.
           </p>
-        </section>
-
-        <section>
-          <h2>
-            <IconTile icon={ListOrdered} size="sm" tone="blue" className="hidden sm:inline-flex" />
-            Writing page ranges
-          </h2>
+        
+              </Prose>
+            </AccordionItem>
+            <AccordionItem heading="h2" icon={ListOrdered} tone="blue" question="Writing page ranges">
+              <Prose className="max-w-none [&>*:first-child]:!mt-0">
           <p className="mt-3 leading-7">
             In Split mode, the pages box accepts single pages and ranges separated by commas. Pages are numbered from 1, as in any PDF viewer.
           </p>
@@ -148,35 +142,29 @@ export default function PdfOrganizerPage() {
           <p className="mt-3 leading-7">
             A range must run from the smaller number to the larger one, and a page beyond the end of the document is rejected with a message naming the last page, rather than being silently skipped.
           </p>
-        </section>
-
-        <section>
-          <h2>
-            <IconTile icon={Scissors} size="sm" tone="blue" className="hidden sm:inline-flex" />
-            Which BravoConvert tool to use
-          </h2>
+        
+              </Prose>
+            </AccordionItem>
+            <AccordionItem heading="h2" icon={Scissors} tone="blue" question="Which BravoConvert tool to use">
+              <Prose className="max-w-none [&>*:first-child]:!mt-0">
           <ul className="mt-3 list-disc space-y-2 pl-6 leading-7">
             <li>Join PDFs, remove pages, or reorder a few pages while keeping text selectable: this tool.</li>
             <li>Turn PDF pages into JPG or PNG pictures for slides, social posts, or thumbnails: the <Link href="/convert/pdf/" className="font-medium text-foreground underline">PDF to image converter</Link>.</li>
             <li>Turn photos or screenshots into a PDF: the <Link href="/convert/img/" className="font-medium text-foreground underline">image converter</Link> with PDF selected as the output.</li>
           </ul>
-        </section>
-
-        <section>
-          <h2>
-            <IconTile icon={ShieldCheck} size="sm" tone="blue" className="hidden sm:inline-flex" />
-            Limits and private processing
-          </h2>
+        
+              </Prose>
+            </AccordionItem>
+            <AccordionItem heading="h2" icon={ShieldCheck} tone="blue" question="Limits and private processing">
+              <Prose className="max-w-none [&>*:first-child]:!mt-0">
           <p className="mt-3 leading-7">
             Each PDF can be up to 50 MB, and a merge can take up to 30 files with a combined size of 150 MB. The whole job happens in your browser&apos;s memory, so these limits exist to keep phones and older laptops from running out of it partway through. Password-protected and encrypted PDFs cannot be opened; remove the protection in the application that created the file first.
           </p>
-        </section>
-
-        <section>
-          <h2>
-            <IconTile icon={CircleAlert} size="sm" tone="blue" className="hidden sm:inline-flex" />
-            Troubleshooting
-          </h2>
+        
+              </Prose>
+            </AccordionItem>
+            <AccordionItem heading="h2" icon={CircleAlert} tone="blue" question="Troubleshooting">
+              <Prose className="max-w-none [&>*:first-child]:!mt-0">
           <ul className="mt-3 list-disc space-y-2 pl-6 leading-7">
             <li><strong className="text-foreground">&ldquo;Not a PDF file.&rdquo;</strong> The file is another format with a .pdf name, or the browser did not report it as a PDF. Open it in a PDF viewer to confirm.</li>
             <li><strong className="text-foreground">&ldquo;Password-protected or encrypted.&rdquo;</strong> Remove the password in the original application, save a copy, and add that copy.</li>
@@ -186,8 +174,11 @@ export default function PdfOrganizerPage() {
           <p className="mt-4 leading-7">
             If a valid PDF consistently fails, see the <Link href="/faq/" className="font-medium text-foreground underline">FAQ</Link> or use the <Link href="/contact/" className="font-medium text-foreground underline">contact page</Link> with your browser, device, and the error shown — but do not send the document itself.
           </p>
-        </section>
-        </Prose>
+        
+              </Prose>
+            </AccordionItem>
+          </Accordion>
+        </article>
       </PageContainer>
     </main>
   );

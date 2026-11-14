@@ -14,6 +14,7 @@ test("home hero keeps its heading and shows the sample report with real values",
   for (const href of ["/convert/img/", "/convert/pdf/", "/edit/image/", "/edit/pdf/"]) {
     await expect(page.getByTestId("tool-cards").locator(`a[href="${href}"]`)).toBeVisible();
   }
+  await page.locator("summary", { hasText: "Tested, not assumed" }).click();
   await expect(page.getByText("None of the fields survived.")).toBeVisible();
 });
 

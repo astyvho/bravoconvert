@@ -5,6 +5,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import PageContainer from "@/components/site/page-container";
 import IconTile from "@/components/tool/icon-tile";
+import { Accordion, AccordionItem } from "@/components/ui/accordion";
 import StatusBadge from "@/components/tool/status-badge";
 import ReportPanel from "@/components/tool/report-panel";
 import HeroStage from "@/components/home/hero-stage";
@@ -206,10 +207,19 @@ export default function KoreanHome() {
 
         <section className="mt-20 space-y-16">
           <div>
-            <h2 className="flex items-center gap-3 text-h2 text-foreground">
-              <IconTile icon={ShieldCheck} size="sm" tone="blue" className="hidden sm:inline-flex" />
-              직접 해 봤어요: 지우고 나면 뭐가 남을까
-            </h2>
+            <h2 className="text-h2 text-foreground">사진에 남는 정보 여섯 가지</h2>
+            <p className="mt-4 max-w-[760px] leading-7 text-muted-foreground">
+              EXIF 뷰어가 확인하는 항목이에요. 한 사진에 전부 들어 있는 경우는 드물고, 무엇이 남는지는 기기와 설정에 따라 달라요.
+            </p>
+            <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {revealed.map((item) => <RevealItem key={item.label} icon={item.icon} label={item.label} body={item.body} />)}
+            </div>
+          </div>
+
+          <div data-fold>
+            <Accordion>
+            <AccordionItem heading="h2" icon={ShieldCheck} tone="blue" question="직접 해 봤어요: 지우고 나면 뭐가 남을까">
+              <div className="[&>*:first-child]:!mt-0">
             <p className="mt-4 max-w-[760px] leading-7 text-muted-foreground">
               눈으로는 안 보이는 정보 {exifDemo.before.length}개({exifDemo.exifBlockBytes}바이트)를 넣은 샘플 사진을 만들고, 변환기와 똑같은
               방식으로 다시 저장한 다음 EXIF 파서로 읽어 봤어요.
@@ -248,23 +258,10 @@ export default function KoreanHome() {
               정보를 지워도 못 막는 것들은{" "}
               <Link href="/ko/guides/exif-metadata-privacy/" className={INLINE_LINK}>EXIF와 개인정보 가이드</Link>에 정리해 뒀어요.
             </p>
-          </div>
-
-          <div>
-            <h2 className="text-h2 text-foreground">사진에 남는 정보 여섯 가지</h2>
-            <p className="mt-4 max-w-[760px] leading-7 text-muted-foreground">
-              EXIF 뷰어가 확인하는 항목이에요. 한 사진에 전부 들어 있는 경우는 드물고, 무엇이 남는지는 기기와 설정에 따라 달라요.
-            </p>
-            <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {revealed.map((item) => <RevealItem key={item.label} icon={item.icon} label={item.label} body={item.body} />)}
-            </div>
-          </div>
-
-          <div className="max-w-[760px]">
-            <h2 className="flex items-center gap-3 text-h2 text-foreground">
-              <IconTile icon={FileText} size="sm" tone="pink" className="hidden sm:inline-flex" />
-              PDF에도 작성자 정보가 남아요
-            </h2>
+              </div>
+            </AccordionItem>
+            <AccordionItem heading="h2" icon={FileText} tone="pink" question="PDF에도 작성자 정보가 남아요">
+              <div className="[&>*:first-child]:!mt-0">
             <p className="mt-4 leading-7 text-muted-foreground">
               PDF에는 작성자, 초안 제목, 만든 프로그램 같은 문서 속성과 검토 메모가 들어 있을 수 있어요. 직접 해 보니 병합·추출·분할하면
               속성은 지워졌지만 메모는{" "}
@@ -273,23 +270,17 @@ export default function KoreanHome() {
               {pdfMetaDemo.coveredText.extractableAfterExtract ? "여전히 복사할 수 있었어요" : "복사되지 않았어요"}. 자세한 결과는{" "}
               <Link href="/ko/guides/pdf-metadata-privacy/" className={INLINE_LINK}>PDF가 드러내는 것</Link>에 있어요.
             </p>
-          </div>
-
-          <div>
-            <h2 className="flex items-center gap-3 text-h2 text-foreground">
-              <IconTile icon={ListChecks} size="sm" tone="blue" className="hidden sm:inline-flex" />
-              이럴 때 쓰면 좋아요
-            </h2>
+              </div>
+            </AccordionItem>
+            <AccordionItem heading="h2" icon={ListChecks} tone="blue" question="이럴 때 쓰면 좋아요">
+              <div className="[&>*:first-child]:!mt-0">
             <div className="mt-6 grid gap-4 md:grid-cols-2">
               {commonTasks.map((task) => <TaskCard key={task.task} task={task.task} how={task.how} tool={task.tool} href={task.href} />)}
             </div>
-          </div>
-
-          <div className="max-w-[760px]">
-            <h2 className="flex items-center gap-3 text-h2 text-foreground">
-              <IconTile icon={CircleAlert} size="sm" tone="yellow" className="hidden sm:inline-flex" />
-              정보를 지워도 남는 것
-            </h2>
+              </div>
+            </AccordionItem>
+            <AccordionItem heading="h2" icon={CircleAlert} tone="yellow" question="정보를 지워도 남는 것">
+              <div className="[&>*:first-child]:!mt-0">
             <p className="mt-4 leading-7 text-muted-foreground">
               여기서 지우는 건 사진 파일에 붙어 있는 정보뿐이고, 사진에 찍힌 건 그대로예요. 도로명 표지판, 동·호수, 얼굴, 창문에 비친 모습,
               뒤에 켜진 모니터로도 장소와 사람을 알 수 있어요. 보내기 전에 사진을 한 번 더 보세요.
@@ -299,6 +290,9 @@ export default function KoreanHome() {
               아이폰은 설정 → 카메라 → 포맷에서 &ldquo;높은 호환성&rdquo;을 고르면 JPG로 찍혀요. 지우기는 사본을 만드는 거라 원본은 그대로
               남아요.
             </p>
+              </div>
+            </AccordionItem>
+            </Accordion>
           </div>
 
           <Card className="p-6">

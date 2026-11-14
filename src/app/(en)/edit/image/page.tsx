@@ -3,6 +3,7 @@ import PageContainer from "@/components/site/page-container";
 import AdSlot from "@/components/tool/ad-slot";
 import IconTile from "@/components/tool/icon-tile";
 import Prose from "@/components/tool/prose";
+import { Accordion, AccordionItem } from "@/components/ui/accordion";
 import ImageEditor from "@/components/ImageEditor";
 import MetadataRemovalNotice from "@/components/MetadataRemovalNotice";
 import Link from "next/link";
@@ -50,8 +51,9 @@ export default function ImageEditorPage() {
 
       <PageContainer className="pb-16">
         <AdSlot slot="edit-image-below-tool" />
-        <Prose as="article" className="mt-12 space-y-12">
-        <header>
+        <article data-fold className="mt-12">
+          <Prose>
+          <header>
           <h2>
             <IconTile icon={ImageIcon} size="sm" tone="blue" className="hidden sm:inline-flex" />
             Edit images without uploading them
@@ -60,45 +62,37 @@ export default function ImageEditorPage() {
             BravoConvert&apos;s image editor resizes, rotates, and flips JPG, PNG, and WebP files directly in your browser. The selected image is not uploaded to a BravoConvert editing server, and each change remains non-destructive until you export the result. Keep the original file until you have checked the downloaded image, especially when reducing dimensions or using a lossy output format.
           </p>
         </header>
-
-        <section>
-          <h2>
-            <IconTile icon={Maximize2} size="sm" tone="blue" className="hidden sm:inline-flex" />
-            Resize while preserving proportions
-          </h2>
+          </Prose>
+          <Accordion className="mt-8 max-w-[880px]">
+            <AccordionItem heading="h2" icon={Maximize2} tone="blue" question="Resize while preserving proportions">
+              <Prose className="max-w-none [&>*:first-child]:!mt-0">
           <p className="mt-3 leading-7">
             Enter a width or height in pixels to create an image that fits a website, document, message, or social post. Aspect ratio locking is enabled by default, so changing one dimension calculates the other and prevents accidental stretching. The 25%, 50%, 75%, and 100% presets are useful when you want a quick size based on the original image rather than an exact pixel measurement.
           </p>
           <p className="mt-3 leading-7">
             Enlarging an image adds pixels but cannot restore detail that was absent from the source. For the sharpest result, avoid scaling beyond the original dimensions unless a larger canvas is required. Very large dimensions are limited to protect the browser from excessive memory use.
           </p>
-        </section>
-
-        <section>
-          <h2>
-            <IconTile icon={RotateCw} size="sm" tone="blue" className="hidden sm:inline-flex" />
-            Rotate and correct image orientation
-          </h2>
+        
+              </Prose>
+            </AccordionItem>
+            <AccordionItem heading="h2" icon={RotateCw} tone="blue" question="Rotate and correct image orientation">
+              <Prose className="max-w-none [&>*:first-child]:!mt-0">
           <p className="mt-3 leading-7">
             Rotate an image left or right in 90-degree steps. A quarter-turn automatically swaps the output width and height, so portrait and landscape images retain the correct canvas dimensions. You can combine rotation with resizing, undo individual edits, redo them, or return to the original orientation with Reset.
           </p>
-        </section>
-
-        <section>
-          <h2>
-            <IconTile icon={FlipHorizontal2} size="sm" tone="blue" className="hidden sm:inline-flex" />
-            Flip horizontally or vertically
-          </h2>
+        
+              </Prose>
+            </AccordionItem>
+            <AccordionItem heading="h2" icon={FlipHorizontal2} tone="blue" question="Flip horizontally or vertically">
+              <Prose className="max-w-none [&>*:first-child]:!mt-0">
           <p className="mt-3 leading-7">
             Horizontal flip creates a mirrored version of the image, while vertical flip reverses it from top to bottom. Both operations can be combined with rotation. The large preview reflects the current edit state, and the exported file uses the same sequence of transformations shown on screen.
           </p>
-        </section>
-
-        <section>
-          <h2>
-            <IconTile icon={Download} size="sm" tone="blue" className="hidden sm:inline-flex" />
-            Choose JPG, PNG, or WebP output
-          </h2>
+        
+              </Prose>
+            </AccordionItem>
+            <AccordionItem heading="h2" icon={Download} tone="blue" question="Choose JPG, PNG, or WebP output">
+              <Prose className="max-w-none [&>*:first-child]:!mt-0">
           <div className="mt-5 grid gap-5 md:grid-cols-3">
             <div className="rounded-field bg-muted p-5">
               <h3 className="!mt-0 text-lg font-semibold text-foreground">JPG for photographs</h3>
@@ -116,23 +110,19 @@ export default function ImageEditorPage() {
           <p className="mt-5 leading-7">
             The quality control applies to JPG and WebP. Higher values normally retain more visual detail and produce larger files. For batch format conversion, image compression controls, ZIP downloads, or combining several images into a PDF, use the <Link href="/convert/img/" className="font-medium text-foreground underline">image converter</Link> instead.
           </p>
-        </section>
-
-        <section>
-          <h2>
-            <IconTile icon={ShieldCheck} size="sm" tone="blue" className="hidden sm:inline-flex" />
-            Private browser-based processing
-          </h2>
+        
+              </Prose>
+            </AccordionItem>
+            <AccordionItem heading="h2" icon={ShieldCheck} tone="blue" question="Private browser-based processing">
+              <Prose className="max-w-none [&>*:first-child]:!mt-0">
           <p className="mt-3 leading-7">
             Image decoding, preview rendering, editing, and export take place on your device with browser image and Canvas APIs. No account or cloud storage is required. Performance depends on the available memory and processing power of your phone or computer, so a very large image can take longer to preview or export.
           </p>
-        </section>
-
-        <section>
-          <h2>
-            <IconTile icon={RotateCw} size="sm" tone="blue" className="hidden sm:inline-flex" />
-            A repeatable editing workflow
-          </h2>
+        
+              </Prose>
+            </AccordionItem>
+            <AccordionItem heading="h2" icon={RotateCw} tone="blue" question="A repeatable editing workflow">
+              <Prose className="max-w-none [&>*:first-child]:!mt-0">
           <ol className="mt-3 list-decimal space-y-2 pl-6 leading-7">
             <li>Open, drop, or paste one supported image and confirm its original pixel dimensions.</li>
             <li>Correct orientation first so the width and height fields describe the final portrait or landscape direction.</li>
@@ -143,26 +133,22 @@ export default function ImageEditorPage() {
           <p className="mt-4 leading-7">
             The preview is generated from the current edit state rather than by repeatedly modifying the source file. Export performs one final Canvas render, so several rotations and flips do not create a chain of intermediate downloaded files. The new encoding does not copy the source EXIF block, but visible information inside the picture remains part of the pixels.
           </p>
-        </section>
-
-        <section>
-          <h2>
-            <IconTile icon={Maximize2} size="sm" tone="blue" className="hidden sm:inline-flex" />
-            File and canvas limits explained
-          </h2>
+        
+              </Prose>
+            </AccordionItem>
+            <AccordionItem heading="h2" icon={Maximize2} tone="blue" question="File and canvas limits explained">
+              <Prose className="max-w-none [&>*:first-child]:!mt-0">
           <p className="mt-3 leading-7">
             The editor accepts one JPG/JPEG, PNG, or WebP file up to 10MB. It also limits either side to 16,384 pixels and the total output area to 64 megapixels. The compressed file size is not a reliable measure of working memory: a 10MB photograph can expand to hundreds of megabytes once decoded into pixels and copied through preview and export canvases.
           </p>
           <p className="mt-3 leading-7">
             If a requested width and height would exceed 64 megapixels, reduce one dimension and keep the aspect ratio locked. Closing other image-heavy tabs can help on mobile devices, but the limits remain in place to reduce frozen tabs and failed exports. The editor does not crop, sharpen, remove backgrounds, add text, or apply filters; use a dedicated editor when those changes are required.
           </p>
-        </section>
-
-        <section>
-          <h2>
-            <IconTile icon={CircleAlert} size="sm" tone="blue" className="hidden sm:inline-flex" />
-            Troubleshooting image editing
-          </h2>
+        
+              </Prose>
+            </AccordionItem>
+            <AccordionItem heading="h2" icon={CircleAlert} tone="blue" question="Troubleshooting image editing">
+              <Prose className="max-w-none [&>*:first-child]:!mt-0">
           <ul className="mt-3 list-disc space-y-2 pl-6 leading-7">
             <li>Confirm that the source is a valid JPG, PNG, or WebP file no larger than 10MB.</li>
             <li>Use a smaller resolution if the browser reports that the requested image is too large.</li>
@@ -173,8 +159,11 @@ export default function ImageEditorPage() {
           <p className="mt-4 leading-7">
             If a supported image consistently fails, see the <Link href="/faq/" className="font-medium text-foreground underline">FAQ</Link> or use the <Link href="/contact/" className="font-medium text-foreground underline">contact page</Link> and include the browser, device, source format, and displayed error message—but do not send a private source image.
           </p>
-        </section>
-        </Prose>
+        
+              </Prose>
+            </AccordionItem>
+          </Accordion>
+        </article>
       </PageContainer>
     </main>
   );

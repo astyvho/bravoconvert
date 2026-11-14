@@ -3,6 +3,7 @@ import PageContainer from "@/components/site/page-container";
 import AdSlot from "@/components/tool/ad-slot";
 import IconTile from "@/components/tool/icon-tile";
 import Prose from "@/components/tool/prose";
+import { Accordion, AccordionItem } from "@/components/ui/accordion";
 import PDFConverter from '@/components/PDFConverter';
 import Link from 'next/link';
 import {
@@ -35,8 +36,9 @@ export default function PDFConvertPage() {
 
         <PageContainer className="pb-16">
           <AdSlot slot="convert-pdf-below-tool" />
-          <Prose as="article" className="mt-12 space-y-12">
-          <header>
+          <article data-fold className="mt-12">
+            <Prose>
+            <header>
             <h2>
               <IconTile icon={FileImage} size="sm" tone="blue" className="hidden sm:inline-flex" />
               A practical guide to converting PDF pages into images
@@ -45,12 +47,10 @@ export default function PDFConvertPage() {
               PDF and image files solve different problems. A PDF preserves a document&apos;s page structure, while a JPG or PNG is easier to insert into a presentation, publish on a website, annotate in an image editor, or share as an individual page. BravoConvert renders each PDF page in your browser and creates a separate image without uploading the document contents to a BravoConvert conversion server.
             </p>
           </header>
-
-          <section>
-            <h2>
-              <IconTile icon={Images} size="sm" tone="blue" className="hidden sm:inline-flex" />
-              Choose JPG or PNG for the page content
-            </h2>
+            </Prose>
+            <Accordion className="mt-8 max-w-[880px]">
+              <AccordionItem heading="h2" icon={Images} tone="blue" question="Choose JPG or PNG for the page content">
+                <Prose className="max-w-none [&>*:first-child]:!mt-0">
             <div className="mt-5 grid gap-5 md:grid-cols-2">
               <div className="rounded-field bg-muted p-5">
                 <h3 className="!mt-0 text-lg font-semibold text-foreground">Use JPG for photo-heavy pages</h3>
@@ -61,88 +61,74 @@ export default function PDFConvertPage() {
                 <p className="!mb-0 !mt-2 leading-7">PNG uses lossless compression and is often the better option for text, line art, interface captures, charts, and diagrams. It can preserve sharp boundaries without JPG artifacts, but image files may be considerably larger—especially when a PDF page contains a full-page photograph.</p>
               </div>
             </div>
-          </section>
-
-          <section>
-            <h2>
-              <IconTile icon={ScanLine} size="sm" tone="blue" className="hidden sm:inline-flex" />
-              How page rendering works
-            </h2>
+          
+                </Prose>
+              </AccordionItem>
+              <AccordionItem heading="h2" icon={ScanLine} tone="blue" question="How page rendering works">
+                <Prose className="max-w-none [&>*:first-child]:!mt-0">
             <p className="mt-3 leading-7">
               The converter uses PDF.js to interpret the document and draw each page to a browser canvas. Final pages are rendered at a 2× scale before encoding, so output pixel dimensions depend on the original PDF page dimensions. This is intended to produce readable text and useful detail without asking the user to install desktop software. It is rasterization rather than extraction: selectable PDF text, links, form controls, layers, and vector objects become pixels in the downloaded image.
             </p>
             <p className="mt-3 leading-7">
               A converted image will therefore not behave like the source PDF. You cannot select its text unless another application performs optical character recognition, and embedded links will no longer be clickable. Keep the original PDF when those document features matter.
             </p>
-          </section>
-
-          <section>
-            <h2>
-              <IconTile icon={ShieldCheck} size="sm" tone="blue" className="hidden sm:inline-flex" />
-              Privacy and browser resource use
-            </h2>
+          
+                </Prose>
+              </AccordionItem>
+              <AccordionItem heading="h2" icon={ShieldCheck} tone="blue" question="Privacy and browser resource use">
+                <Prose className="max-w-none [&>*:first-child]:!mt-0">
             <p className="mt-3 leading-7">
               Selected PDFs are processed locally in the browser. The file contents are not sent to BravoConvert for conversion or storage. This is useful for ordinary documents that you prefer not to upload to a conversion server, but no browser tool can remove every security consideration. Avoid processing a document on a shared or untrusted device, close the tab when finished, and follow your organization&apos;s rules for confidential material.
             </p>
             <p className="mt-3 leading-7">
               Local processing also means performance depends on the device. A long PDF, a page containing complex graphics, or several large page canvases can use significant memory. BravoConvert processes pages in order and updates progress as the conversion runs. Keep the tab open until all requested pages have completed.
             </p>
-          </section>
-
-          <section>
-            <h2>
-              <IconTile icon={FileCheck2} size="sm" tone="blue" className="hidden sm:inline-flex" />
-              Supported files and practical limits
-            </h2>
+          
+                </Prose>
+              </AccordionItem>
+              <AccordionItem heading="h2" icon={FileCheck2} tone="blue" question="Supported files and practical limits">
+                <Prose className="max-w-none [&>*:first-child]:!mt-0">
             <ul className="mt-3 list-disc space-y-2 pl-6 leading-7">
               <li>The selected file must be a PDF and can be up to 50MB.</li>
               <li>Password-protected and encrypted PDFs are not supported because the browser cannot open them without the required access.</li>
               <li>Very complex or unusually long documents may exceed the memory available on a phone or tablet even when the file itself is below 50MB.</li>
               <li>Damaged files or PDFs using unsupported structures may fail during loading or on an individual page.</li>
             </ul>
-          </section>
-
-          <section>
-            <h2>
-              <IconTile icon={Download} size="sm" tone="blue" className="hidden sm:inline-flex" />
-              Downloading one page or the full set
-            </h2>
+          
+                </Prose>
+              </AccordionItem>
+              <AccordionItem heading="h2" icon={Download} tone="blue" question="Downloading one page or the full set">
+                <Prose className="max-w-none [&>*:first-child]:!mt-0">
             <p className="mt-3 leading-7">
               After conversion, each page receives a numbered filename and can be downloaded separately. This is useful when only a cover, chart, receipt, or selected page is needed. When several pages are required, Download All packages the completed images in a ZIP archive so the browser does not need to start many separate downloads. Extract the ZIP with the file manager built into your computer or mobile device.
             </p>
-          </section>
-
-          <section>
-            <h2>
-              <IconTile icon={ScanLine} size="sm" tone="blue" className="hidden sm:inline-flex" />
-              Estimate the resulting pixel dimensions
-            </h2>
+          
+                </Prose>
+              </AccordionItem>
+              <AccordionItem heading="h2" icon={ScanLine} tone="blue" question="Estimate the resulting pixel dimensions">
+                <Prose className="max-w-none [&>*:first-child]:!mt-0">
             <p className="mt-3 leading-7">
               PDF pages are measured in points rather than image pixels. At BravoConvert&apos;s fixed 2× render scale, a common US Letter page defined as 612 × 792 points becomes approximately 1224 × 1584 pixels, while an A4 page near 595 × 842 points becomes approximately 1190 × 1684 pixels. A PDF can define a different page box, so the exact downloaded dimensions follow the source document rather than a universal paper preset.
             </p>
             <p className="mt-3 leading-7">
               These pixel dimensions are useful for screens, slides, and online publishing, but they do not by themselves guarantee a particular print quality. Printing a 1224-pixel-wide page at 300 pixels per inch yields only about 4.1 inches of image width. For high-resolution commercial printing, keep the vector PDF or render it with a desktop tool that offers a chosen DPI.
             </p>
-          </section>
-
-          <section>
-            <h2>
-              <IconTile icon={FileCheck2} size="sm" tone="blue" className="hidden sm:inline-flex" />
-              Know when PDF-to-image is the wrong tool
-            </h2>
+          
+                </Prose>
+              </AccordionItem>
+              <AccordionItem heading="h2" icon={FileCheck2} tone="blue" question="Know when PDF-to-image is the wrong tool">
+                <Prose className="max-w-none [&>*:first-child]:!mt-0">
             <ul className="mt-3 list-disc space-y-2 pl-6 leading-7">
               <li>Use a PDF editor when you need to change selectable text, links, forms, annotations, or page order.</li>
               <li>Use an OCR tool when you need searchable text from a scanned page; BravoConvert creates pixels and does not recognize text.</li>
               <li>Keep the original PDF for accessible reading because image output does not preserve tags, reading order, or alternative text.</li>
               <li>Use the image editor only after conversion when a single rendered page needs resizing, rotation, or flipping.</li>
             </ul>
-          </section>
-
-          <section>
-            <h2>
-              <IconTile icon={Sparkles} size="sm" tone="blue" className="hidden sm:inline-flex" />
-              Tips for clearer and smaller output
-            </h2>
+          
+                </Prose>
+              </AccordionItem>
+              <AccordionItem heading="h2" icon={Sparkles} tone="blue" question="Tips for clearer and smaller output">
+                <Prose className="max-w-none [&>*:first-child]:!mt-0">
             <ul className="mt-3 list-disc space-y-2 pl-6 leading-7">
               <li>Choose PNG when small text, thin rules, screenshots, or diagrams are the main content.</li>
               <li>Choose JPG when pages are scans or photographs and a smaller download is more important than perfectly sharp edges.</li>
@@ -150,21 +136,22 @@ export default function PDFConvertPage() {
               <li>If a social network or content system resizes uploads, preserve a copy of the original converted page before uploading it.</li>
               <li>For converting standalone JPG, PNG, or WebP files—or combining images into a PDF—use the <Link href="/convert/img/" className="font-medium text-foreground underline">image converter</Link>.</li>
             </ul>
-          </section>
-
-          <section>
-            <h2>
-              <IconTile icon={CircleAlert} size="sm" tone="blue" className="hidden sm:inline-flex" />
-              Troubleshooting PDF conversion
-            </h2>
+          
+                </Prose>
+              </AccordionItem>
+              <AccordionItem heading="h2" icon={CircleAlert} tone="blue" question="Troubleshooting PDF conversion">
+                <Prose className="max-w-none [&>*:first-child]:!mt-0">
             <p className="mt-3 leading-7">
               If the document does not load, first confirm that it opens normally in another PDF viewer and is not password protected. Reload the page, close other memory-heavy browser tabs, and try again with an up-to-date browser. On a phone, a shorter PDF may succeed when a long, graphics-heavy document exceeds available memory. If only one page fails, the PDF itself may contain damaged or unusual page data.
             </p>
             <p className="mt-4 leading-7">
               The <Link href="/how-to-use/" className="font-medium text-foreground underline">usage guide</Link> explains the normal workflow, and the <Link href="/faq/" className="font-medium text-foreground underline">FAQ</Link> covers supported formats and privacy. For a repeatable error, contact us through the <Link href="/contact/" className="font-medium text-foreground underline">support page</Link> with the browser, device, page count, file size, and error message. Do not attach a confidential document.
             </p>
-          </section>
-          </Prose>
+          
+                </Prose>
+              </AccordionItem>
+            </Accordion>
+          </article>
         </PageContainer>
     </main>
   );

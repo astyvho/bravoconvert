@@ -7,6 +7,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import PageContainer from "@/components/site/page-container";
 import IconTile from "@/components/tool/icon-tile";
+import { Accordion, AccordionItem } from "@/components/ui/accordion";
 import StatusBadge from "@/components/tool/status-badge";
 import ReportPanel from "@/components/tool/report-panel";
 import HeroStage from "@/components/home/hero-stage";
@@ -234,10 +235,32 @@ export default function Home() {
 
         <section className="mt-20 space-y-16">
           <div>
-            <h2 className="flex items-center gap-3 text-h2 text-foreground">
-              <IconTile icon={ShieldCheck} size="sm" tone="blue" className="hidden sm:inline-flex" />
-              Tested, not assumed: what survives a conversion
-            </h2>
+            <h2 className="text-h2 text-foreground">What a photo can say about you</h2>
+            <p className="mt-4 max-w-[760px] leading-7 text-muted-foreground">
+              These are the six things the EXIF Viewer looks for. A photo rarely carries all of them, and which ones appear
+              depends on the device and its settings rather than on the picture.
+            </p>
+            <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {revealed.map((item) => <RevealItem key={item.label} icon={item.icon} label={item.label} body={item.body} />)}
+            </div>
+          </div>
+          <div>
+            <h2 className="text-h2 text-foreground">Tools that keep files on your device</h2>
+            <p className="mt-4 max-w-[760px] leading-7 text-muted-foreground">
+              The other tools do everyday image and PDF work the same way: the file is opened by your browser and the result
+              is handed back as a download, so there is never a copy on someone else&apos;s server.
+            </p>
+            <div data-testid="tool-cards" className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {otherTools.map((tool, index) => (
+                <ToolCard key={tool.href} icon={tool.icon} tone={OTHER_TOOL_TONES[index]} title={tool.title} points={tool.points} body={tool.use} href={tool.href} cta="Open" />
+              ))}
+            </div>
+          </div>
+
+          <div data-fold>
+            <Accordion>
+            <AccordionItem heading="h2" icon={ShieldCheck} tone="blue" question="Tested, not assumed: what survives a conversion">
+              <div className="[&>*:first-child]:!mt-0">
             <p className="mt-4 max-w-[760px] leading-7 text-muted-foreground">
               We built a sample photo carrying {exifDemo.before.length} metadata fields — {exifDemo.exifBlockBytes} bytes that
               no one sees when looking at the picture — then put it through the same decode-and-redraw path the converter
@@ -278,47 +301,17 @@ export default function Home() {
               <Link href="/guides/exif-metadata-privacy/" className={INLINE_LINK}>EXIF privacy guide</Link>{" "}
               covers the full test and what removing metadata does not protect you from.
             </p>
-          </div>
-
-          <div>
-            <h2 className="text-h2 text-foreground">What a photo can say about you</h2>
-            <p className="mt-4 max-w-[760px] leading-7 text-muted-foreground">
-              These are the six things the EXIF Viewer looks for. A photo rarely carries all of them, and which ones appear
-              depends on the device and its settings rather than on the picture.
-            </p>
-            <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {revealed.map((item) => <RevealItem key={item.label} icon={item.icon} label={item.label} body={item.body} />)}
-            </div>
-          </div>
-
-          <div>
-            <h2 className="text-h2 text-foreground">Tools that keep files on your device</h2>
-            <p className="mt-4 max-w-[760px] leading-7 text-muted-foreground">
-              The other tools do everyday image and PDF work the same way: the file is opened by your browser and the result
-              is handed back as a download, so there is never a copy on someone else&apos;s server.
-            </p>
-            <div data-testid="tool-cards" className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {otherTools.map((tool, index) => (
-                <ToolCard key={tool.href} icon={tool.icon} tone={OTHER_TOOL_TONES[index]} title={tool.title} points={tool.points} body={tool.use} href={tool.href} cta="Open" />
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <h2 className="flex items-center gap-3 text-h2 text-foreground">
-              <IconTile icon={ListChecks} size="sm" tone="blue" className="hidden sm:inline-flex" />
-              Common tasks, and where to start
-            </h2>
+              </div>
+            </AccordionItem>
+            <AccordionItem heading="h2" icon={ListChecks} tone="blue" question="Common tasks, and where to start">
+              <div className="[&>*:first-child]:!mt-0">
             <div className="mt-6 grid gap-4 md:grid-cols-2">
               {commonTasks.map((task) => <TaskCard key={task.task} task={task.task} how={task.how} tool={task.tool} href={task.href} />)}
             </div>
-          </div>
-
-          <div className="max-w-[760px]">
-            <h2 className="flex items-center gap-3 text-h2 text-foreground">
-              <IconTile icon={CircleAlert} size="sm" tone="yellow" className="hidden sm:inline-flex" />
-              What removing metadata does not do
-            </h2>
+              </div>
+            </AccordionItem>
+            <AccordionItem heading="h2" icon={CircleAlert} tone="yellow" question="What removing metadata does not do">
+              <div className="[&>*:first-child]:!mt-0">
             <p className="mt-4 leading-7 text-muted-foreground">
               Converting removes the information stored alongside the picture. It does nothing about the picture itself: a
               street sign, a house number, a face, a reflection in a window or a screen in the background can identify a
@@ -330,13 +323,10 @@ export default function Home() {
               originals: converting makes a copy and nothing is stored here after you close the tab. If something fails,{" "}
               <Link href="/guides/troubleshooting/" className={INLINE_LINK}>troubleshooting</Link> lists the usual causes.
             </p>
-          </div>
-
-          <div>
-            <h2 className="flex items-center gap-3 text-h2 text-foreground">
-              <IconTile icon={Gauge} size="sm" tone="green" className="hidden sm:inline-flex" />
-              Also measured: what conversion does to file size
-            </h2>
+              </div>
+            </AccordionItem>
+            <AccordionItem heading="h2" icon={Gauge} tone="green" question="Also measured: what conversion does to file size">
+              <div className="[&>*:first-child]:!mt-0">
             <Card className="mt-6 overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full">
@@ -376,6 +366,9 @@ export default function Home() {
               The <Link href="/guides/jpg-png-webp-comparison/" className={INLINE_LINK}>format comparison guide</Link>{" "}
               publishes every measurement and the test images themselves, including the case where JPG beats WebP.
             </p>
+              </div>
+            </AccordionItem>
+            </Accordion>
           </div>
 
           <Card className="p-6">

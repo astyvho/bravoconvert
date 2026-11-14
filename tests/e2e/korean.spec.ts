@@ -54,6 +54,7 @@ test("Korean EXIF viewer reads the sample photo with Korean labels", async ({ pa
 test("Korean guides render their measured findings", async ({ page }) => {
   await page.goto("/ko/");
   await expect(page.getByRole("heading", { level: 1, name: "보내기 전에, 사진에 뭐가 남아 있는지 보세요" })).toBeVisible();
+  await page.locator("[data-fold] summary").first().click();
   await expect(page.getByText("남은 건 하나도 없었어요.")).toBeVisible();
 
   await page.goto("/ko/guides/pdf-metadata-privacy/");
@@ -90,7 +91,10 @@ test("tools reached from the EXIF context say that converting removes the metada
   await expect(page.locator("[data-metadata-notice]")).toContainText("Saving here leaves the photo's hidden information behind");
 
   await page.goto("/ko/view/exif/");
-  await expect(page.locator('main a[href="/convert/img/?from=exif&lang=ko"]').first()).toBeVisible();
+  const toConverter = page.locator('main a[href="/convert/img/?from=exif&lang=ko"]').first();
+  // the link sits in a folded explanation section; open it like a reader would
+  await page.locator("[data-fold] details", { has: page.locator('a[href="/convert/img/?from=exif&lang=ko"]') }).locator("summary").click();
+  await expect(toConverter).toBeVisible();
 
   // 한국어에서 넘어온 영문 도구의 언어 전환은 하던 일(EXIF 뷰어)로 돌려보낸다.
   await page.goto("/convert/img/?from=exif&lang=ko");

@@ -3,6 +3,7 @@ import PageContainer from "@/components/site/page-container";
 import AdSlot from "@/components/tool/ad-slot";
 import IconTile from "@/components/tool/icon-tile";
 import Prose from "@/components/tool/prose";
+import { Accordion, AccordionItem } from "@/components/ui/accordion";
 import ImageConverter from "@/components/ImageConverter";
 import MetadataRemovalNotice from "@/components/MetadataRemovalNotice";
 import Link from "next/link";
@@ -85,8 +86,9 @@ export default function ImageConverterPage() {
 
       <PageContainer className="pb-16">
         <AdSlot slot="convert-img-below-tool" />
-        <Prose as="article" className="mt-12 space-y-12">
-        <header>
+        <article data-fold className="mt-12">
+          <Prose>
+          <header>
           <h2>
             <IconTile icon={SlidersHorizontal} size="sm" tone="blue" className="hidden sm:inline-flex" />
             How to choose the right image conversion settings
@@ -95,12 +97,10 @@ export default function ImageConverterPage() {
             Image conversion is more useful when the output format matches the way you plan to use the file. BravoConvert accepts JPG/JPEG, PNG, and WebP images and can create JPG, PNG, WebP, or PDF output. The conversion takes place in your browser, so the selected image contents are not uploaded to a BravoConvert conversion server. Keep the original file until you have checked the downloaded result, because re-encoding can change file size, color rendering, transparency, and visual quality.
           </p>
         </header>
-
-        <section>
-          <h2>
-            <IconTile icon={Images} size="sm" tone="blue" className="hidden sm:inline-flex" />
-            JPG, PNG, and WebP compared
-          </h2>
+          </Prose>
+          <Accordion className="mt-8 max-w-[880px]">
+            <AccordionItem heading="h2" icon={Images} tone="blue" question="JPG, PNG, and WebP compared">
+              <Prose className="max-w-none [&>*:first-child]:!mt-0">
           <div className="mt-5 grid gap-5 md:grid-cols-3">
             <div className="rounded-field bg-muted p-5">
               <h3 className="!mt-0 text-lg font-semibold text-foreground">JPG for photographs</h3>
@@ -115,66 +115,54 @@ export default function ImageConverterPage() {
               <p className="!mb-0 !mt-2 leading-7">WebP can produce compact photographs and can also retain transparency. It is useful for modern websites and apps, although an older editor or workflow may not accept it. For maximum compatibility with office software and older devices, JPG or PNG may be safer.</p>
             </div>
           </div>
-        </section>
-
-        <section>
-          <h2>
-            <IconTile icon={Gauge} size="sm" tone="blue" className="hidden sm:inline-flex" />
-            Quality and target file size
-          </h2>
+        
+              </Prose>
+            </AccordionItem>
+            <AccordionItem heading="h2" icon={Gauge} tone="blue" question="Quality and target file size">
+              <Prose className="max-w-none [&>*:first-child]:!mt-0">
           <p className="mt-3 leading-7">
             The optional compression controls apply to JPG and WebP output. A higher quality percentage preserves more image detail but normally creates a larger file. A lower value can reduce transfer time and storage use, but fine textures, text edges, and gradients may show artifacts. Start near the default value, inspect the result at full size, and lower the setting only when the file must be smaller.
           </p>
           <p className="mt-3 leading-7">
             The target size field is an estimate rather than a guarantee. Some images compress efficiently, while noisy photographs and complex textures require more data. PNG compression is lossless, so BravoConvert does not expose the same quality slider for PNG. The displayed input and output sizes make it easier to compare the result before downloading a batch.
           </p>
-        </section>
-
-        <section>
-          <h2>
-            <IconTile icon={Blend} size="sm" tone="blue" className="hidden sm:inline-flex" />
-            Transparency and background behavior
-          </h2>
+        
+              </Prose>
+            </AccordionItem>
+            <AccordionItem heading="h2" icon={Blend} tone="blue" question="Transparency and background behavior">
+              <Prose className="max-w-none [&>*:first-child]:!mt-0">
           <p className="mt-3 leading-7">
             PNG and WebP can contain transparent pixels, but JPG cannot. If a transparent PNG or WebP is converted to JPG, do not assume the transparent area will look correct against every background. Review the downloaded JPG before publishing it. If transparency is required for a logo, product cutout, sticker, or overlay, choose PNG or WebP output instead. Converting a JPG to PNG does not recreate transparency that was absent from the source.
           </p>
-        </section>
-
-        <section>
-          <h2>
-            <IconTile icon={ShieldCheck} size="sm" tone="blue" className="hidden sm:inline-flex" />
-            Local processing and metadata
-          </h2>
+        
+              </Prose>
+            </AccordionItem>
+            <AccordionItem heading="h2" icon={ShieldCheck} tone="blue" question="Local processing and metadata">
+              <Prose className="max-w-none [&>*:first-child]:!mt-0">
           <p className="mt-3 leading-7">
             BravoConvert decodes and re-encodes supported images locally in the browser. The newly encoded JPG, PNG, or WebP output does not copy the source EXIF block, which can contain GPS coordinates, capture time, camera model, and camera settings. This reduces accidental metadata sharing, but it is still sensible to inspect sensitive files with a metadata viewer before publication. Browser processing also means that conversion speed and memory limits depend on your phone or computer rather than a remote server.
           </p>
-        </section>
-
-        <section>
-          <h2>
-            <IconTile icon={Smartphone} size="sm" tone="blue" className="hidden sm:inline-flex" />
-            WebP conversion on iPhone and iPad
-          </h2>
+        
+              </Prose>
+            </AccordionItem>
+            <AccordionItem heading="h2" icon={Smartphone} tone="blue" question="WebP conversion on iPhone and iPad">
+              <Prose className="max-w-none [&>*:first-child]:!mt-0">
           <p className="mt-3 leading-7">
             Safari and Chrome on iOS both use Apple&apos;s browser engine, and some iOS versions can display WebP without providing Canvas-based WebP encoding. BravoConvert detects iPhone and iPad conversion conditions and uses a browser-side WebAssembly encoder when native WebP encoding is unavailable. Large batches are processed one image at a time on iOS to reduce peak memory use. The file still remains on the device throughout this process.
           </p>
-        </section>
-
-        <section>
-          <h2>
-            <IconTile icon={Layers3} size="sm" tone="blue" className="hidden sm:inline-flex" />
-            Batch conversion and PDF creation
-          </h2>
+        
+              </Prose>
+            </AccordionItem>
+            <AccordionItem heading="h2" icon={Layers3} tone="blue" question="Batch conversion and PDF creation">
+              <Prose className="max-w-none [&>*:first-child]:!mt-0">
           <p className="mt-3 leading-7">
             Files in one image batch must share the detected input type. Each image can be up to 10MB. Converted images can be downloaded individually, while multiple completed results can be collected in a ZIP archive. Selecting PDF as the destination combines the chosen images into one document, with reorder controls available before creation. For a PDF that already contains pages, use the dedicated <Link href="/convert/pdf/" className="font-medium text-foreground underline">PDF to image converter</Link> instead.
           </p>
-        </section>
-
-        <section>
-          <h2>
-            <IconTile icon={Images} size="sm" tone="blue" className="hidden sm:inline-flex" />
-            Three practical conversion recipes
-          </h2>
+        
+              </Prose>
+            </AccordionItem>
+            <AccordionItem heading="h2" icon={Images} tone="blue" question="Three practical conversion recipes">
+              <Prose className="max-w-none [&>*:first-child]:!mt-0">
           <div className="mt-5 grid gap-5 md:grid-cols-3">
             <div className="rounded-field bg-muted p-5">
               <h3 className="!mt-0 text-lg font-semibold text-foreground">Prepare camera photos for sharing</h3>
@@ -189,13 +177,11 @@ export default function ImageConverterPage() {
               <p className="!mb-0 !mt-2 leading-7">Select PDF output, arrange the images in reading order, and review every source before creating the document. This produces one page per image; it does not add searchable text, margins, headers, or page numbers.</p>
             </div>
           </div>
-        </section>
-
-        <section>
-          <h2>
-            <IconTile icon={CircleAlert} size="sm" tone="blue" className="hidden sm:inline-flex" />
-            Troubleshooting a failed image conversion
-          </h2>
+        
+              </Prose>
+            </AccordionItem>
+            <AccordionItem heading="h2" icon={CircleAlert} tone="blue" question="Troubleshooting a failed image conversion">
+              <Prose className="max-w-none [&>*:first-child]:!mt-0">
           <ul className="mt-3 list-disc space-y-2 pl-6 leading-7">
             <li>Confirm that the input is a valid JPG/JPEG, PNG, or WebP file and is no larger than 10MB.</li>
             <li>Reload the page after a browser tab has been open for a long time, especially on a memory-limited phone.</li>
@@ -206,8 +192,11 @@ export default function ImageConverterPage() {
           <p className="mt-4 leading-7">
             For more detail, see the <Link href="/how-to-use/" className="font-medium text-foreground underline">step-by-step guide</Link> and <Link href="/faq/" className="font-medium text-foreground underline">image converter FAQ</Link>. If a supported file consistently fails, use the <Link href="/contact/" className="font-medium text-foreground underline">contact page</Link> and include the browser, device, input format, output format, and displayed error message—but do not send a private source image.
           </p>
-        </section>
-        </Prose>
+        
+              </Prose>
+            </AccordionItem>
+          </Accordion>
+        </article>
       </PageContainer>
     </main>
   );
