@@ -1,6 +1,14 @@
 import { MetadataRoute } from 'next'
 import { KO_PATHS, koPath } from '@/lib/locale'
 
+// `next dev` mounts sitemap.ts at /sitemap.xml/[[...__metadata_id__]] and, under
+// `output: 'export'`, answers 500 ("missing generateStaticParams()") unless the one
+// path is listed. The build already flattens it to /sitemap.xml, so this only fixes dev.
+export const dynamic = 'force-static'
+export function generateStaticParams() {
+  return [{ __metadata_id__: [] }]
+}
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://bravoconvert.com'
   const currentDate = new Date()

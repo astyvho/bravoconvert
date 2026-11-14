@@ -234,13 +234,25 @@ test("the home page and the converter take the photo without choosing it again",
   await page.goto("/");
   await rejectOptionalCookies(page);
   await page.getByLabel("Choose photos to check").setInputFiles(SAMPLE);
-  await expect(page).toHaveURL(/\/view\/exif\/$/);
+  // The dev server may compile the viewer on first visit, which can take longer than 5 s under load.
+  await expect(page).toHaveURL(/\/view\/exif\/$/, { timeout: 20_000 });
   await expect(page.getByText("This photo carries 3 kinds of identifying information.")).toBeVisible();
 
   await page.locator("[data-clean]").getByRole("link", { name: "Image Converter" }).click();
-  await expect(page).toHaveURL(/\/convert\/img\/\?from=exif&handoff=1$/);
+  await expect(page).toHaveURL(/\/convert\/img\/\?from=exif&handoff=1$/, { timeout: 20_000 });
   await expect(page.locator("[data-metadata-notice]")).toContainText("The photos you were checking are already added below.");
   await expect(page.getByText("exif-sample-with-metadata.jpg").first()).toBeVisible();
+});
+
+test("a photo chosen on the home page before the scripts finish loading is still checked", async ({ page }) => {
+  let release!: () => void;
+  const scriptsHeld = new Promise<void>(resolve => { release = resolve; });
+  await page.route(/\/_next\/static\/chunks\/app\//, async route => { await scriptsHeld; await route.continue(); });
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await page.getByLabel("Choose photos to check").setInputFiles(SAMPLE);
+  release();
+  await expect(page).toHaveURL(/\/view\/exif\/\?handoff=1$|\/view\/exif\/$/, { timeout: 20_000 });
+  await expect(page.getByText("This photo carries 3 kinds of identifying information.")).toBeVisible();
 });
 
 test("if the ZIP library cannot load, the clean copies still download one by one", async ({ page }) => {

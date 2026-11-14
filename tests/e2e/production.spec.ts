@@ -19,8 +19,10 @@ for (const device of [
   { name: "desktop", viewport: { width: 1440, height: 900 } },
   { name: "iPhone", viewport: { width: 390, height: 844 } },
 ]) {
-  test(`all production HTML routes render on ${device.name}`, async ({ browser }) => {
-    for (const route of htmlRoutes) {
+  // One test per route: ten pages in one test shared a single 30 s budget, and a slow
+  // first compile on the dev server used it up before the last pages were reached.
+  for (const route of htmlRoutes) {
+    test(`${route} renders on ${device.name}`, async ({ browser }) => {
       const page = await browser.newPage({ viewport: device.viewport });
       const pageErrors: string[] = [];
       const consoleErrors: string[] = [];
@@ -50,8 +52,8 @@ for (const device of [
         console.log(`${device.name} ${route} external diagnostics`, { consoleErrors, badResponses });
       }
       await page.close();
-    }
-  });
+    });
+  }
 }
 
 test("production sitemap, robots, and feeds respond with expected content", async ({ request }) => {

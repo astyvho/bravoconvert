@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ChangeEvent, DragEvent, useRef, useState } from "react";
+import { ChangeEvent, DragEvent, useEffect, useRef, useState } from "react";
 import { FileSearch } from "lucide-react";
 import type { Locale } from "@/lib/locale";
 import { putHandoff, withHandoff } from "@/lib/file-handoff";
@@ -43,6 +43,18 @@ export default function HomePhotoDrop({ locale = "en" }: { locale?: Locale }) {
     const handed = await putHandoff(files);
     router.push(handed ? withHandoff(t.viewer) : t.viewer);
   };
+
+  // The input is in the static HTML, so a photo can be chosen before React attaches
+  // onChange (slow phones, slow networks). Pick up anything chosen in that window.
+  useEffect(() => {
+    const input = inputRef.current;
+    if (input?.files?.length) {
+      go(input.files);
+      input.value = "";
+    }
+    // Runs once after hydration; `go` is recreated every render.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const onDrop = (event: DragEvent<HTMLDivElement>) => {
     event.preventDefault();
