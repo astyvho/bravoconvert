@@ -298,7 +298,7 @@ export default function KoreanHome() {
           <Card className="p-6">
             <h2 className="text-h3 text-foreground">한국어로 볼 수 있는 페이지</h2>
             <p className="mt-2 leading-7 text-muted-foreground">
-              지금은 EXIF 뷰어와 개인정보 가이드만 한국어예요. 이미지 변환기, PDF 도구, FAQ는 영어지만 화면이 단순해서 버튼 몇 개만 알면
+              EXIF 뷰어와 가이드 7편은 모두 한국어예요. 이미지 변환기, PDF 도구, FAQ는 영어지만 화면이 단순해서 버튼 몇 개만 알면
               쓸 수 있어요. 가이드는 <Link href="/ko/guides/" className={INLINE_LINK}>가이드 목록</Link>에 모아 뒀어요.
             </p>
           </Card>

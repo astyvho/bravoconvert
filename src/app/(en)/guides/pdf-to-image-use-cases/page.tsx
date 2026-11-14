@@ -3,6 +3,7 @@ import ContentHeader from "@/components/content/content-header";
 import IconTile from "@/components/tool/icon-tile";
 import Prose from "@/components/tool/prose";
 import Link from "next/link";
+import { alternatesFor } from "@/lib/locale";
 import {
   AlertTriangle,
   Files,
@@ -24,7 +25,7 @@ export const metadata: Metadata = {
   title: "PDF to Image: What Resolution You Get, and PNG vs JPG | BravoConvert",
   description:
     "Converting a PDF page to an image renders it at 144 DPI. We measured what that means for file size, and why PNG beats JPG for text documents by a wider margin than most people expect.",
-  alternates: { canonical: "/guides/pdf-to-image-use-cases/" },
+  alternates: alternatesFor("/guides/pdf-to-image-use-cases/", "en"),
   openGraph: {
     title: "PDF to Image: What Resolution You Get, and PNG vs JPG",
     description:

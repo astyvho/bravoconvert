@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import ContentHeader from "@/components/content/content-header";
 import Prose from "@/components/tool/prose";
 import Link from "next/link";
+import { alternatesFor } from "@/lib/locale";
 import { Library } from "lucide-react";
 import benchmarks from "@/data/format-benchmarks.json";
 
@@ -12,7 +13,7 @@ export const metadata: Metadata = {
   title: "Image and PDF Terminology Glossary | BravoConvert",
   description:
     "Plain-language definitions for resolution, DPI, compression, alpha channel, EXIF, chroma subsampling and the other terms that come up when converting images and PDFs — with what each one means in practice.",
-  alternates: { canonical: "/guides/glossary/" },
+  alternates: alternatesFor("/guides/glossary/", "en"),
   openGraph: {
     title: "Image and PDF Terminology Glossary",
     description:

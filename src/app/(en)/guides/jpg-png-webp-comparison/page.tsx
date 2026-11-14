@@ -3,6 +3,7 @@ import ContentHeader from "@/components/content/content-header";
 import IconTile from "@/components/tool/icon-tile";
 import Prose from "@/components/tool/prose";
 import Link from "next/link";
+import { alternatesFor } from "@/lib/locale";
 import { BarChart3, CheckCircle2, FlaskConical, Image as ImageIcon, Layers, Lightbulb, XCircle } from "lucide-react";
 import benchmarks from "@/data/format-benchmarks.json";
 
@@ -13,7 +14,7 @@ export const metadata: Metadata = {
   title: "JPG vs PNG vs WebP: Measured File Size Comparison | BravoConvert",
   description:
     "We encoded three test images at four quality levels in the same browser engine BravoConvert uses and measured every byte. The results show where WebP wins, where it loses to JPG, and when PNG is the wrong choice.",
-  alternates: { canonical: "/guides/jpg-png-webp-comparison/" },
+  alternates: alternatesFor("/guides/jpg-png-webp-comparison/", "en"),
   openGraph: {
     title: "JPG vs PNG vs WebP: Measured File Size Comparison",
     description:

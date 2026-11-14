@@ -62,7 +62,7 @@ export default function SiteFooter({ locale }: { locale: Locale }) {
         </div>
         {locale === "ko" && (
           <p className="mt-5 text-center text-[13px] text-muted-foreground">
-            EXIF 뷰어와 개인정보 가이드는 한국어로, 나머지 도구와 안내 페이지는 영어로 제공됩니다.
+            EXIF 뷰어와 가이드는 한국어로, 나머지 도구와 안내 페이지는 영어로 제공됩니다.
           </p>
         )}
         <div className="mt-8 flex flex-col items-center justify-between gap-3 border-t border-border pt-6 text-sm font-semibold text-muted-foreground sm:flex-row">

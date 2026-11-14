@@ -3,6 +3,7 @@ import ContentHeader from "@/components/content/content-header";
 import IconTile from "@/components/tool/icon-tile";
 import Prose from "@/components/tool/prose";
 import Link from "next/link";
+import { alternatesFor } from "@/lib/locale";
 import { FlaskConical, Gauge, Layers, Minimize2, SlidersHorizontal, Tag } from "lucide-react";
 import benchmarks from "@/data/format-benchmarks.json";
 
@@ -13,7 +14,7 @@ export const metadata: Metadata = {
   title: "How to Reduce Image File Size: Measured Results | BravoConvert",
   description:
     "Four levers shrink an image, and they are not equally effective. We measured each one on the same source photo — including the resize result that beats the usual rule of thumb.",
-  alternates: { canonical: "/guides/reduce-image-file-size/" },
+  alternates: alternatesFor("/guides/reduce-image-file-size/", "en"),
   openGraph: {
     title: "How to Reduce Image File Size: Measured Results",
     description:

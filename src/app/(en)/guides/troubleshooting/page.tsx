@@ -3,6 +3,7 @@ import ContentHeader from "@/components/content/content-header";
 import IconTile from "@/components/tool/icon-tile";
 import Prose from "@/components/tool/prose";
 import Link from "next/link";
+import { alternatesFor } from "@/lib/locale";
 import { Cpu, LifeBuoy, ListChecks, Smartphone } from "lucide-react";
 
 const PUBLISHED = "2026-07-28";
@@ -12,7 +13,7 @@ export const metadata: Metadata = {
   title: "Troubleshooting Conversion Problems | BravoConvert",
   description:
     "Why a file gets rejected, why a conversion stalls, why the download never appears, and why output can look worse than expected — with the actual limits behind each one.",
-  alternates: { canonical: "/guides/troubleshooting/" },
+  alternates: alternatesFor("/guides/troubleshooting/", "en"),
   openGraph: {
     title: "Troubleshooting Conversion Problems",
     description: "The real limits behind each failure, and what to change to get past it.",

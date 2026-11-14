@@ -1,4 +1,4 @@
-// 한국어판은 /ko/ 아래에 개인정보 관련 핵심 페이지만 있다.
+// 한국어판은 /ko/ 아래에 개인정보 핵심 페이지와 가이드 전체가 있다.
 // 이 목록이 언어 전환 링크, hreflang, 사이트맵의 기준이다. 한국어 페이지를 추가하면 여기에도 추가한다.
 export type Locale = "en" | "ko";
 
@@ -8,6 +8,11 @@ export const KO_PATHS = [
   "/guides/",
   "/guides/exif-metadata-privacy/",
   "/guides/pdf-metadata-privacy/",
+  "/guides/jpg-png-webp-comparison/",
+  "/guides/reduce-image-file-size/",
+  "/guides/pdf-to-image-use-cases/",
+  "/guides/troubleshooting/",
+  "/guides/glossary/",
 ] as const;
 
 const SITE = "https://bravoconvert.com";
